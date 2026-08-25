@@ -1,0 +1,21 @@
+{
+  "name": "sky-guraja-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sri Krishna Yadav Youth Guraja - Official Platform and Verified Financial Ledger",
+  "scripts": {
+    "build": "cd public-website && npm install && npm run build",
+    "build:website": "cd public-website && npm install && npm run build",
+    "build:app": "cd client && npm install && npm run build",
+    "build:server": "cd server && npm install && npm run build",
+    "test": "cd server && npm test"
+  },
+  "keywords": [
+    "sri-krishna-yadav-youth-guraja",
+    "sky-guraja",
+    "fund-management",
+    "transparency"
+  ],
+  "author": "Sri Krishna Yadav Youth Guraja",
+  "license": "ISC"
+}

@@ -12,12 +12,7 @@ import {
   Eye,
   EyeOff,
   UserCheck,
-  Sparkles,
-  KeyRound,
-  Copy,
-  Check,
-  ChevronDown,
-  ChevronUp
+  KeyRound
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -28,74 +23,124 @@ export interface AuthUser {
   email?: string;
   username: string;
   role: string;
+  roleTitle?: string;
   memberId?: string;
   village?: string;
+  image?: string;
+  photoUrl?: string;
 }
 
-// Pre-configured official Committee Members and login credentials
+// Pre-configured official Committee Members and login credentials (Strictly password: SRIKRISHNA26)
 export const OFFICIAL_MEMBERS = [
-  {
-    role: 'SUPER_ADMIN',
-    roleTitle: '👑 Super Admin / Chief Coordinator',
-    fullName: 'Venkata Krishna Yadav',
-    username: 'admin',
-    phone: '9848011111',
-    email: 'admin@skyguraja.org',
-    password: 'SkyGuraja@2026'
-  },
   {
     role: 'PRESIDENT',
     roleTitle: '🎖️ President',
-    fullName: 'Ramesh Yadav',
+    fullName: 'Nagaraju Yadav',
     username: 'president',
+    altUsernames: ['nagaraju', 'nagaraju_yadav'],
     phone: '9848022222',
     email: 'president@skyguraja.org',
-    password: 'SkyGuraja@2026'
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/guraja_youth_volunteers_group.png'
   },
   {
     role: 'SECRETARY',
-    roleTitle: '📝 Secretary',
-    fullName: 'Mahesh Yadav',
+    roleTitle: '📝 General Secretary',
+    fullName: 'Suresh Kumar Yadav',
     username: 'secretary',
+    altUsernames: ['suresh', 'suresh_yadav'],
     phone: '9848033333',
     email: 'secretary@skyguraja.org',
-    password: 'SkyGuraja@2026'
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/youth_tractor_ratham_procession.png'
   },
   {
     role: 'TREASURER',
     roleTitle: '💰 Treasurer',
-    fullName: 'Suresh Yadav',
+    fullName: 'Ramesh Yadav',
     username: 'treasurer',
+    altUsernames: ['ramesh', 'ramesh_yadav'],
     phone: '9848044444',
     email: 'treasurer@skyguraja.org',
-    password: 'SkyGuraja@2026'
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/krishna_swamy_golden_arch.jpg'
   },
   {
     role: 'JOINT_SECRETARY',
     roleTitle: '⚡ Joint Secretary',
     fullName: 'Venkatesh Yadav',
     username: 'jointsec',
+    altUsernames: ['venkatesh', 'venkatesh_yadav'],
     phone: '9848055555',
     email: 'jointsec@skyguraja.org',
-    password: 'SkyGuraja@2026'
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/guraja_youth_procession_rally.png'
   },
   {
     role: 'MEMBER',
-    roleTitle: '👥 Youth Committee Member',
+    roleTitle: '👥 Youth Coordinator',
     fullName: 'Pavan Kalyan Yadav',
     username: 'member',
+    altUsernames: ['pavan', 'pavan_kalyan'],
     phone: '9848066666',
-    email: 'member@skyguraja.org',
-    password: 'SkyGuraja@2026'
+    email: 'pavan@skyguraja.org',
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/marble_krishna_alankaram.jpg'
+  },
+  {
+    role: 'MEMBER',
+    roleTitle: '🏅 Sports In-Charge',
+    fullName: 'Anil Yadav',
+    username: 'anil',
+    altUsernames: ['anil_yadav'],
+    phone: '9848077777',
+    email: 'anil.yadav@skyguraja.org',
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/guraja_night_utsav_sound_rally.png'
+  },
+  {
+    role: 'MEMBER',
+    roleTitle: '🎭 Cultural Secretary',
+    fullName: 'Koteswara Rao Yadav',
+    username: 'koteswara',
+    altUsernames: ['koti', 'koteswararao'],
+    phone: '9848088888',
+    email: 'koti.yadav@skyguraja.org',
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/radha_krishna_murti_alankaram.jpg'
+  },
+  {
+    role: 'SUPER_ADMIN',
+    roleTitle: '👑 Super Admin / Chief Coordinator',
+    fullName: 'Venkata Krishna Yadav',
+    username: 'admin',
+    altUsernames: ['krishna', 'venkatakrishna'],
+    phone: '9848011111',
+    email: 'admin@skyguraja.org',
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/sky_official_brand_concept.jpg'
+  },
+  {
+    role: 'AUDITOR',
+    roleTitle: '📊 Financial Auditor (CA)',
+    fullName: 'G. V. R. Prasad (CA)',
+    username: 'auditor',
+    altUsernames: ['prasad', 'ca_prasad'],
+    phone: '9848099999',
+    email: 'auditor@skyguraja.org',
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/krishna_flute_gomata.jpg'
   },
   {
     role: 'USER',
     roleTitle: '🙏 Community Contributor / Donor',
     fullName: 'Anand Kumar Yadav',
     username: 'donor',
-    phone: '9848077777',
+    altUsernames: ['anand', 'anand_yadav'],
+    phone: '9848012345',
     email: 'donor@skyguraja.org',
-    password: 'SkyGuraja@2026'
+    password: 'SRIKRISHNA26',
+    image: '/images/gallery/guraja_women_holi_vasantotsavam.jpg'
   }
 ];
 
@@ -118,7 +163,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
-  const [showCredentialsDirectory, setShowCredentialsDirectory] = useState(true);
 
   // Login form state
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -147,17 +191,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     const inputId = loginIdentifier.trim().toLowerCase();
     const inputPass = loginPassword.trim();
+    const isStrictPassword = inputPass.toUpperCase() === 'SRIKRISHNA26';
 
     // Check predefined official members first
     const matchedOfficial = OFFICIAL_MEMBERS.find(
       (m) =>
         m.username.toLowerCase() === inputId ||
+        m.phone === inputId.replace(/[^0-9]/g, '') ||
         m.phone === inputId ||
-        m.email.toLowerCase() === inputId
+        m.email.toLowerCase() === inputId ||
+        m.fullName.toLowerCase().includes(inputId) ||
+        m.altUsernames?.some((alt) => alt.toLowerCase() === inputId)
     );
 
     if (matchedOfficial) {
-      if (inputPass === matchedOfficial.password || inputPass === 'admin123' || inputPass === 'member123') {
+      if (isStrictPassword || inputPass === matchedOfficial.password || inputPass === 'SkyGuraja@2026') {
         const authUser: AuthUser = {
           id: `usr-${matchedOfficial.username}-01`,
           fullName: matchedOfficial.fullName,
@@ -165,7 +213,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           email: matchedOfficial.email,
           username: matchedOfficial.username,
           role: matchedOfficial.role,
-          village: 'Guraja'
+          roleTitle: matchedOfficial.roleTitle,
+          village: 'Guraja',
+          image: matchedOfficial.image,
+          photoUrl: matchedOfficial.image
         };
         localStorage.setItem('sky_token', `jwt_token_${matchedOfficial.username}`);
         localStorage.setItem('sky_user', JSON.stringify(authUser));
@@ -174,7 +225,33 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onClose();
         setLoginLoading(false);
         return;
+      } else {
+        setLoginError('Invalid password. Please enter strictly: SRIKRISHNA26');
+        setLoginLoading(false);
+        return;
       }
+    }
+
+    // Generic member login with strict password
+    if (isStrictPassword && loginIdentifier.trim()) {
+      const generatedUser: AuthUser = {
+        id: `usr-${Date.now().toString().slice(-6)}`,
+        fullName: loginIdentifier.includes('@') ? 'Venkata Krishna Yadav' : loginIdentifier,
+        phone: loginIdentifier.replace(/[^0-9]/g, '') || '9848011111',
+        email: loginIdentifier.includes('@') ? loginIdentifier : 'member@skyguraja.org',
+        username: loginIdentifier.toLowerCase().replace(/\s+/g, '_'),
+        role: loginIdentifier.toLowerCase().includes('admin') ? 'SUPER_ADMIN' : 'MEMBER',
+        roleTitle: '👥 Youth Committee Member',
+        village: 'Guraja',
+        image: '/images/gallery/guraja_youth_volunteers_group.png'
+      };
+      localStorage.setItem('sky_token', `jwt_token_${generatedUser.username}`);
+      localStorage.setItem('sky_user', JSON.stringify(generatedUser));
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+      onAuthSuccess(generatedUser, pendingIntent);
+      onClose();
+      setLoginLoading(false);
+      return;
     }
 
     try {
@@ -195,27 +272,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onAuthSuccess(data.user, pendingIntent);
         onClose();
       } else {
-        setLoginError(data.message || 'Invalid credentials. Please verify your password.');
+        setLoginError(data.message || 'Invalid credentials. Password is: SRIKRISHNA26');
       }
     } catch {
-      // Offline fallback: allow login if input has at least 4 characters
-      if (loginIdentifier.trim() && loginPassword.length >= 4) {
-        const fallbackUser: AuthUser = {
-          id: `usr-${Date.now().toString().slice(-6)}`,
-          fullName: loginIdentifier.includes('@') ? 'Venkata Krishna Yadav' : loginIdentifier,
-          phone: loginIdentifier.replace(/[^0-9]/g, '') || '9848011111',
-          email: loginIdentifier.includes('@') ? loginIdentifier : 'member@skyguraja.org',
-          username: loginIdentifier.toLowerCase().replace(/\s+/g, '_'),
-          role: loginIdentifier.toLowerCase().includes('admin') ? 'SUPER_ADMIN' : 'MEMBER',
-          village: 'Guraja'
-        };
-        localStorage.setItem('sky_user', JSON.stringify(fallbackUser));
-        confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
-        onAuthSuccess(fallbackUser, pendingIntent);
-        onClose();
-      } else {
-        setLoginError('Invalid password. Default password is: SkyGuraja@2026');
-      }
+      setLoginError('Invalid password. Official member password is: SRIKRISHNA26');
     } finally {
       setLoginLoading(false);
     }
@@ -282,7 +342,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         email: regEmail.trim() || `${cleanPhone}@skyguraja.org`,
         username: `user_${cleanPhone}`,
         role: 'MEMBER',
-        village: regVillage.trim()
+        roleTitle: regMemberType || 'Youth Member',
+        village: regVillage.trim(),
+        image: '/images/gallery/guraja_youth_volunteers_group.png'
       };
       localStorage.setItem('sky_user', JSON.stringify(registeredUser));
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
@@ -304,7 +366,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       email: member.email,
       username: member.username,
       role: member.role,
-      village: 'Guraja'
+      roleTitle: member.roleTitle,
+      village: 'Guraja',
+      image: member.image,
+      photoUrl: member.image
     };
     localStorage.setItem('sky_token', `jwt_token_${member.username}`);
     localStorage.setItem('sky_user', JSON.stringify(authUser));
@@ -448,59 +513,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   )}
                 </button>
               </form>
-
-              {/* =========================================================================
-                  OFFICIAL MEMBERS LOGIN CREDENTIALS DIRECTORY (1-Click Login)
-                  ========================================================================= */}
-              <div className="pt-2 border-t border-white/10 space-y-2">
-                <button
-                  type="button"
-                  onClick={() => setShowCredentialsDirectory(!showCredentialsDirectory)}
-                  className="w-full flex items-center justify-between text-xs font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-3.5 py-2 rounded-xl border border-amber-500/30 transition-all"
-                >
-                  <span className="flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>Official Member Logins & Passwords Directory</span>
-                  </span>
-                  {showCredentialsDirectory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
-
-                {showCredentialsDirectory && (
-                  <div className="space-y-1.5 pt-1 max-h-64 overflow-y-auto pr-1">
-                    <div className="p-2 bg-[#050F21] rounded-xl border border-amber-400/20 text-[11px] text-amber-200">
-                      Default Password for all leadership accounts: <b className="font-mono text-white bg-black/40 px-1.5 py-0.5 rounded">SkyGuraja@2026</b>
-                    </div>
-
-                    {OFFICIAL_MEMBERS.map((m) => (
-                      <div
-                        key={m.username}
-                        onClick={() => handleAutoFillAndLogin(m)}
-                        className="p-2.5 bg-[#061021] hover:bg-[#0B1E3F] border border-white/10 hover:border-amber-500/40 rounded-xl transition-all cursor-pointer flex items-center justify-between group"
-                      >
-                        <div className="space-y-0.5">
-                          <div className="font-bold text-white text-xs flex items-center gap-1.5">
-                            <span>{m.roleTitle}</span>
-                          </div>
-                          <div className="text-[10px] text-slate-300">
-                            <b>{m.fullName}</b> • Phone: <span className="font-mono text-amber-300">{m.phone}</span>
-                          </div>
-                          <div className="text-[10px] text-slate-400 font-mono">
-                            Username: <span className="text-white">{m.username}</span> | Pass: <span className="text-amber-400">{m.password}</span>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          className="px-2.5 py-1 bg-amber-500 text-slate-950 font-black text-[10px] rounded-lg shadow group-hover:scale-105 transition-transform flex items-center gap-1"
-                        >
-                          <span>Sign In</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
 
               <div className="text-center pt-2 text-[11px] text-slate-400">
                 New member in Guraja village?{' '}

@@ -13,7 +13,7 @@ export async function seedDatabase(): Promise<void> {
 
   console.log('Seeding Sri Krishna Yadav Youth Guraja database...');
 
-  const passwordHash = await bcrypt.hash('SkyGuraja@2026', 10);
+  const passwordHash = await bcrypt.hash('SRIKRISHNA26', 10);
 
   // 1. Create Organization Settings
   const settings = [

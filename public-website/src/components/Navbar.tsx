@@ -8,7 +8,8 @@ import {
   UserCheck,
   ChevronDown,
   Edit3,
-  Coins
+  Coins,
+  ShieldCheck
 } from 'lucide-react';
 import { AuthUser } from './AuthModal';
 
@@ -112,35 +113,79 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span>SUPPORT US</span>
           </button>
 
-          {/* Committee Action / Member Account */}
+          {/* Committee Action / Member Account with Member Photo Icon & Label */}
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-[#08152B] hover:bg-[#102447] border border-amber-500/30 rounded-xl text-xs text-slate-200 transition-all"
+                className="flex items-center gap-2.5 px-3 py-1.5 bg-[#08152B] hover:bg-[#0D2142] border-2 border-amber-500/40 hover:border-amber-400 rounded-2xl text-xs text-slate-200 transition-all shadow-[0_0_15px_rgba(245,158,11,0.15)] group"
+                title={`Logged in as ${user.fullName} (${user.role})`}
               >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-emerald-500 text-slate-950 font-bold flex items-center justify-center text-[10px]">
-                  {user.fullName.charAt(0)}
-                </div>
-                <div className="text-left hidden sm:block">
-                  <div className="font-bold text-white leading-none truncate max-w-[100px]">
-                    {user.fullName.split(' ')[0]}
+                {/* Member Photo Icon with Gold Ring Frame */}
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full p-0.5 bg-gradient-to-tr from-[#B38020] via-[#F5BD55] to-[#D4A244] shadow-md flex-shrink-0">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center">
+                    {user.image || user.photoUrl ? (
+                      <img
+                        src={user.image || user.photoUrl}
+                        alt={user.fullName}
+                        className="w-full h-full object-cover object-top"
+                        onError={(e) => {
+                          // Fallback to initial
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span className="font-black text-amber-300 text-xs font-serif">
+                        {user.fullName.charAt(0)}
+                      </span>
+                    )}
                   </div>
-                  <div className="text-[9px] text-amber-400 font-mono leading-none mt-0.5">
-                    {user.role}
+                  {/* Verified Online Green Pulse Indicator */}
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#08152B] rounded-full shadow-sm" />
+                </div>
+
+                {/* Member Label */}
+                <div className="text-left hidden md:block">
+                  <div className="flex items-center gap-1">
+                    <span className="font-black text-white text-xs leading-none truncate max-w-[130px] group-hover:text-amber-300 transition-colors">
+                      {user.fullName}
+                    </span>
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-300 bg-amber-500/20 border border-amber-500/40 px-1.5 py-0.2 rounded leading-none font-mono">
+                      {user.role}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-mono leading-none">
+                      Guraja
+                    </span>
                   </div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-[#08152B] border border-amber-500/30 rounded-2xl shadow-2xl p-2 z-50 text-xs space-y-1 animate-fadeIn">
-                  <div className="p-2 border-b border-white/10 text-left">
-                    <div className="font-bold text-white truncate">{user.fullName}</div>
-                    <div className="text-[10px] text-slate-400 font-mono">{user.phone}</div>
-                    <span className="inline-block mt-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px]">
-                      {user.role}
-                    </span>
+                <div className="absolute right-0 mt-2 w-64 bg-[#08152B] border-2 border-amber-500/40 rounded-2xl shadow-2xl p-2.5 z-50 text-xs space-y-1.5 animate-fadeIn">
+                  {/* Dropdown Profile Header with Photo */}
+                  <div className="p-3 bg-[#050F21] rounded-xl border border-white/10 text-left flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 to-amber-600 shadow-md flex-shrink-0">
+                      <img
+                        src={user.image || user.photoUrl || '/images/gallery/guraja_youth_volunteers_group.png'}
+                        alt={user.fullName}
+                        className="w-full h-full object-cover object-top rounded-full"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-white text-xs truncate">{user.fullName}</div>
+                      <div className="text-[10px] text-amber-300 font-mono truncate">{user.phone}</div>
+                      <div className="mt-1 flex items-center gap-1">
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] font-bold border border-emerald-500/30">
+                          {user.role}
+                        </span>
+                        <span className="text-[9px] text-slate-400 font-mono">SKY Guraja</span>
+                      </div>
+                    </div>
                   </div>
 
                   <button
@@ -170,7 +215,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       setUserDropdownOpen(false);
                       onLogout();
                     }}
-                    className="w-full text-left p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 pt-2 border-t border-white/5"
+                    className="w-full text-left p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 pt-2 border-t border-white/5 font-semibold"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Sign Out</span>
@@ -212,14 +257,22 @@ export const Navbar: React.FC<NavbarProps> = ({
       {mobileMenuOpen && (
         <div className="xl:hidden pt-4 pb-3 border-t border-white/10 mt-3 space-y-2 bg-[#050E1C] rounded-2xl p-4 shadow-2xl">
           {user ? (
-            <div className="p-3 bg-[#08152B] rounded-xl border border-amber-500/30 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-xs">
-                  {user.fullName.charAt(0)}
+            <div className="p-3 bg-[#08152B] rounded-xl border border-amber-500/40 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 to-amber-600 flex-shrink-0">
+                  <img
+                    src={user.image || user.photoUrl || '/images/gallery/guraja_youth_volunteers_group.png'}
+                    alt={user.fullName}
+                    className="w-full h-full object-cover object-top rounded-full"
+                  />
                 </div>
                 <div>
                   <div className="font-bold text-white text-xs">{user.fullName}</div>
-                  <div className="text-[10px] text-amber-400 font-mono">{user.role}</div>
+                  <div className="text-[10px] text-amber-300 font-mono flex items-center gap-1">
+                    <span>{user.role}</span>
+                    <span>•</span>
+                    <span>{user.phone}</span>
+                  </div>
                 </div>
               </div>
               <button

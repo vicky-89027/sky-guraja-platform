@@ -168,7 +168,31 @@ export function getMemberPhoto(identifier: string): string {
   return found?.image || '/images/gallery/guraja_youth_volunteers_group.png';
 }
 
-import { syncMembersToSupabase } from './supabaseService';
+import { syncMembersToSupabase, fetchSupabaseMembers } from './supabaseService';
+
+export async function hydrateTeamFromSupabase(): Promise<TeamMember[]> {
+  try {
+    const cloudMembers = await fetchSupabaseMembers();
+    if (cloudMembers && cloudMembers.length > 0) {
+      const mapped: TeamMember[] = cloudMembers.map((m) => ({
+        id: m.id,
+        name: m.name,
+        role: m.role,
+        bio: m.bio || '',
+        phone: m.phone || undefined,
+        email: m.email || undefined,
+        initials: m.initials || m.name.split(' ').map((w: string) => w[0]).join(''),
+        image: m.image || '/images/gallery/guraja_youth_volunteers_group.png',
+        order: m.order || 1
+      }));
+      localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(mapped));
+      return mapped;
+    }
+  } catch (err) {
+    console.error('Failed hydrating team from Supabase:', err);
+  }
+  return getTeamMembers();
+}
 
 export function saveTeamMembers(members: TeamMember[]): void {
   try {

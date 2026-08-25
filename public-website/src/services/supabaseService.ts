@@ -10,18 +10,24 @@ export interface SupabaseConfig {
 
 const SUPABASE_STORAGE_KEY = 'sky_supabase_config_v1';
 
+export const DEFAULT_SUPABASE_CONFIG: SupabaseConfig = {
+  url: 'https://hctgwcazsrpglcalcxgf.supabase.co',
+  anonKey: 'sb_publishable_EqvwimFyy8RRC0LTMcxbag_NWL9nz73'
+};
+
 // Default / configured Supabase credentials (can be overridden via environment variables or settings)
 export const getSupabaseConfig = (): SupabaseConfig => {
   try {
     const saved = localStorage.getItem(SUPABASE_STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (parsed.url && parsed.anonKey) return parsed;
     }
   } catch {}
 
   return {
-    url: (import.meta as any).env?.VITE_SUPABASE_URL || 'https://hctgwcazsrpglcalcxgf.supabase.co',
-    anonKey: (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || ''
+    url: (import.meta as any).env?.VITE_SUPABASE_URL || DEFAULT_SUPABASE_CONFIG.url,
+    anonKey: (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || (import.meta as any).env?.VITE_SUPABASE_PUBLISHABLE_KEY || DEFAULT_SUPABASE_CONFIG.anonKey
   };
 };
 
@@ -56,7 +62,7 @@ export async function fetchSupabaseMembers(): Promise<any[] | null> {
 
     if (!res.ok) return null;
     const data = await res.json();
-    return Array.isArray(data) ? data : null;
+    return Array.isArray(data) && data.length > 0 ? data : null;
   } catch (err) {
     console.error('Supabase fetch members error:', err);
     return null;

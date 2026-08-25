@@ -18,6 +18,7 @@ import {
   getTeamMembers,
   addOrUpdateTeamMember,
   deleteTeamMember,
+  hydrateTeamFromSupabase,
   TeamMember
 } from '../services/teamService';
 import confetti from 'canvas-confetti';
@@ -44,6 +45,9 @@ export const TeamPage: React.FC<TeamPageProps> = ({ user }) => {
 
   useEffect(() => {
     loadMembers();
+    hydrateTeamFromSupabase().then((m) => {
+      if (m && m.length > 0) setMembers(m);
+    });
   }, []);
 
   const loadMembers = () => {

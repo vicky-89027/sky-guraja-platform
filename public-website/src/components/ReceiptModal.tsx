@@ -343,23 +343,11 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
                 {/* Right: Official Circular Stamp matching the reference image */}
                 <div className="flex justify-center items-center">
-                  <div className="relative w-36 h-36 rounded-full border-4 border-[#051124] flex items-center justify-center p-2 shadow-inner group">
-                    <div className="absolute inset-1 rounded-full border border-dashed border-[#C49132]" />
-                    {/* Outer Text Circle */}
-                    <div className="text-center space-y-0.5">
-                      <div className="text-[7.5px] font-black tracking-widest text-[#051124] uppercase">
-                        SRI KRISHNA YADAV YOUTH
-                      </div>
-                      <img
-                        src="/images/sky_official_monogram.png"
-                        alt="Stamp Logo"
-                        className="w-12 h-12 mx-auto object-contain drop-shadow"
-                      />
-                      <div className="text-[7.5px] font-black tracking-wider text-[#C49132] uppercase">
-                        ★ E-RECEIPT VERIFIED ★
-                      </div>
-                    </div>
-                  </div>
+                  <img
+                    src="/images/sky_verified_stamp.png"
+                    alt="Official Verification Stamp"
+                    className="w-36 h-36 object-contain drop-shadow-md transform hover:rotate-6 transition-transform duration-500"
+                  />
                 </div>
               </div>
 

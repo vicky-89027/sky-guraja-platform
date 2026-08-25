@@ -1,6 +1,7 @@
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
 
 console.log('🚀 Starting SKY Guraja Unified Build for Vercel...');
 

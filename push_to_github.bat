@@ -3,7 +3,7 @@ title Push Sri Krishna Yadav Youth Guraja to GitHub
 cd /d "%~dp0"
 echo =======================================================
 echo Pushing Sri Krishna Yadav Youth Guraja to GitHub...
-echo Repository: https://github.com/venkatasaitejaavula/sky-guraja-platform.git
+echo Repository: https://github.com/vicky-89027/sky-guraja-platform.git
 echo =======================================================
 git push -u origin main
 echo.

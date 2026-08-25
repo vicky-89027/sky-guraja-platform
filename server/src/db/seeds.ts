@@ -68,20 +68,52 @@ export async function seedDatabase(): Promise<void> {
       role: 'TREASURER'
     },
     {
-      id: 'usr-mem-01',
-      username: 'member',
-      email: 'member@skyguraja.org',
+      id: 'usr-jsec-01',
+      username: 'jointsec',
+      email: 'jointsec@skyguraja.org',
       phone: '9848055555',
+      full_name: 'Venkatesh Yadav',
+      role: 'JOINT_SECRETARY'
+    },
+    {
+      id: 'usr-mem-01',
+      username: 'pavan',
+      email: 'pavan@skyguraja.org',
+      phone: '9848066666',
       full_name: 'Pavan Kalyan Yadav',
+      role: 'MEMBER'
+    },
+    {
+      id: 'usr-sport-01',
+      username: 'anil',
+      email: 'anil.yadav@skyguraja.org',
+      phone: '9848077777',
+      full_name: 'Anil Yadav',
+      role: 'MEMBER'
+    },
+    {
+      id: 'usr-cult-01',
+      username: 'koteswara',
+      email: 'koti.yadav@skyguraja.org',
+      phone: '9848088888',
+      full_name: 'Koteswara Rao Yadav',
       role: 'MEMBER'
     },
     {
       id: 'usr-audit-01',
       username: 'auditor',
       email: 'auditor@skyguraja.org',
-      phone: '9848066666',
+      phone: '9848099999',
       full_name: 'G. V. R. Prasad (CA)',
       role: 'AUDITOR'
+    },
+    {
+      id: 'usr-donor-01',
+      username: 'donor',
+      email: 'donor@skyguraja.org',
+      phone: '9848012345',
+      full_name: 'Anand Kumar Yadav',
+      role: 'USER'
     }
   ];
 
@@ -130,36 +162,80 @@ export async function seedDatabase(): Promise<void> {
     },
     {
       id: 'mem-04',
+      user_id: 'usr-jsec-01',
+      name: 'Venkatesh Yadav',
+      role_title: 'Joint Secretary',
+      phone: '9848055555',
+      email: 'jointsec@skyguraja.org',
+      joining_date: '2022-03-10',
+      area_location: 'Guraja Main Road',
+      assigned_responsibilities: 'Stage, Sound & Lighting Event Setup'
+    },
+    {
+      id: 'mem-05',
       user_id: 'usr-mem-01',
       name: 'Pavan Kalyan Yadav',
       role_title: 'Youth Coordinator',
-      phone: '9848055555',
-      email: 'member@skyguraja.org',
+      phone: '9848066666',
+      email: 'pavan@skyguraja.org',
       joining_date: '2023-04-10',
       area_location: 'Guraja East',
       assigned_responsibilities: 'Volunteer Coordination & Event Logistics'
     },
     {
-      id: 'mem-05',
-      user_id: null,
+      id: 'mem-06',
+      user_id: 'usr-sport-01',
       name: 'Anil Yadav',
-      role_title: 'Sports In-charge',
+      role_title: 'Sports & Logistics In-Charge',
       phone: '9848077777',
       email: 'anil.yadav@skyguraja.org',
       joining_date: '2023-08-01',
       area_location: 'Guraja West',
-      assigned_responsibilities: 'Youth Sports Tournaments & Ground Management'
+      assigned_responsibilities: 'Youth Sports Tournaments & Ground Logistics'
     },
     {
-      id: 'mem-06',
-      user_id: null,
+      id: 'mem-07',
+      user_id: 'usr-cult-01',
       name: 'Koteswara Rao Yadav',
       role_title: 'Cultural Secretary',
       phone: '9848088888',
       email: 'koti.yadav@skyguraja.org',
       joining_date: '2022-05-20',
       area_location: 'Guraja Temple Street',
-      assigned_responsibilities: 'Festivals, Cultural Stage & Stage Programs'
+      assigned_responsibilities: 'Festivals, Cultural Stage & Drama Programs'
+    },
+    {
+      id: 'mem-08',
+      user_id: 'usr-admin-01',
+      name: 'Venkata Krishna Yadav',
+      role_title: 'Super Admin & Chief Coordinator',
+      phone: '9848011111',
+      email: 'admin@skyguraja.org',
+      joining_date: '2021-01-01',
+      area_location: 'Guraja Central',
+      assigned_responsibilities: 'IT Governance, Database Integrity & Cryptographic Receipts'
+    },
+    {
+      id: 'mem-09',
+      user_id: 'usr-audit-01',
+      name: 'G. V. R. Prasad (CA)',
+      role_title: 'Financial Auditor & Advisor',
+      phone: '9848099999',
+      email: 'auditor@skyguraja.org',
+      joining_date: '2022-06-01',
+      area_location: 'Vijayawada / Guraja',
+      assigned_responsibilities: 'Quarterly Financial Audits, Balance Sheets & Tax Advisory'
+    },
+    {
+      id: 'mem-10',
+      user_id: 'usr-donor-01',
+      name: 'Anand Kumar Yadav',
+      role_title: 'Youth Contributor & Volunteer',
+      phone: '9848012345',
+      email: 'donor@skyguraja.org',
+      joining_date: '2023-01-10',
+      area_location: 'Guraja Center',
+      assigned_responsibilities: 'Community Annadanam & Public Cleanliness Drives'
     }
   ];
 

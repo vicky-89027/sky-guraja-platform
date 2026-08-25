@@ -11,7 +11,7 @@ export interface TeamMember {
   order: number;
 }
 
-const STORAGE_KEY_TEAM = 'sky_team_members_v2026';
+const STORAGE_KEY_TEAM = 'sky_team_members_v2026_live';
 
 export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   {
@@ -64,10 +64,10 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   },
   {
     id: 'team-05',
-    name: 'Pavan Kalyan Yadav',
-    role: 'Youth Coordinator',
+    name: 'PAVAN YADAV',
+    role: 'YOUTH COORDINATOR',
     bio: 'Directs youth volunteer squads for Janmashtami, blood donation drives, educational library initiatives, and disaster relief assistance.',
-    initials: 'PK',
+    initials: 'PY',
     phone: '+91 98480 66666',
     email: 'pavan@skyguraja.org',
     username: 'pavan',
@@ -76,20 +76,20 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   },
   {
     id: 'team-06',
-    name: 'Anil Yadav',
-    role: 'Sports & Logistics In-Charge',
+    name: 'SIVA NAGARAJU YADAV',
+    role: 'COMMITTEE IN-CHARGE',
     bio: 'Manages youth sports tournaments, ground preparations, emergency community transport, and volunteer equipment logistics.',
-    initials: 'AY',
+    initials: 'SN',
     phone: '+91 98480 77777',
-    email: 'anil.yadav@skyguraja.org',
-    username: 'anil',
+    email: 'sivanagaraju@skyguraja.org',
+    username: 'sivanagaraju',
     image: '/images/gallery/guraja_night_utsav_sound_rally.png',
     order: 6
   },
   {
     id: 'team-07',
     name: 'Koteswara Rao Yadav',
-    role: 'Cultural Secretary',
+    role: 'MEMBER',
     bio: 'Organizes temple Utsavams, Bhajana programs, Utlotsavam (Dahi Handi) coordination, and stage artist felicitations.',
     initials: 'KY',
     phone: '+91 98480 88888',
@@ -100,10 +100,10 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   },
   {
     id: 'team-08',
-    name: 'Venkata Krishna Yadav',
-    role: 'Super Admin & Chief Coordinator',
+    name: 'S GANESH YADAV',
+    role: 'CHIEF COORDINATOR',
     bio: 'Oversees digital transparency portal, verified receipt infrastructure, cloud database integrity, and overall organization strategy.',
-    initials: 'VK',
+    initials: 'SG',
     phone: '+91 98480 11111',
     email: 'admin@skyguraja.org',
     username: 'admin',
@@ -112,8 +112,8 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   },
   {
     id: 'team-09',
-    name: 'G. V. R. Prasad (CA)',
-    role: 'Financial Auditor & Advisor',
+    name: 'G PHANI KUMAR YADAV',
+    role: 'FINANCIAL AUDITOR & ADVISOR',
     bio: 'Conducts regular audit reviews of all double-entry ledger vouchers, verified bank statements, and tax compliance for SKY Guraja.',
     initials: 'GP',
     phone: '+91 98480 99999',
@@ -124,12 +124,12 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   },
   {
     id: 'team-10',
-    name: 'Anand Kumar Yadav',
-    role: 'Youth Contributor & Volunteer',
+    name: 'T SIRNU YADAV',
+    role: 'YOUTH COORDINATOR',
     bio: 'Dedicated youth devotee and community contributor supporting temple Annadanam and village sanitation drives.',
-    initials: 'AK',
+    initials: 'TS',
     phone: '+91 98480 12345',
-    email: 'donor@skyguraja.org',
+    email: 'srinu@skyguraja.org',
     username: 'donor',
     image: '/images/gallery/guraja_women_holi_vasantotsavam.jpg',
     order: 10
@@ -168,18 +168,21 @@ export function getMemberPhoto(identifier: string): string {
   return found?.image || '/images/gallery/guraja_youth_volunteers_group.png';
 }
 
+import { syncMembersToSupabase } from './supabaseService';
+
 export function saveTeamMembers(members: TeamMember[]): void {
   try {
     localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(members));
     
-    // Background sync with database if backend is reachable
+    // 1. Sync to Supabase Cloud Database (if configured)
+    syncMembersToSupabase(members).catch(() => {});
+
+    // 2. Background sync with backend database (if reachable)
     fetch('/api/members/sync', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ members })
-    }).catch(() => {
-      // Standalone mode fallback
-    });
+    }).catch(() => {});
   } catch (err) {
     console.error('Error saving team members to storage:', err);
   }

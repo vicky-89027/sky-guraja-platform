@@ -80,15 +80,15 @@ export async function seedDatabase(): Promise<void> {
       username: 'pavan',
       email: 'pavan@skyguraja.org',
       phone: '9848066666',
-      full_name: 'Pavan Kalyan Yadav',
+      full_name: 'PAVAN YADAV',
       role: 'MEMBER'
     },
     {
       id: 'usr-sport-01',
-      username: 'anil',
-      email: 'anil.yadav@skyguraja.org',
+      username: 'sivanagaraju',
+      email: 'sivanagaraju@skyguraja.org',
       phone: '9848077777',
-      full_name: 'Anil Yadav',
+      full_name: 'SIVA NAGARAJU YADAV',
       role: 'MEMBER'
     },
     {
@@ -104,15 +104,15 @@ export async function seedDatabase(): Promise<void> {
       username: 'auditor',
       email: 'auditor@skyguraja.org',
       phone: '9848099999',
-      full_name: 'G. V. R. Prasad (CA)',
+      full_name: 'G PHANI KUMAR YADAV',
       role: 'AUDITOR'
     },
     {
       id: 'usr-donor-01',
       username: 'donor',
-      email: 'donor@skyguraja.org',
+      email: 'srinu@skyguraja.org',
       phone: '9848012345',
-      full_name: 'Anand Kumar Yadav',
+      full_name: 'T SIRNU YADAV',
       role: 'USER'
     }
   ];
@@ -174,8 +174,8 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-05',
       user_id: 'usr-mem-01',
-      name: 'Pavan Kalyan Yadav',
-      role_title: 'Youth Coordinator',
+      name: 'PAVAN YADAV',
+      role_title: 'YOUTH COORDINATOR',
       phone: '9848066666',
       email: 'pavan@skyguraja.org',
       joining_date: '2023-04-10',
@@ -185,10 +185,10 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-06',
       user_id: 'usr-sport-01',
-      name: 'Anil Yadav',
-      role_title: 'Sports & Logistics In-Charge',
+      name: 'SIVA NAGARAJU YADAV',
+      role_title: 'COMMITTEE IN-CHARGE',
       phone: '9848077777',
-      email: 'anil.yadav@skyguraja.org',
+      email: 'sivanagaraju@skyguraja.org',
       joining_date: '2023-08-01',
       area_location: 'Guraja West',
       assigned_responsibilities: 'Youth Sports Tournaments & Ground Logistics'
@@ -197,7 +197,7 @@ export async function seedDatabase(): Promise<void> {
       id: 'mem-07',
       user_id: 'usr-cult-01',
       name: 'Koteswara Rao Yadav',
-      role_title: 'Cultural Secretary',
+      role_title: 'MEMBER',
       phone: '9848088888',
       email: 'koti.yadav@skyguraja.org',
       joining_date: '2022-05-20',
@@ -207,8 +207,8 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-08',
       user_id: 'usr-admin-01',
-      name: 'Venkata Krishna Yadav',
-      role_title: 'Super Admin & Chief Coordinator',
+      name: 'S GANESH YADAV',
+      role_title: 'CHIEF COORDINATOR',
       phone: '9848011111',
       email: 'admin@skyguraja.org',
       joining_date: '2021-01-01',
@@ -218,8 +218,8 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-09',
       user_id: 'usr-audit-01',
-      name: 'G. V. R. Prasad (CA)',
-      role_title: 'Financial Auditor & Advisor',
+      name: 'G PHANI KUMAR YADAV',
+      role_title: 'FINANCIAL AUDITOR & ADVISOR',
       phone: '9848099999',
       email: 'auditor@skyguraja.org',
       joining_date: '2022-06-01',
@@ -229,10 +229,10 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-10',
       user_id: 'usr-donor-01',
-      name: 'Anand Kumar Yadav',
-      role_title: 'Youth Contributor & Volunteer',
+      name: 'T SIRNU YADAV',
+      role_title: 'YOUTH COORDINATOR',
       phone: '9848012345',
-      email: 'donor@skyguraja.org',
+      email: 'srinu@skyguraja.org',
       joining_date: '2023-01-10',
       area_location: 'Guraja Center',
       assigned_responsibilities: 'Community Annadanam & Public Cleanliness Drives'

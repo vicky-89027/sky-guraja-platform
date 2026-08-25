@@ -21,7 +21,10 @@ import {
   Trash2,
   Plus,
   Image as ImageIcon,
-  RotateCcw
+  RotateCcw,
+  Database,
+  CloudCheck,
+  Check
 } from 'lucide-react';
 import { AuthUser } from './AuthModal';
 import {
@@ -29,8 +32,15 @@ import {
   addOrUpdateTeamMember,
   deleteTeamMember,
   resetTeamMembersToDefault,
-  TeamMember
+  TeamMember,
+  saveTeamMembers
 } from '../services/teamService';
+import {
+  getSupabaseConfig,
+  saveSupabaseConfig,
+  isSupabaseConfigured,
+  syncMembersToSupabase
+} from '../services/supabaseService';
 import confetti from 'canvas-confetti';
 
 interface ManagementModalProps {
@@ -46,10 +56,14 @@ export const ManagementModal: React.FC<ManagementModalProps> = ({
   user,
   onRefreshData
 }) => {
-  const [activeTab, setActiveTab] = useState<'members' | 'expense' | 'contribution' | 'campaign' | 'meeting' | 'profile'>('members');
+  const [activeTab, setActiveTab] = useState<'members' | 'database' | 'expense' | 'contribution' | 'campaign' | 'meeting' | 'profile'>('members');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Supabase State
+  const [sbUrl, setSbUrl] = useState('');
+  const [sbAnonKey, setSbAnonKey] = useState('');
 
   // 0. Members Management State
   const [teamMembersList, setTeamMembersList] = useState<TeamMember[]>([]);
@@ -317,6 +331,7 @@ export const ManagementModal: React.FC<ManagementModalProps> = ({
         <div className="flex items-center gap-1.5 p-3 bg-[#061021] border-b border-white/10 overflow-x-auto text-xs font-bold">
           {[
             { id: 'members', label: 'Edit Members & Photos', icon: Edit3, color: 'text-amber-400' },
+            { id: 'database', label: 'Cloud DB & Supabase', icon: Database, color: 'text-emerald-400' },
             { id: 'contribution', label: 'Record Collection', icon: Coins, color: 'text-amber-400' },
             { id: 'expense', label: 'Submit Expense', icon: ArrowDownRight, color: 'text-rose-400' },
             { id: 'campaign', label: 'New Campaign', icon: Layers, color: 'text-cyan-400' },
@@ -553,6 +568,79 @@ export const ManagementModal: React.FC<ManagementModalProps> = ({
                   </form>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 0.5: CLOUD DATABASE & SUPABASE */}
+          {activeTab === 'database' && (
+            <div className="space-y-4 text-xs">
+              <div className="p-4 bg-[#061021] border border-emerald-500/30 rounded-2xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Database className="w-5 h-5 text-emerald-400" />
+                    <span className="font-bold text-white text-sm">Supabase & Cloud Sync Engine</span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">
+                    READY & CONNECTED
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300">
+                  Enables real-time global synchronization of committee members, receipts, ledger entries, and photos between all mobile phones and desktop computers.
+                </p>
+              </div>
+
+              <div className="p-4 bg-[#061021] border border-white/10 rounded-2xl space-y-3">
+                <h4 className="font-bold text-white text-xs">Supabase Project Connection (Optional Custom Project)</h4>
+                
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Supabase Project URL</label>
+                  <input
+                    type="text"
+                    placeholder="https://your-project-id.supabase.co"
+                    value={sbUrl}
+                    onChange={(e) => setSbUrl(e.target.value)}
+                    className="w-full bg-[#040C1A] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none font-mono text-[11px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Supabase Anon Public API Key</label>
+                  <input
+                    type="password"
+                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    value={sbAnonKey}
+                    onChange={(e) => setSbAnonKey(e.target.value)}
+                    className="w-full bg-[#040C1A] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none font-mono text-[11px]"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      saveSupabaseConfig({ url: sbUrl.trim(), anonKey: sbAnonKey.trim() });
+                      showNotification('Supabase configuration saved!');
+                    }}
+                    className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Save Supabase Config</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const all = getTeamMembers();
+                      syncMembersToSupabase(all);
+                      showNotification('Data synced to Supabase database!');
+                    }}
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow"
+                  >
+                    <CloudCheck className="w-3.5 h-3.5" />
+                    <span>Sync All Data to Cloud</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

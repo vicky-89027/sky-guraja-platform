@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Heart, Calendar, Target, Users, Filter, CheckCircle2, ArrowRight } from 'lucide-react';
 
 interface CampaignsPageProps {
   onOpenDonate: (campaignName?: string) => void;
@@ -11,66 +10,60 @@ export const CampaignsPage: React.FC<CampaignsPageProps> = ({ onOpenDonate }) =>
   const campaigns = [
     {
       id: 'cmp-1',
-      name: 'Education for All',
-      category: 'EDUCATION',
-      image: '/images/gallery/youth_study_hall_library.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80',
-      description: 'Support quality education, tuition assistance, and competitive exam books for underprivileged students in Guraja.',
-      target_amount: 200000,
-      collected_amount: 125000,
-      percentage: 62.5
-    },
-    {
-      id: 'cmp-2',
-      name: 'Healthcare Support',
-      category: 'HEALTH',
-      image: '/images/gallery/village_youth_social_service.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80',
-      description: 'Provide essential healthcare aid, quarterly blood donation camps, and emergency ambulance fund for villagers.',
-      target_amount: 150000,
-      collected_amount: 75000,
-      percentage: 50
-    },
-    {
-      id: 'cmp-3',
-      name: 'Youth Empowerment',
-      category: 'YOUTH',
-      image: '/images/gallery/youth_sports_cricket_tournament.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80',
-      description: 'Skill training, vocational career workshops, computer lab access, and sports tournaments for Guraja youth brigade.',
-      target_amount: 200000,
-      collected_amount: 90000,
-      percentage: 45
-    },
-    {
-      id: 'cmp-4',
-      name: 'Community Development',
-      category: 'COMMUNITY',
-      image: '/images/gallery/guraja_ro_plant_field.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
-      description: 'Maintenance of Guraja clean drinking water RO plant and solar street light installations across village streets.',
-      target_amount: 300000,
-      collected_amount: 210000,
-      percentage: 70
-    },
-    {
-      id: 'cmp-5',
-      name: 'Sri Krishna Janmashtami Celebration',
-      category: 'COMMUNITY',
-      image: '/images/gallery/krishna_swamy_golden_arch.jpg',
-      fallbackImage: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80',
+      name: 'Sri Krishna Janmashtami & Utlotsavam Mahotsavam',
+      category: 'FESTIVAL',
+      image: '/images/gallery/radha_krishna_janmashtami_banner.jpg',
       description: 'Grand Utlotsavam (Dahi Handi), devotional bhajans, cultural youth drama, and Annadanam for 2500+ devotees.',
       target_amount: 250000,
       collected_amount: 195000,
       percentage: 78
     },
     {
+      id: 'cmp-2',
+      name: 'Guraja Youth Community Seva & Village Upliftment',
+      category: 'COMMUNITY',
+      image: '/images/gallery/guraja_youth_volunteers_group.png',
+      description: 'Youth solidarity drives, RO clean drinking water maintenance, and village development programs in Guraja.',
+      target_amount: 300000,
+      collected_amount: 210000,
+      percentage: 70
+    },
+    {
+      id: 'cmp-3',
+      name: 'Sri Krishna Swamy Temple Arch & Mandir Alankaram',
+      category: 'FESTIVAL',
+      image: '/images/gallery/krishna_swamy_golden_arch.jpg',
+      description: 'Golden Prabhavali arch installation, sanctum deepam lighting, and heritage mandir upkeep in Guraja.',
+      target_amount: 200000,
+      collected_amount: 125000,
+      percentage: 62.5
+    },
+    {
+      id: 'cmp-4',
+      name: 'Devi Navaratri Mahotsavam & Cultural Drives',
+      category: 'CULTURAL',
+      image: '/images/gallery/devi_navaratri_guraja_banner.jpg',
+      description: 'Annual village Dussehra & Navaratri celebrations, kumkumarchana, and special prasadam distribution.',
+      target_amount: 150000,
+      collected_amount: 90000,
+      percentage: 60
+    },
+    {
+      id: 'cmp-5',
+      name: 'Guraja Youth Tractor Ratham Procession',
+      category: 'YOUTH',
+      image: '/images/gallery/youth_tractor_ratham_procession.png',
+      description: 'Chariot tractor floral decoration, sound lighting equipment, and youth volunteers rally coordination.',
+      target_amount: 120000,
+      collected_amount: 120000,
+      percentage: 100
+    },
+    {
       id: 'cmp-6',
-      name: 'Green Guraja Tree Plantation Drive',
-      category: 'ENVIRONMENT',
-      image: '/images/gallery/tree_plantation_drive.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
-      description: 'Planting and nurturing 1,000+ shade trees, fruit saplings, and medicinal plants along Guraja village roads.',
+      name: 'Community Social Welfare & Birthday Charity Drive',
+      category: 'COMMUNITY',
+      image: '/images/gallery/suriya_birthday_guraja_banner.jpg',
+      description: 'Social welfare distribution, fruits & clothes for village elders, and student merit encouragement.',
       target_amount: 80000,
       collected_amount: 80000,
       percentage: 100
@@ -79,11 +72,10 @@ export const CampaignsPage: React.FC<CampaignsPageProps> = ({ onOpenDonate }) =>
 
   const categories = [
     { id: 'ALL', label: 'All' },
-    { id: 'EDUCATION', label: 'Education' },
-    { id: 'HEALTH', label: 'Health' },
+    { id: 'FESTIVAL', label: 'Festival' },
     { id: 'COMMUNITY', label: 'Community' },
     { id: 'YOUTH', label: 'Youth' },
-    { id: 'ENVIRONMENT', label: 'Environment' }
+    { id: 'CULTURAL', label: 'Cultural' }
   ];
 
   const filtered = filterCategory === 'ALL'
@@ -102,7 +94,7 @@ export const CampaignsPage: React.FC<CampaignsPageProps> = ({ onOpenDonate }) =>
             ALL CAMPAIGNS
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-            Explore and support active community development programs in Guraja village.
+            Explore and support authentic community and cultural programs in Guraja village.
           </p>
         </div>
       </div>
@@ -134,15 +126,10 @@ export const CampaignsPage: React.FC<CampaignsPageProps> = ({ onOpenDonate }) =>
               className="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
             >
               <div>
-                {/* Image Banner */}
-                <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
                   <img
                     src={c.image}
                     alt={c.name}
-                    onError={(e: any) => {
-                      e.target.onerror = null;
-                      e.target.src = c.fallbackImage;
-                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-bold text-slate-800 uppercase shadow">
@@ -150,7 +137,6 @@ export const CampaignsPage: React.FC<CampaignsPageProps> = ({ onOpenDonate }) =>
                   </div>
                 </div>
 
-                {/* Info */}
                 <div className="p-5 space-y-2">
                   <h3 className="font-bold text-slate-900 text-lg leading-snug">
                     {c.name}
@@ -162,7 +148,6 @@ export const CampaignsPage: React.FC<CampaignsPageProps> = ({ onOpenDonate }) =>
               </div>
 
               <div className="p-5 pt-0 space-y-3">
-                {/* Progress Bar & Numbers */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs font-mono">
                     <span className="font-bold text-slate-800">

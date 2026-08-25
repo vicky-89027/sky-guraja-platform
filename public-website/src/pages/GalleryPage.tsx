@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Eye, X, MapPin, Calendar } from 'lucide-react';
+import { Eye, MapPin } from 'lucide-react';
 
 export const GalleryPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -11,7 +11,6 @@ export const GalleryPage: React.FC = () => {
       title: 'Sri Krishna Swamy in Golden Arch (Prabhavali) Alankaram',
       category: 'EVENTS',
       image: '/images/gallery/krishna_swamy_golden_arch.jpg',
-      fallbackImage: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80',
       location: 'Sri Krishna Mandiram, Guraja'
     },
     {
@@ -19,7 +18,6 @@ export const GalleryPage: React.FC = () => {
       title: 'Guraja Village Women Joyous Vasantotsavam & Holi Celebration',
       category: 'COMMUNITY',
       image: '/images/gallery/guraja_women_holi_vasantotsavam.jpg',
-      fallbackImage: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=600&q=80',
       location: 'Guraja Village Streets'
     },
     {
@@ -27,48 +25,98 @@ export const GalleryPage: React.FC = () => {
       title: 'Youth Chariot Procession on Village Tractor with Sri Krishna Idol',
       category: 'EVENTS',
       image: '/images/gallery/youth_tractor_ratham_procession.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=600&q=80',
       location: 'Main Road, Guraja'
     },
     {
       id: 'p4',
-      title: 'Annadanam Community Feast & Prasad Distribution Seva',
-      category: 'ACTIVITIES',
-      image: '/images/gallery/annadanam_prasad_distribution.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80',
+      title: 'Guraja Youth Committee & Volunteers Gathering',
+      category: 'COMMUNITY',
+      image: '/images/gallery/guraja_youth_volunteers_group.png',
       location: 'Yadav Youth Bhavan, Guraja'
     },
     {
       id: 'p5',
-      title: 'Youth Study Hall & Digital Library Inauguration',
+      title: 'Radha Krishna Janmashtami Celebration Official Banner',
       category: 'CAMPAIGNS',
-      image: '/images/gallery/youth_study_hall_library.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80',
-      location: 'Yadav Youth Study Hall, Guraja'
+      image: '/images/gallery/radha_krishna_janmashtami_banner.jpg',
+      location: 'Main Junction, Guraja'
     },
     {
       id: 'p6',
-      title: 'Village RO Drinking Water Plant & Green Surroundings',
+      title: 'Devi Navaratri Mahotsavam & Dussehra Youth Seva Banner',
       category: 'CAMPAIGNS',
-      image: '/images/gallery/guraja_ro_plant_field.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
-      location: 'Drinking Water RO Center, Guraja'
+      image: '/images/gallery/devi_navaratri_guraja_banner.jpg',
+      location: 'Sri Krishna Mandir Center, Guraja'
     },
     {
       id: 'p7',
-      title: 'Medical Camp Doctors & Free Health Diagnostics',
-      category: 'ACTIVITIES',
-      image: '/images/gallery/medical_camp_doctors.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80',
-      location: 'Health Sub-Center, Guraja'
+      title: 'Marble Sri Krishna Mandir Murti Alankaram with Peacock Feather',
+      category: 'EVENTS',
+      image: '/images/gallery/marble_krishna_alankaram.jpg',
+      location: 'Garbhagudi, Sri Krishna Mandiram'
     },
     {
       id: 'p8',
-      title: 'Youth Sports & Volleyball League Tournament',
+      title: 'Guraja Youth Heritage Motorcycle & Flag Procession Rally',
       category: 'ACTIVITIES',
-      image: '/images/gallery/youth_sports_cricket_tournament.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80',
-      location: 'Guraja High School Grounds'
+      image: '/images/gallery/guraja_youth_procession_rally.png',
+      location: 'Guraja Village High Road'
+    },
+    {
+      id: 'p9',
+      title: 'Guraja Night Utsavam & High-Power Sound Lighting Rally',
+      category: 'ACTIVITIES',
+      image: '/images/gallery/guraja_night_utsav_sound_rally.png',
+      location: 'Guraja Temple Square'
+    },
+    {
+      id: 'p10',
+      title: 'Radha Krishna Divine Murti Sanctum Darshanam with Flowers',
+      category: 'EVENTS',
+      image: '/images/gallery/radha_krishna_murti_alankaram.jpg',
+      location: 'Sanctum Sanctorum, Guraja'
+    },
+    {
+      id: 'p11',
+      title: 'Village Chariot (Ratham) Utsavam Devotional Procession',
+      category: 'EVENTS',
+      image: '/images/gallery/village_chariot_utsavam_procession.jpg',
+      location: 'Guraja Main Temple Street'
+    },
+    {
+      id: 'p12',
+      title: 'Community Social Welfare & Birthday Charity Drive',
+      category: 'COMMUNITY',
+      image: '/images/gallery/suriya_birthday_guraja_banner.jpg',
+      location: 'Guraja Community Center'
+    },
+    {
+      id: 'p13',
+      title: 'Temple Sanctum Darshanam with Sacred Deepam Lighting',
+      category: 'EVENTS',
+      image: '/images/gallery/temple_sanctum_darshanam.png',
+      location: 'Sri Krishna Mandiram, Guraja'
+    },
+    {
+      id: 'p14',
+      title: 'Holy Puja Altar & Harati Deepam at Village Mandir',
+      category: 'EVENTS',
+      image: '/images/gallery/puja_altar_deepam.jpg',
+      location: 'Puja Altar, Guraja'
+    },
+    {
+      id: 'p15',
+      title: 'Sri Krishna with Divine Flute & Gomata Iconography',
+      category: 'CULTURAL',
+      image: '/images/gallery/krishna_flute_gomata.jpg',
+      location: 'Cultural Hall, Guraja'
+    },
+    {
+      id: 'p16',
+      title: 'SKY Sri Krishna Yadav Youth Guraja Official Emblem',
+      category: 'COMMUNITY',
+      image: '/images/gallery/sky_official_brand_concept.jpg',
+      location: 'Yadav Youth Bhavan, Guraja'
     }
   ];
 
@@ -96,7 +144,7 @@ export const GalleryPage: React.FC = () => {
             GALLERY
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-            Photographs of our community festivals, development projects, and youth initiatives in Guraja.
+            Real photographs of our community festivals, temple alankaram, and youth initiatives in Guraja.
           </p>
         </div>
       </div>
@@ -128,14 +176,10 @@ export const GalleryPage: React.FC = () => {
               onClick={() => setActivePhoto(p)}
               className="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden cursor-pointer group flex flex-col justify-between"
             >
-              <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+              <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
                 <img
                   src={p.image}
                   alt={p.title}
-                  onError={(e: any) => {
-                    e.target.onerror = null;
-                    e.target.src = p.fallbackImage;
-                  }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-slate-950/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">

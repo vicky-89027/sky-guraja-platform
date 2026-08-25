@@ -1,35 +1,35 @@
 import React from 'react';
-import { Users, Shield, Award, Mail, Phone } from 'lucide-react';
+import { UserCheck } from 'lucide-react';
 
 export const TeamPage: React.FC = () => {
   const leaders = [
     {
       name: 'Ramesh Yadav',
       role: 'President',
-      bio: 'Leading Sri Krishna Yadav Youth with grassroots community experience in Guraja. Dedicated to education and cultural unity.',
+      bio: 'Leading Sri Krishna Yadav Youth with grassroots community experience in Guraja. Dedicated to cultural unity, temple festivals, and youth development.',
       initials: 'RY',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+      image: '/images/gallery/guraja_youth_volunteers_group.png'
     },
     {
       name: 'Mahesh Yadav',
       role: 'Secretary',
-      bio: 'Coordinates village social drives, event operations, youth volunteers, and keeps records of committee meetings.',
+      bio: 'Coordinates village cultural drives, event operations, youth volunteers, and keeps records of committee meetings and public resolutions.',
       initials: 'MY',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+      image: '/images/gallery/youth_tractor_ratham_procession.png'
     },
     {
       name: 'Suresh Yadav',
       role: 'Treasurer',
-      bio: 'Manages the double-entry accounting ledger, digital receipt verification, vendor disbursements, and bank accounts.',
+      bio: 'Manages the double-entry accounting ledger, digital receipt verification, vendor disbursements, and verified bank records.',
       initials: 'SY',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80'
+      image: '/images/gallery/krishna_swamy_golden_arch.jpg'
     },
     {
       name: 'Venkatesh Yadav',
       role: 'Joint Secretary',
-      bio: 'Oversees youth sports tournaments, educational library setup, and village elder welfare programs.',
+      bio: 'Oversees youth festival rallies, sound & lighting setup, and village community welfare programs.',
       initials: 'VY',
-      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80'
+      image: '/images/gallery/guraja_youth_procession_rally.png'
     }
   ];
 
@@ -45,7 +45,7 @@ export const TeamPage: React.FC = () => {
             OUR TEAM
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-            Meet the dedicated youth committee members who volunteer their time and energy to serve Guraja.
+            Dedicated youth committee members who volunteer their time and energy to serve Guraja village.
           </p>
         </div>
       </div>
@@ -59,13 +59,15 @@ export const TeamPage: React.FC = () => {
               className="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between text-center group"
             >
               <div>
-                {/* Photo */}
-                <div className="relative h-60 w-full bg-slate-100 overflow-hidden">
+                <div className="relative h-56 w-full bg-slate-900 overflow-hidden">
                   <img
                     src={m.image}
                     alt={m.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <div className="absolute top-3 right-3 bg-[#061224]/80 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-amber-300 font-mono">
+                    {m.initials}
+                  </div>
                 </div>
 
                 <div className="p-5 space-y-2">
@@ -83,7 +85,10 @@ export const TeamPage: React.FC = () => {
 
               <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
                 <span>Sri Krishna Yadav Youth</span>
-                <span className="text-emerald-600 font-medium">Guraja, AP</span>
+                <span className="text-emerald-600 font-medium flex items-center gap-1">
+                  <UserCheck className="w-3 h-3" />
+                  <span>Guraja, AP</span>
+                </span>
               </div>
             </div>
           ))}

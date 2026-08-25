@@ -1,46 +1,41 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Clock, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Clock, MapPin } from 'lucide-react';
 
 interface EventsPageProps {
   onOpenDonate: (campaignName?: string) => void;
 }
 
-export const EventsPage: React.FC<EventsPageProps> = ({ onOpenDonate }) => {
-  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
-
+export const EventsPage: React.FC<EventsPageProps> = () => {
   const events = [
     {
       id: 'ev-1',
-      title: 'Youth Leadership Workshop & Skill Assembly',
-      date: '12 OCT 2026',
-      time: '09:30 AM - 01:30 PM',
-      location: 'Yadav Youth Bhavan, Main Road, Guraja',
-      category: 'WORKSHOP',
-      image: '/images/gallery/youth_study_hall_library.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80',
-      description: 'Career guidance, competitive exam prep methods, and communication workshops for Guraja students and youth volunteers.'
-    },
-    {
-      id: 'ev-2',
-      title: 'Grand Blood Donation & Free Health Screening Camp',
-      date: '25 NOV 2026',
-      time: '08:00 AM - 03:00 PM',
-      location: 'Community Health Center, Guraja',
-      category: 'HEALTHCARE',
-      image: '/images/gallery/medical_camp_doctors.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80',
-      description: 'Quarterly voluntary blood donation drive organized in association with District Red Cross and government doctors.'
-    },
-    {
-      id: 'ev-3',
       title: 'Sri Krishna Janmashtami & Utlotsavam Mahotsavam',
       date: '15 JAN 2027',
       time: '06:00 AM - 10:00 PM',
       location: 'Sri Krishna Mandiram & Main Junction, Guraja',
       category: 'FESTIVAL',
-      image: '/images/gallery/krishna_swamy_golden_arch.jpg',
-      fallbackImage: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80',
+      image: '/images/gallery/radha_krishna_janmashtami_banner.jpg',
       description: 'Traditional Utlotsavam (Dahi Handi), devotional bhajans, prize distribution for student merit toppers, and Annadanam for 2500+ devotees.'
+    },
+    {
+      id: 'ev-2',
+      title: 'Guraja Youth Tractor Chariot Procession Rally',
+      date: '12 OCT 2026',
+      time: '04:00 PM - 09:00 PM',
+      location: 'Yadav Youth Bhavan & Village Streets, Guraja',
+      category: 'YOUTH RALLY',
+      image: '/images/gallery/youth_tractor_ratham_procession.png',
+      description: 'Grand devotional tractor chariot procession with traditional drums, lighting, and cultural performances by village youth.'
+    },
+    {
+      id: 'ev-3',
+      title: 'Devi Navaratri Mahotsavam & Special Puja',
+      date: '25 NOV 2026',
+      time: '08:00 AM - 08:00 PM',
+      location: 'Sri Krishna Mandiram, Guraja',
+      category: 'CULTURAL',
+      image: '/images/gallery/devi_navaratri_guraja_banner.jpg',
+      description: 'Special 9-day Navaratri Alankaram, Harati deepam, and community prasadam distribution organized by youth committee.'
     }
   ];
 
@@ -60,7 +55,7 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onOpenDonate }) => {
             UPCOMING EVENTS
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-            Participate in youth workshops, welfare camps, and cultural festivals in Guraja.
+            Participate in youth rallies, cultural festivals, and community celebrations in Guraja.
           </p>
         </div>
       </div>
@@ -74,15 +69,10 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onOpenDonate }) => {
               className="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between group"
             >
               <div>
-                {/* Photo & Date Badge */}
-                <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
                   <img
                     src={e.image}
                     alt={e.title}
-                    onError={(ev: any) => {
-                      ev.target.onerror = null;
-                      ev.target.src = e.fallbackImage;
-                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 bg-[#08152B] text-white border border-amber-500/40 px-3 py-1.5 rounded-xl text-center shadow-lg">

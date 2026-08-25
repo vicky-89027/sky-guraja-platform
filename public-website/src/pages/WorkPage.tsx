@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Award, CheckCircle2, Calendar, MapPin } from 'lucide-react';
 
 export const WorkPage: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
@@ -7,65 +6,59 @@ export const WorkPage: React.FC = () => {
   const works = [
     {
       id: 'w-1',
-      title: 'Food Distribution & Annadanam Seva Drive',
-      category: 'COMMUNITY',
-      date: 'May 2024',
-      image: '/images/gallery/annadanam_prasad_distribution.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80',
-      description: 'Distributed nutritious cooked meals and prasad to over 2,500 villagers and elderly residents during temple festival.'
+      title: 'Youth Chariot Procession on Village Tractor with Sri Krishna Idol',
+      category: 'EVENTS',
+      date: 'Janmashtami 2024',
+      image: '/images/gallery/youth_tractor_ratham_procession.png',
+      description: 'Organized grand tractor ratham procession decorated with yellow marigold garlands and Sri Krishna vigraham throughout Guraja streets.'
     },
     {
       id: 'w-2',
-      title: 'Green Guraja 1,000 Tree Plantation Drive',
-      category: 'ENVIRONMENT',
-      date: 'April 2024',
-      image: '/images/gallery/tree_plantation_drive.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
-      description: 'Planted native shade trees and neem saplings along village entrance roads with drip protection tree guards.'
+      title: 'Guraja Village Women Joyous Vasantotsavam & Holi Celebration',
+      category: 'COMMUNITY',
+      date: 'March 2024',
+      image: '/images/gallery/guraja_women_holi_vasantotsavam.jpg',
+      description: 'Celebrated traditional Vasantotsavam with organic colors, devotional songs, and cultural togetherness among Guraja families.'
     },
     {
       id: 'w-3',
-      title: 'Free Mega Medical & Health Screening Camp',
-      category: 'HEALTH',
+      title: 'Sri Krishna Swamy in Golden Arch (Prabhavali) Alankaram',
+      category: 'CULTURAL',
       date: 'April 2024',
-      image: '/images/gallery/medical_camp_doctors.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80',
-      description: 'Provided free health checkups, blood pressure monitoring, eye tests, and medicines for 450+ village elders.'
+      image: '/images/gallery/krishna_swamy_golden_arch.jpg',
+      description: 'Installed decorative golden Prabhavali arch and performed sacred alankaram at Sri Krishna Mandiram.'
     },
     {
       id: 'w-4',
-      title: 'Guraja Youth Premier League Sports Tournament',
+      title: 'Guraja Youth Procession & Heritage Motorcycle Rally',
       category: 'YOUTH',
-      date: 'March 2024',
-      image: '/images/gallery/youth_sports_cricket_tournament.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80',
-      description: 'Organized inter-hamlet cricket and kabaddi tournaments to encourage youth sportsmanship, fitness, and solidarity.'
+      date: 'April 2024',
+      image: '/images/gallery/guraja_youth_procession_rally.png',
+      description: 'Conducted grand youth flag rally across the village to promote brotherhood, cultural pride, and youth unity.'
     },
     {
       id: 'w-5',
-      title: 'RO Drinking Water Plant Membrane Upkeep',
-      category: 'COMMUNITY',
-      date: 'February 2024',
-      image: '/images/gallery/guraja_ro_plant_field.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
-      description: 'Replaced multi-stage sand filters and reverse osmosis membranes to guarantee 100% clean drinking water.'
+      title: 'Guraja Night Utsavam & High-Power Sound Lighting Rally',
+      category: 'EVENTS',
+      date: 'May 2024',
+      image: '/images/gallery/guraja_night_utsav_sound_rally.png',
+      description: 'Organized vibrant night utsav with laser lighting, sound systems, and youth devotional bhajan processions.'
     },
     {
       id: 'w-6',
-      title: 'Youth Community Study Hall Desks Setup',
-      category: 'EDUCATION',
-      date: 'January 2024',
-      image: '/images/gallery/youth_study_hall_library.png',
-      fallbackImage: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80',
-      description: 'Equipped the Yadav Youth Bhavan study hall with LED lighting, reference encyclopedias, and high-speed Wi-Fi.'
+      title: 'Devi Navaratri Mahotsavam & Dussehra Youth Seva',
+      category: 'CULTURAL',
+      date: 'October 2024',
+      image: '/images/gallery/devi_navaratri_guraja_banner.jpg',
+      description: 'Coordinated the annual 9-day Navaratri celebrations, kumkum puja, and youth volunteer security management.'
     }
   ];
 
   const categories = [
     { id: 'ALL', label: 'All' },
-    { id: 'EDUCATION', label: 'Education' },
-    { id: 'ENVIRONMENT', label: 'Environment' },
+    { id: 'EVENTS', label: 'Events' },
     { id: 'COMMUNITY', label: 'Community' },
+    { id: 'CULTURAL', label: 'Cultural' },
     { id: 'YOUTH', label: 'Youth' }
   ];
 
@@ -85,7 +78,7 @@ export const WorkPage: React.FC = () => {
             OUR INITIATIVES
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-            Discover the verified community projects executed by Sri Krishna Yadav Youth Guraja.
+            Discover verified community celebrations and youth projects executed in Guraja.
           </p>
         </div>
       </div>
@@ -117,14 +110,10 @@ export const WorkPage: React.FC = () => {
               className="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between group"
             >
               <div>
-                <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                <div className="relative h-48 w-full bg-slate-900 overflow-hidden">
                   <img
                     src={w.image}
                     alt={w.title}
-                    onError={(e: any) => {
-                      e.target.onerror = null;
-                      e.target.src = w.fallbackImage;
-                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-bold text-slate-800 uppercase shadow">

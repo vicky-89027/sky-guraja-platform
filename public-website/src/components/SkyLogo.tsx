@@ -15,21 +15,17 @@ export const SkyLogo: React.FC<SkyLogoProps> = ({
     sm: { img: 'w-10 h-10', text: 'text-xs', sub: 'text-[9px]' },
     md: { img: 'w-12 h-12 sm:w-14 sm:h-14', text: 'text-sm sm:text-base', sub: 'text-[10px]' },
     lg: { img: 'w-24 h-24', text: 'text-xl', sub: 'text-xs' },
-    xl: { img: 'w-40 h-40 sm:w-52 sm:h-52', text: 'text-2xl sm:text-4xl', sub: 'text-xs sm:text-sm' }
+    xl: { img: 'w-44 h-44 sm:w-56 sm:h-56', text: 'text-2xl sm:text-4xl', sub: 'text-xs sm:text-sm' }
   };
 
   const currentSize = sizeMap[size];
 
-  // Seamless in-built blended master monogram (zero box edges, natural glow onto backdrop)
+  // Official transparent master monogram
   const MonogramImg = (
     <img
       src="/images/sky_official_monogram.png"
-      alt="SKY Monogram"
-      className={`${currentSize.img} object-contain mix-blend-screen filter drop-shadow-[0_0_35px_rgba(245,158,11,0.75)] flex-shrink-0 transition-transform duration-300 group-hover:scale-105`}
-      style={{
-        maskImage: 'radial-gradient(circle at center, black 62%, transparent 98%)',
-        WebkitMaskImage: 'radial-gradient(circle at center, black 62%, transparent 98%)'
-      }}
+      alt="Sri Krishna Yadav Youth Guraja Official Monogram"
+      className={`${currentSize.img} object-contain drop-shadow-[0_0_25px_rgba(245,158,11,0.55)] flex-shrink-0 transition-transform duration-300 group-hover:scale-105`}
     />
   );
 
@@ -45,7 +41,7 @@ export const SkyLogo: React.FC<SkyLogoProps> = ({
     return (
       <div className={`flex flex-col items-center text-center space-y-4 ${className}`}>
         <div className="relative group">
-          <div className="absolute -inset-6 bg-amber-500/25 rounded-full blur-3xl group-hover:bg-amber-500/40 transition-all" />
+          <div className="absolute -inset-6 bg-amber-500/25 rounded-full blur-3xl group-hover:bg-amber-500/40 transition-all pointer-events-none" />
           <div className="relative">{MonogramImg}</div>
         </div>
 
@@ -95,7 +91,7 @@ export const SkyLogo: React.FC<SkyLogoProps> = ({
         <img
           src="/images/sky_official_monogram.png"
           alt="SKY Logo"
-          className="w-16 h-16 object-contain rounded-full drop-shadow-md mix-blend-multiply"
+          className="w-16 h-16 object-contain flex-shrink-0 drop-shadow-sm"
         />
         <div className="text-left">
           <div className="font-serif font-black text-slate-900 tracking-wider text-base uppercase leading-tight">

@@ -151,7 +151,7 @@ export const App: React.FC = () => {
           />
         )}
         {activeTab === 'reports' && <ReportsPage />}
-        {activeTab === 'team' && <TeamPage />}
+        {activeTab === 'team' && <TeamPage user={user} />}
         {activeTab === 'gallery' && <GalleryPage />}
         {activeTab === 'contact' && <ContactPage />}
         {activeTab === 'join' && <JoinUsPage />}

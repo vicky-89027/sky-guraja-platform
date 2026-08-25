@@ -40,7 +40,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ user }) => {
   const [formImage, setFormImage] = useState('');
   const [imagePreview, setImagePreview] = useState('');
 
-  const isAdmin = user && ['ADMIN', 'SUPER_ADMIN', 'MEMBER'].includes(user.role);
+  const isAdmin = !!user;
 
   useEffect(() => {
     loadMembers();

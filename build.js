@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
-console.log('🚀 Starting SKY Guraja Unified Build for Vercel...');
+console.log('🚀 Starting SKY Guraja Unified Build for Deployment...');
 
 try {
   // Run public-website build
@@ -17,6 +17,15 @@ try {
       fs.mkdirSync(destDir, { recursive: true });
     }
     fs.cpSync(srcDir, destDir, { recursive: true });
+
+    // Create 404.html fallback for GitHub Pages & static hosts
+    const indexPath = path.join(destDir, 'index.html');
+    const notFoundPath = path.join(destDir, '404.html');
+    if (fs.existsSync(indexPath) && !fs.existsSync(notFoundPath)) {
+      fs.copyFileSync(indexPath, notFoundPath);
+      console.log('✅ Created 404.html SPA redirect for GitHub Pages / static hosting!');
+    }
+
     console.log('✅ Successfully copied build artifacts to root /dist directory!');
   }
 

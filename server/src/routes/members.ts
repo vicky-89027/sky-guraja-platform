@@ -100,4 +100,38 @@ router.patch('/:id/status', authenticateToken, forbidAuditorMutation, requireRol
   }
 });
 
+// Bulk sync members from client UI to database
+router.post('/sync', async (req, res) => {
+  try {
+    const { members } = req.body;
+    if (!Array.isArray(members)) {
+      return res.status(400).json({ success: false, message: 'members array is required' });
+    }
+
+    for (const m of members) {
+      if (!m.name || !m.role) continue;
+      
+      // Upsert into committee_members
+      const existing = await DB.get<any>(`SELECT id FROM committee_members WHERE phone = ? OR name = ?`, [m.phone, m.name]);
+      if (existing) {
+        await DB.run(
+          `UPDATE committee_members SET name = ?, role_title = ?, phone = ?, assigned_responsibilities = ? WHERE id = ?`,
+          [m.name, m.role, m.phone || null, m.bio || null, existing.id]
+        );
+      } else {
+        const newId = m.id || `mem-${Date.now().toString().slice(-6)}`;
+        await DB.run(
+          `INSERT INTO committee_members (id, name, role_title, phone, area_location, active, assigned_responsibilities, created_at)
+           VALUES (?, ?, ?, ?, 'Guraja', 1, ?, datetime('now'))`,
+          [newId, m.name, m.role, m.phone || null, m.bio || null]
+        );
+      }
+    }
+
+    return res.json({ success: true, message: 'Database successfully synced with member changes' });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 export default router;

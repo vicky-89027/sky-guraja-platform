@@ -171,6 +171,15 @@ export function getMemberPhoto(identifier: string): string {
 export function saveTeamMembers(members: TeamMember[]): void {
   try {
     localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(members));
+    
+    // Background sync with database if backend is reachable
+    fetch('/api/members/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ members })
+    }).catch(() => {
+      // Standalone mode fallback
+    });
   } catch (err) {
     console.error('Error saving team members to storage:', err);
   }

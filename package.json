@@ -4,11 +4,11 @@
   "private": true,
   "description": "Sri Krishna Yadav Youth Guraja - Official Platform and Verified Financial Ledger",
   "scripts": {
-    "build": "cd public-website && npm install && npm run build",
-    "build:website": "cd public-website && npm install && npm run build",
-    "build:app": "cd client && npm install && npm run build",
-    "build:server": "cd server && npm install && npm run build",
-    "test": "cd server && npm test"
+    "build": "npm run build --prefix public-website",
+    "build:website": "npm run build --prefix public-website",
+    "build:app": "npm run build --prefix client",
+    "build:server": "npm run build --prefix server",
+    "test": "npm test --prefix server"
   },
   "keywords": [
     "sri-krishna-yadav-youth-guraja",

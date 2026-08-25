@@ -1,8 +1,9 @@
 {
   "version": 2,
   "framework": "vite",
-  "buildCommand": "cd public-website && npm install && npm run build",
+  "buildCommand": "npm run build --prefix public-website",
   "outputDirectory": "public-website/dist",
+  "installCommand": "npm install --prefix public-website",
   "rewrites": [
     {
       "source": "/api/:path*",

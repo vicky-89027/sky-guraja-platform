@@ -6,151 +6,132 @@ interface EventsPageProps {
 }
 
 export const EventsPage: React.FC<EventsPageProps> = ({ onOpenDonate }) => {
-  const [tab, setTab] = useState<'UPCOMING' | 'PAST'>('UPCOMING');
+  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
 
-  const upcomingEvents = [
+  const events = [
     {
       id: 'ev-1',
-      title: 'Sri Krishna Janmashtami 2026 Grand Utlotsavam',
-      date: 'August 28, 2026',
-      time: '04:00 PM - 11:30 PM',
-      venue: 'Sri Krishna Temple Grounds, Main Road, Guraja',
-      description: 'Annual cultural festival with traditional Pot Breaking (Utlotsavam), devotional singing, community feast (Annadanam), and prize distribution for village students.',
-      expectedAttendance: '2,500+ Devotees & Youth',
-      coordinator: 'K. Nageswara Rao (President)',
-      supportCampaign: 'Sri Krishna Janmashtami 2026 Grand Celebration'
+      title: 'Youth Leadership Workshop & Skill Assembly',
+      date: '12 OCT 2026',
+      time: '09:30 AM - 01:30 PM',
+      location: 'Yadav Youth Bhavan, Main Road, Guraja',
+      category: 'WORKSHOP',
+      image: '/images/gallery/youth_study_hall_library.png',
+      fallbackImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80',
+      description: 'Career guidance, competitive exam prep methods, and communication workshops for Guraja students and youth volunteers.'
     },
     {
       id: 'ev-2',
-      title: 'Guraja Youth Competitive Exam Orientation Workshop',
-      date: 'September 12, 2026',
-      time: '10:00 AM - 01:00 PM',
-      venue: 'Yadav Youth Study Bhavan, Guraja',
-      description: 'Special mentoring session with state government rankers on cracking APPSC Group 1/2 and Banking exams for Guraja college youth.',
-      expectedAttendance: '120+ Aspirants',
-      coordinator: 'P. Venkanna (Secretary)',
-      supportCampaign: 'Youth Community Study Hall & Digital Library'
-    }
-  ];
-
-  const pastEvents = [
-    {
-      id: 'ev-p1',
-      title: 'Annual Youth Day & Blood Donation Camp',
-      date: 'January 12, 2026',
-      venue: 'Guraja Panchayat Hall',
-      description: 'Mobilized 85 units of blood in partnership with Red Cross Vijayawada and conducted free health screenings.',
-      highlights: '85 Units Collected • 180 Youth Volunteers'
+      title: 'Grand Blood Donation & Free Health Screening Camp',
+      date: '25 NOV 2026',
+      time: '08:00 AM - 03:00 PM',
+      location: 'Community Health Center, Guraja',
+      category: 'HEALTHCARE',
+      image: '/images/gallery/medical_camp_doctors.png',
+      fallbackImage: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80',
+      description: 'Quarterly voluntary blood donation drive organized in association with District Red Cross and government doctors.'
     },
     {
-      id: 'ev-p2',
-      title: 'Guraja Clean Village & Green Tree Plantation Drive',
-      date: 'June 5, 2025',
-      venue: 'Village Main Streets & Canal Bund',
-      description: 'Planted 400 neem and fruit-bearing saplings along the Guraja canal road with youth volunteer brigades.',
-      highlights: '400 Trees Planted'
+      id: 'ev-3',
+      title: 'Sri Krishna Janmashtami & Utlotsavam Mahotsavam',
+      date: '15 JAN 2027',
+      time: '06:00 AM - 10:00 PM',
+      location: 'Sri Krishna Mandiram & Main Junction, Guraja',
+      category: 'FESTIVAL',
+      image: '/images/gallery/krishna_swamy_golden_arch.jpg',
+      fallbackImage: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80',
+      description: 'Traditional Utlotsavam (Dahi Handi), devotional bhajans, prize distribution for student merit toppers, and Annadanam for 2500+ devotees.'
     }
   ];
 
+  const handleRegisterEvent = (eventTitle: string) => {
+    alert(`Registration recorded for "${eventTitle}". See you at Yadav Youth Bhavan, Guraja!`);
+  };
+
   return (
-    <div className="max-w-6xl mx-auto px-4 lg:px-8 py-10 space-y-10">
-      <div className="text-center space-y-3 max-w-2xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-black text-white font-display uppercase tracking-tight">
-          Community Events & Programs
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-300">
-          Gatherings, cultural celebrations, youth orientation workshops, and welfare drives organized by Sri Krishna Yadav Youth Guraja.
-        </p>
+    <div className="w-full bg-[#F8FAFC] text-slate-900">
+      {/* Dark Header Banner */}
+      <div className="bg-gradient-to-b from-[#050E1C] via-[#08152B] to-[#040C18] text-white py-14 px-4 text-center border-b border-amber-500/20">
+        <div className="max-w-4xl mx-auto space-y-2">
+          <span className="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono">
+            COMMUNITY ASSEMBLIES
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black font-display uppercase tracking-tight text-white">
+            UPCOMING EVENTS
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
+            Participate in youth workshops, welfare camps, and cultural festivals in Guraja.
+          </p>
+        </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex justify-center gap-3">
-        <button
-          onClick={() => setTab('UPCOMING')}
-          className={`px-5 py-2 rounded-xl text-xs font-bold transition-all border ${
-            tab === 'UPCOMING'
-              ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
-              : 'bg-[#0B1B36] text-slate-300 border-white/10'
-          }`}
-        >
-          Upcoming Events
-        </button>
-        <button
-          onClick={() => setTab('PAST')}
-          className={`px-5 py-2 rounded-xl text-xs font-bold transition-all border ${
-            tab === 'PAST'
-              ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
-              : 'bg-[#0B1B36] text-slate-300 border-white/10'
-          }`}
-        >
-          Past Accomplishments
-        </button>
-      </div>
-
-      {/* Events List */}
-      <div className="space-y-6">
-        {tab === 'UPCOMING' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {upcomingEvents.map((ev) => (
-              <div
-                key={ev.id}
-                className="p-6 bg-[#0B1B36] border border-amber-500/30 rounded-3xl space-y-4 shadow-xl flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-400 font-mono">
-                    <Calendar className="w-4 h-4" />
-                    <span>{ev.date}</span>
-                    <span>•</span>
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="text-slate-300">{ev.time}</span>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-white leading-snug">{ev.title}</h3>
-                  <p className="text-xs text-slate-300 leading-relaxed">{ev.description}</p>
-
-                  <div className="space-y-1.5 text-xs text-slate-400 pt-2 border-t border-white/5">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                      <span>{ev.venue}</span>
+      {/* Main Content Area */}
+      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {events.map((e) => (
+            <div
+              key={e.id}
+              className="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between group"
+            >
+              <div>
+                {/* Photo & Date Badge */}
+                <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                  <img
+                    src={e.image}
+                    alt={e.title}
+                    onError={(ev: any) => {
+                      ev.target.onerror = null;
+                      ev.target.src = e.fallbackImage;
+                    }}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-[#08152B] text-white border border-amber-500/40 px-3 py-1.5 rounded-xl text-center shadow-lg">
+                    <div className="text-[10px] font-black text-amber-400 font-mono leading-none">
+                      {e.date.split(' ')[0]}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                      <span>Expected: <b className="text-white">{ev.expectedAttendance}</b></span>
+                    <div className="text-[9px] font-bold text-slate-300 uppercase leading-none mt-0.5">
+                      {e.date.split(' ')[1]}
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-3">
-                  <button
-                    onClick={() => onOpenDonate(ev.supportCampaign)}
-                    className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <span>Support Event Fund</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+                <div className="p-5 space-y-3">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-[#D4A244] border border-amber-200 uppercase">
+                    {e.category}
+                  </span>
+                  <h3 className="font-bold text-slate-900 text-base leading-snug">
+                    {e.title}
+                  </h3>
+                  <div className="space-y-1.5 text-xs text-slate-500">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{e.time}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="truncate">{e.location}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed pt-1">
+                    {e.description}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {pastEvents.map((ev) => (
-              <div key={ev.id} className="p-6 bg-[#0B1B36] border border-white/10 rounded-3xl space-y-3 shadow-xl">
-                <div className="flex justify-between items-start">
-                  <span className="text-xs text-emerald-400 font-mono font-bold">{ev.date}</span>
-                  <span className="text-[10px] text-slate-400 px-2 py-0.5 rounded bg-white/5 border border-white/10">Completed</span>
-                </div>
-                <h3 className="text-base font-bold text-white">{ev.title}</h3>
-                <p className="text-xs text-slate-300">{ev.description}</p>
-                <div className="p-3 bg-[#061224] rounded-xl text-xs text-amber-300 font-mono flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>{ev.highlights}</span>
-                </div>
+
+              <div className="p-5 pt-0">
+                <button
+                  onClick={() => handleRegisterEvent(e.title)}
+                  className="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow transition-all text-center"
+                >
+                  REGISTER NOW
+                </button>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
+
+export default EventsPage;

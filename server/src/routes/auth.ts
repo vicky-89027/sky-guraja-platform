@@ -4,7 +4,93 @@ import { DB } from '../db/database';
 import { generateToken, authenticateToken, AuthRequest, AuthUser } from '../middleware/auth';
 import { logAudit } from '../middleware/audit';
 
+import { v4 as uuidv4 } from 'uuid';
+
 const router = Router();
+
+// Register new Community Member / Donor / Volunteer
+router.post('/register', async (req, res) => {
+  try {
+    const { fullName, phone, email, username, password, village, memberType } = req.body;
+
+    if (!fullName || !phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Full Name, Phone Number, and Password are required.'
+      });
+    }
+
+    const cleanPhone = phone.trim().replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid 10-digit mobile phone number.'
+      });
+    }
+
+    const cleanUsername = (username || `user_${cleanPhone}`).trim().toLowerCase();
+    const cleanEmail = (email || `${cleanUsername}@skyguraja.org`).trim().toLowerCase();
+
+    // Check if user already exists
+    const existing = await DB.get<any>(
+      `SELECT * FROM users WHERE phone = ? OR username = ? OR email = ?`,
+      [cleanPhone, cleanUsername, cleanEmail]
+    );
+
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: 'An account with this phone number, username, or email already exists. Please log in.'
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const userId = `usr-${uuidv4().substring(0, 8)}`;
+    const role = 'MEMBER';
+
+    await DB.run(
+      `INSERT INTO users (id, username, email, phone, password_hash, full_name, role, is_active, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1, datetime('now'), datetime('now'))`,
+      [userId, cleanUsername, cleanEmail, cleanPhone, passwordHash, fullName.trim(), role]
+    );
+
+    // Register in committee_members table
+    const memberId = `mem-${uuidv4().substring(0, 8)}`;
+    await DB.run(
+      `INSERT INTO committee_members (id, user_id, name, role_title, phone, email, joining_date, area_location, active, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, date('now'), ?, 1, datetime('now'))`,
+      [memberId, userId, fullName.trim(), memberType || 'Registered Member', cleanPhone, cleanEmail, village || 'Guraja']
+    );
+
+    const authUser: AuthUser = {
+      id: userId,
+      username: cleanUsername,
+      email: cleanEmail,
+      role: role,
+      fullName: fullName.trim(),
+      memberId: memberId
+    };
+
+    const token = generateToken(authUser);
+
+    await logAudit({
+      user: authUser,
+      action: 'USER_REGISTER',
+      entityType: 'USER',
+      entityId: userId,
+      ipAddress: req.ip
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: `Registration successful! Welcome to Sri Krishna Yadav Youth Guraja, ${fullName.trim()}.`,
+      token,
+      user: authUser
+    });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // Login with email or phone + password
 router.post('/login', async (req, res) => {

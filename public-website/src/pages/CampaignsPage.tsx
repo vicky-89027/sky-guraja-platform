@@ -1,179 +1,199 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, Calendar, Target, Users, Filter, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart, Calendar, Target, Users, Filter, CheckCircle2, ArrowRight } from 'lucide-react';
 
 interface CampaignsPageProps {
   onOpenDonate: (campaignName?: string) => void;
 }
 
 export const CampaignsPage: React.FC<CampaignsPageProps> = ({ onOpenDonate }) => {
-  const [campaigns, setCampaigns] = useState<any[]>([
+  const [filterCategory, setFilterCategory] = useState<string>('ALL');
+
+  const campaigns = [
     {
       id: 'cmp-1',
-      name: 'Sri Krishna Janmashtami 2026 Grand Celebration',
-      category: 'FESTIVAL',
-      description: 'Annadanam for 2500+ villagers, grand Utlotsavam (Dahi Handi), devotional bhajans, prize distribution for youth merit scholars, and cultural programs.',
-      target_amount: 250000,
-      collected_amount: 50000,
-      start_date: '2026-07-01',
-      end_date: '2026-08-31',
-      status: 'ACTIVE'
+      name: 'Education for All',
+      category: 'EDUCATION',
+      image: '/images/gallery/youth_study_hall_library.png',
+      fallbackImage: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80',
+      description: 'Support quality education, tuition assistance, and competitive exam books for underprivileged students in Guraja.',
+      target_amount: 200000,
+      collected_amount: 125000,
+      percentage: 62.5
     },
     {
       id: 'cmp-2',
-      name: 'Youth Community Study Hall & Digital Library',
-      category: 'EDUCATION',
-      description: 'Setting up an air-conditioned study hall with high-speed fiber internet, competitive exam preparation material (UPSC, APPSC, SSC, Banking), and modern study desks for Guraja students.',
+      name: 'Healthcare Support',
+      category: 'HEALTH',
+      image: '/images/gallery/village_youth_social_service.png',
+      fallbackImage: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80',
+      description: 'Provide essential healthcare aid, quarterly blood donation camps, and emergency ambulance fund for villagers.',
       target_amount: 150000,
-      collected_amount: 30000,
-      start_date: '2026-06-01',
-      end_date: '2026-10-31',
-      status: 'ACTIVE'
+      collected_amount: 75000,
+      percentage: 50
     },
     {
       id: 'cmp-3',
-      name: 'Guraja Clean Drinking Water (RO Plant Maintenance)',
-      category: 'COMMUNITY_DEVELOPMENT',
-      description: 'Annual filter membrane replacement and mineral replenishment for Guraja RO drinking water plant serving over 600 village households daily with clean potable water.',
-      target_amount: 50000,
-      collected_amount: 50000,
-      start_date: '2026-05-01',
-      end_date: '2026-08-15',
-      status: 'COMPLETED'
+      name: 'Youth Empowerment',
+      category: 'YOUTH',
+      image: '/images/gallery/youth_sports_cricket_tournament.png',
+      fallbackImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80',
+      description: 'Skill training, vocational career workshops, computer lab access, and sports tournaments for Guraja youth brigade.',
+      target_amount: 200000,
+      collected_amount: 90000,
+      percentage: 45
     },
     {
       id: 'cmp-4',
-      name: 'Emergency Medical Aid & Youth Blood Donation Wing',
-      category: 'HEALTHCARE',
-      description: 'Creating an emergency medical contingency fund for Guraja families requiring urgent hospitalization, ambulance assistance, and organizing quarterly blood donation camps.',
-      target_amount: 100000,
-      collected_amount: 15000,
-      start_date: '2026-08-01',
-      end_date: '2026-12-31',
-      status: 'ACTIVE'
+      name: 'Community Development',
+      category: 'COMMUNITY',
+      image: '/images/gallery/guraja_ro_plant_field.png',
+      fallbackImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
+      description: 'Maintenance of Guraja clean drinking water RO plant and solar street light installations across village streets.',
+      target_amount: 300000,
+      collected_amount: 210000,
+      percentage: 70
+    },
+    {
+      id: 'cmp-5',
+      name: 'Sri Krishna Janmashtami Celebration',
+      category: 'COMMUNITY',
+      image: '/images/gallery/krishna_swamy_golden_arch.jpg',
+      fallbackImage: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?auto=format&fit=crop&w=600&q=80',
+      description: 'Grand Utlotsavam (Dahi Handi), devotional bhajans, cultural youth drama, and Annadanam for 2500+ devotees.',
+      target_amount: 250000,
+      collected_amount: 195000,
+      percentage: 78
+    },
+    {
+      id: 'cmp-6',
+      name: 'Green Guraja Tree Plantation Drive',
+      category: 'ENVIRONMENT',
+      image: '/images/gallery/tree_plantation_drive.png',
+      fallbackImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80',
+      description: 'Planting and nurturing 1,000+ shade trees, fruit saplings, and medicinal plants along Guraja village roads.',
+      target_amount: 80000,
+      collected_amount: 80000,
+      percentage: 100
     }
-  ]);
-  const [filterCategory, setFilterCategory] = useState<string>('ALL');
+  ];
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/public/transparency')
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.success && res.data?.campaigns?.length > 0) {
-          setCampaigns(res.data.campaigns);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const categories = ['ALL', 'FESTIVAL', 'EDUCATION', 'COMMUNITY_DEVELOPMENT', 'HEALTHCARE'];
+  const categories = [
+    { id: 'ALL', label: 'All' },
+    { id: 'EDUCATION', label: 'Education' },
+    { id: 'HEALTH', label: 'Health' },
+    { id: 'COMMUNITY', label: 'Community' },
+    { id: 'YOUTH', label: 'Youth' },
+    { id: 'ENVIRONMENT', label: 'Environment' }
+  ];
 
   const filtered = filterCategory === 'ALL'
     ? campaigns
     : campaigns.filter((c) => c.category === filterCategory);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 lg:px-8 py-10 space-y-10">
-      {/* Header */}
-      <div className="text-center space-y-3 max-w-2xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-black text-white font-display uppercase tracking-tight">
-          Community Campaigns & Initiatives
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-300">
-          Support verified village initiatives. Every contribution is directly credited to the public ledger and issued an official cryptographic receipt.
-        </p>
+    <div className="w-full bg-[#F8FAFC] text-slate-900">
+      {/* Dark Header Banner */}
+      <div className="bg-gradient-to-b from-[#050E1C] via-[#08152B] to-[#040C18] text-white py-14 px-4 text-center border-b border-amber-500/20">
+        <div className="max-w-4xl mx-auto space-y-2">
+          <span className="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono">
+            COMMUNITY INITIATIVES
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black font-display uppercase tracking-tight text-white">
+            ALL CAMPAIGNS
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
+            Explore and support active community development programs in Guraja village.
+          </p>
+        </div>
       </div>
 
-      {/* Category Filter Tabs */}
-      <div className="flex items-center justify-center gap-2 flex-wrap">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setFilterCategory(cat)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-              filterCategory === cat
-                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
-                : 'bg-[#0B1B36] text-slate-300 border-white/10 hover:border-amber-500/30'
-            }`}
-          >
-            {cat.replace(/_/g, ' ')}
-          </button>
-        ))}
-      </div>
+      {/* Main Content Area */}
+      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-12 space-y-8">
+        {/* Category Filters */}
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setFilterCategory(cat.id)}
+              className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                filterCategory === cat.id
+                  ? 'bg-[#D4A244] text-slate-950 shadow-md'
+                  : 'bg-white text-slate-600 border border-slate-200 hover:border-amber-400'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
 
-      {/* Campaigns Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filtered.map((c) => {
-          const pct = Math.min(Math.round((c.collected_amount / c.target_amount) * 100), 100);
-          const isCompleted = c.status === 'COMPLETED' || pct >= 100;
-
-          return (
+        {/* Campaigns Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((c) => (
             <div
               key={c.id}
-              className="p-6 bg-[#0B1B36] border border-white/10 rounded-3xl space-y-5 hover:border-amber-500/40 transition-all flex flex-col justify-between shadow-xl"
+              className="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
             >
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30 uppercase">
-                    {c.category.replace(/_/g, ' ')}
-                  </span>
-                  {isCompleted ? (
-                    <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 uppercase">
-                      <CheckCircle2 className="w-3 h-3" />
-                      <span>100% Funded</span>
-                    </span>
-                  ) : (
-                    <span className="font-mono text-emerald-400 font-bold text-xs">
-                      {pct}% Achieved
-                    </span>
-                  )}
+              <div>
+                {/* Image Banner */}
+                <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                  <img
+                    src={c.image}
+                    alt={c.name}
+                    onError={(e: any) => {
+                      e.target.onerror = null;
+                      e.target.src = c.fallbackImage;
+                    }}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-bold text-slate-800 uppercase shadow">
+                    {c.category}
+                  </div>
                 </div>
 
-                <h3 className="text-lg font-bold text-white leading-snug">{c.name}</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">{c.description}</p>
+                {/* Info */}
+                <div className="p-5 space-y-2">
+                  <h3 className="font-bold text-slate-900 text-lg leading-snug">
+                    {c.name}
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {c.description}
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-3 pt-2">
-                {/* Progress Bar */}
-                <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-1000 ${
-                      isCompleted
-                        ? 'bg-emerald-400'
-                        : 'bg-gradient-to-r from-amber-500 to-emerald-500'
-                    }`}
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
+              <div className="p-5 pt-0 space-y-3">
+                {/* Progress Bar & Numbers */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs font-mono">
+                    <span className="font-bold text-slate-800">
+                      ₹{c.collected_amount.toLocaleString('en-IN')} / <span className="text-slate-400">₹{c.target_amount.toLocaleString('en-IN')}</span>
+                    </span>
+                    <span className="font-bold text-slate-600">{c.percentage}%</span>
+                  </div>
 
-                <div className="flex justify-between text-xs text-slate-400 font-mono">
-                  <span>Collected: <b className="text-white">₹{Number(c.collected_amount).toLocaleString('en-IN')}</b></span>
-                  <span>Target: <b className="text-amber-300">₹{Number(c.target_amount).toLocaleString('en-IN')}</b></span>
-                </div>
-
-                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>Until: {c.end_date || '2026-12-31'}</span>
-                  </span>
-                  <span className="text-emerald-400 font-medium">Verified Ledger ID: #{c.id}</span>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-700 ${
+                        c.percentage >= 100 ? 'bg-emerald-500' : 'bg-[#D4A244]'
+                      }`}
+                      style={{ width: `${Math.min(c.percentage, 100)}%` }}
+                    />
+                  </div>
                 </div>
 
                 <button
                   onClick={() => onOpenDonate(c.name)}
-                  className={`w-full py-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-lg ${
-                    isCompleted
-                      ? 'bg-[#16335F] text-slate-300 hover:bg-[#1E437C]'
-                      : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950'
-                  }`}
+                  className="w-full py-3 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs tracking-wider uppercase rounded-xl shadow-md transition-all text-center"
                 >
-                  <Heart className="w-4 h-4 fill-current" />
-                  <span>{isCompleted ? 'Contribute Extra Surplus' : 'Support this Campaign'}</span>
+                  SUPPORT NOW
                 </button>
               </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </div>
   );
 };
+
+export default CampaignsPage;

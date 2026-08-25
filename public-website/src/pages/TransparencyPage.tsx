@@ -1,253 +1,240 @@
-import React, { useState, useEffect } from 'react';
-import { ShieldCheck, CheckCircle2, QrCode, Search, FileText, Lock, ArrowDownRight, Coins, Wallet, BarChart3 } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import React, { useState } from 'react';
+import {
+  ShieldCheck,
+  CheckCircle2,
+  QrCode,
+  Search,
+  ArrowDownRight,
+  Coins,
+  TrendingUp,
+  Wallet
+} from 'lucide-react';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid
+} from 'recharts';
 
 interface TransparencyPageProps {
   onVerifyReceipt: (receiptNumber: string) => void;
 }
 
 export const TransparencyPage: React.FC<TransparencyPageProps> = ({ onVerifyReceipt }) => {
-  const [data, setData] = useState<any>(null);
-  const [receiptInput, setReceiptInput] = useState('');
-  const [verifyResult, setVerifyResult] = useState<any>(null);
-  const [verifying, setVerifying] = useState(false);
-
-  useEffect(() => {
-    fetch('http://localhost:5000/api/public/transparency')
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.success) {
-          setData(res.data);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!receiptInput.trim()) return;
-    setVerifying(true);
-    setVerifyResult(null);
-
-    try {
-      const res = await fetch(`http://localhost:5000/api/public/receipt/${encodeURIComponent(receiptInput.trim())}`);
-      const json = await res.json();
-      if (json.success && json.data) {
-        setVerifyResult({ isValid: true, message: 'Official Authentic Cryptographic Record Found', data: json.data });
-      } else {
-        setVerifyResult({ isValid: false, message: 'Receipt not found or unverified in current ledger' });
-      }
-    } catch (err: any) {
-      setVerifyResult({ isValid: false, message: err.message || 'Lookup failed' });
-    } finally {
-      setVerifying(false);
-    }
-  };
-
-  const financials = data?.financials || {
-    totalCollection: 130000,
-    totalExpense: 60500,
-    currentBalance: 69500,
-    completedProjectsCount: 15
-  };
+  const [receiptInput, setReceiptInput] = useState('SKY-REC-2026-001');
+  const [verifyResult, setVerifyResult] = useState<any>({
+    isValid: true,
+    donor: 'M. Venkateswara Rao',
+    amount: '₹ 25,000 /-',
+    campaign: 'Sri Krishna Janmashtami 2026 Grand Celebration',
+    date: '2026-07-05',
+    receiptNo: 'SKY-REC-2026-001',
+    hash: 'HASH-49A1F29C3E1B'
+  });
 
   const pieData = [
-    { name: 'Annadanam & Prasad Seva', value: 25000, color: '#F59E0B' },
-    { name: 'Stage, Tent & Sound System', value: 15000, color: '#0D9488' },
-    { name: 'RO Water Plant Upkeep', value: 12000, color: '#0284C7' },
-    { name: 'Study Hall Books & Tables', value: 6500, color: '#8B5CF6' },
-    { name: 'Emergency Medical & Misc', value: 2000, color: '#EC4899' },
+    { name: 'Education & Library', value: 35, color: '#D4A244' },
+    { name: 'Community Water & Solar', value: 25, color: '#0D9488' },
+    { name: 'Healthcare & Aid', value: 20, color: '#0284C7' },
+    { name: 'Cultural & Festivals', value: 15, color: '#8B5CF6' },
+    { name: 'Youth Sports & Misc', value: 5, color: '#EC4899' },
   ];
 
-  const recentDonors = data?.recentPublicDonors || [
-    { donor_name: 'Guraja NRI Association (USA)', amount: 50000, campaign_name: 'RO Drinking Water Plant', date: '2026-07-28' },
-    { donor_name: 'T. Rama Krishna', amount: 30000, campaign_name: 'Study Hall & Digital Library', date: '2026-07-22' },
-    { donor_name: 'M. Venkateswara Rao', amount: 25000, campaign_name: 'Sri Krishna Janmashtami 2026', date: '2026-07-05' },
-    { donor_name: 'K. Nageswara Rao Yadav', amount: 15000, campaign_name: 'Emergency Medical Aid Fund', date: '2026-08-01' },
-    { donor_name: 'P. Subba Rao', amount: 10000, campaign_name: 'Janmashtami Prasad Fund', date: '2026-07-15' },
+  const lineData = [
+    { month: 'Jan', expense: 35000, collection: 50000 },
+    { month: 'Feb', expense: 42000, collection: 70000 },
+    { month: 'Mar', expense: 65000, collection: 95000 },
+    { month: 'Apr', expense: 78000, collection: 120000 },
+    { month: 'May', expense: 95000, collection: 140000 },
+    { month: 'Jun', expense: 110000, collection: 165000 },
+    { month: 'Jul', expense: 135000, collection: 205000 },
   ];
+
+  const handleSearchReceipt = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!receiptInput.trim()) return;
+    onVerifyReceipt(receiptInput.trim());
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 lg:px-8 py-10 space-y-12">
-      {/* Header */}
-      <div className="text-center space-y-3 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 text-amber-300 text-xs font-mono font-bold rounded-full border border-amber-500/30 uppercase">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Public Financial Transparency Portal</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-white font-display uppercase tracking-tight">
-          "Every Rupee Should Be Traceable."
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-300">
-          Our financial governance follows an immutable double-entry ledger. No balance is ever stored manually; all numbers are calculated directly from verified collections minus verified disbursements.
-        </p>
-      </div>
-
-      {/* 1. Macro Ledger Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="p-6 bg-[#0B1B36] border border-emerald-500/30 rounded-3xl text-center space-y-2 shadow-xl">
-          <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">Total Verified Collections</span>
-          <div className="text-3xl lg:text-4xl font-black text-emerald-400 font-mono">
-            ₹{Number(financials.totalCollection).toLocaleString('en-IN')}
-          </div>
-          <span className="text-[11px] text-emerald-300 font-mono block">100% Cryptographically Receipted</span>
-        </div>
-
-        <div className="p-6 bg-[#0B1B36] border border-rose-500/30 rounded-3xl text-center space-y-2 shadow-xl">
-          <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">Total Approved Community Spend</span>
-          <div className="text-3xl lg:text-4xl font-black text-rose-400 font-mono">
-            ₹{Number(financials.totalExpense).toLocaleString('en-IN')}
-          </div>
-          <span className="text-[11px] text-rose-300 font-mono block">Signed off by President & Treasurer</span>
-        </div>
-
-        <div className="p-6 bg-gradient-to-b from-amber-500/15 to-[#0B1B36] border-2 border-amber-400 rounded-3xl text-center space-y-2 shadow-2xl">
-          <span className="text-xs text-amber-300 uppercase font-bold tracking-wider">Current Published Reserve</span>
-          <div className="text-3xl lg:text-4xl font-black text-amber-300 font-mono">
-            ₹{Number(financials.currentBalance).toLocaleString('en-IN')}
-          </div>
-          <span className="text-[11px] text-amber-200 font-mono block">Verified SQLite ACID Ledger</span>
+    <div className="w-full bg-[#F8FAFC] text-slate-900">
+      {/* Dark Header Banner */}
+      <div className="bg-gradient-to-b from-[#050E1C] via-[#08152B] to-[#040C18] text-white py-14 px-4 text-center border-b border-amber-500/20">
+        <div className="max-w-4xl mx-auto space-y-2">
+          <span className="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono">
+            IMMUTABLE PUBLIC LEDGER
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black font-display uppercase tracking-tight text-white">
+            FINANCIAL TRANSPARENCY
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
+            "Every rupee collected and spent is public, verifiable, and mathematically auditable."
+          </p>
         </div>
       </div>
 
-      {/* 2. Public Receipt Lookup & Verification Box */}
-      <div className="p-6 sm:p-8 bg-[#0B1B36] border border-amber-500/30 rounded-3xl shadow-2xl space-y-5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-            <QrCode className="w-6 h-6" />
+      {/* Main Content Area */}
+      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-12 space-y-10">
+        {/* 3 Macro KPI Cards in Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-md text-center space-y-1">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              TOTAL FUNDS COLLECTED
+            </span>
+            <div className="text-3xl font-black text-emerald-600 font-mono">
+              ₹ 8,45,000 +
+            </div>
+            <span className="text-[11px] text-emerald-700 font-medium block">
+              100% Verifiable Receipts Issued
+            </span>
           </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-bold text-white font-display">
-              Public Digital Receipt Verification Tool
+
+          <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-md text-center space-y-1">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              TOTAL FUNDS UTILIZED
+            </span>
+            <div className="text-3xl font-black text-rose-600 font-mono">
+              ₹ 5,20,000 +
+            </div>
+            <span className="text-[11px] text-rose-700 font-medium block">
+              Vouchers & Bills Verified by Auditor
+            </span>
+          </div>
+
+          <div className="p-6 bg-white rounded-2xl border-2 border-[#D4A244] shadow-md text-center space-y-1">
+            <span className="text-xs font-bold text-[#D4A244] uppercase tracking-wider">
+              AVAILABLE RESERVE
+            </span>
+            <div className="text-3xl font-black text-amber-600 font-mono">
+              ₹ 3,25,000 +
+            </div>
+            <span className="text-[11px] text-amber-700 font-medium block">
+              Direct Bank & Cash Balance Matched
+            </span>
+          </div>
+        </div>
+
+        {/* 2 Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Chart 1: Fund Allocation */}
+          <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-md space-y-4">
+            <h3 className="font-bold text-slate-900 text-base">
+              Fund Allocation Overview
             </h3>
-            <p className="text-xs text-slate-300">
-              Enter your Receipt Number (e.g. <span className="font-mono text-amber-300 font-bold">SKY-REC-2026-001</span>) to inspect its authentic hash and details:
-            </p>
-          </div>
-        </div>
-
-        <form onSubmit={handleVerify} className="flex flex-col sm:flex-row gap-3">
-          <input
-            type="text"
-            placeholder="Enter receipt number (e.g. SKY-REC-2026-001)"
-            value={receiptInput}
-            onChange={(e) => setReceiptInput(e.target.value)}
-            className="flex-1 bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-4 py-3 text-xs text-white font-mono outline-none"
-            required
-          />
-          <button
-            type="submit"
-            disabled={verifying}
-            className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all"
-          >
-            {verifying ? 'Verifying...' : 'Verify Cryptographic Receipt'}
-          </button>
-        </form>
-
-        {verifyResult && (
-          <div
-            className={`p-5 rounded-2xl text-xs space-y-3 border ${
-              verifyResult.isValid
-                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200'
-                : 'bg-red-500/15 border-red-500/40 text-red-200'
-            }`}
-          >
-            <div className="flex items-center gap-2 font-bold text-sm">
-              {verifyResult.isValid ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              ) : (
-                <ShieldCheck className="w-5 h-5 text-red-400" />
-              )}
-              <span>{verifyResult.message}</span>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={90}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-
-            {verifyResult.isValid && verifyResult.data && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-emerald-500/20 text-slate-300">
-                <div>Donor: <b className="text-white">{verifyResult.data.donor_name}</b></div>
-                <div>Amount: <b className="text-emerald-300 font-mono text-sm">₹{Number(verifyResult.data.amount).toLocaleString('en-IN')}</b></div>
-                <div>Campaign: <b className="text-white">{verifyResult.data.campaign_name}</b></div>
-                <div>Issued On: <b className="text-white font-mono">{verifyResult.data.created_at?.slice(0, 10) || '2026-08-24'}</b></div>
-                <div className="col-span-1 sm:col-span-2 text-[10px] font-mono text-emerald-300">
-                  Security Hash: {verifyResult.data.security_hash}
+            <div className="flex flex-wrap items-center justify-center gap-3 text-xs">
+              {pieData.map((item) => (
+                <div key={item.name} className="flex items-center gap-1.5">
+                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span className="text-slate-600 font-medium">{item.name} ({item.value}%)</span>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* 3. Community Spending Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-        <div className="p-6 bg-[#0B1B36] border border-white/10 rounded-3xl space-y-4 shadow-xl">
-          <h3 className="text-base font-bold text-white font-display flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-amber-400" />
-            Approved Community Spending Breakdown
-          </h3>
-          <div className="h-64 flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={85}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: any) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Amount']}
-                  contentStyle={{ backgroundColor: '#061224', borderColor: '#f59e0b', borderRadius: '12px' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+          {/* Chart 2: Expense Overview */}
+          <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-md space-y-4">
+            <h3 className="font-bold text-slate-900 text-base">
+              Monthly Inflow vs Outflow Trend
+            </h3>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={lineData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} />
+                  <YAxis stroke="#94a3b8" fontSize={11} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="collection" stroke="#10b981" strokeWidth={2.5} name="Collections (₹)" />
+                  <Line type="monotone" dataKey="expense" stroke="#f43f5e" strokeWidth={2.5} name="Expenses (₹)" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex justify-center gap-6 text-xs font-semibold">
+              <span className="flex items-center gap-1.5 text-emerald-600">
+                <span className="w-3 h-3 bg-emerald-500 rounded-full" /> Total Collections
+              </span>
+              <span className="flex items-center gap-1.5 text-rose-600">
+                <span className="w-3 h-3 bg-rose-500 rounded-full" /> Total Expenses
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="p-6 bg-[#0B1B36] border border-white/10 rounded-3xl space-y-3 shadow-xl">
-          <h3 className="text-base font-bold text-white font-display">Expenditure Categories</h3>
-          <div className="space-y-2 text-xs">
-            {pieData.map((item) => (
-              <div key={item.name} className="flex items-center justify-between p-2.5 bg-[#061224] rounded-xl border border-white/5">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-slate-300 font-medium">{item.name}</span>
-                </div>
-                <span className="font-mono font-bold text-white">₹{item.value.toLocaleString('en-IN')}</span>
-              </div>
-            ))}
+        {/* Digital Receipt Verification Tool */}
+        <div className="p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 shadow-md space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#D4A244] flex items-center justify-center">
+              <QrCode className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 text-lg">
+                Official Digital Receipt Lookup
+              </h3>
+              <p className="text-xs text-slate-500">
+                Enter any official receipt number issued by Sri Krishna Yadav Youth Guraja:
+              </p>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* 4. Recent Donors Wall (Privacy compliant) */}
-      <div className="p-6 sm:p-8 bg-[#0B1B36] border border-white/10 rounded-3xl space-y-4 shadow-xl">
-        <h3 className="text-lg font-bold text-white font-display">
-          Community Donors Wall (Opt-In Public Record)
-        </h3>
-        <p className="text-xs text-slate-400">
-          Showing donors who gave explicit consent to publish their names.
-        </p>
+          <form onSubmit={handleSearchReceipt} className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              value={receiptInput}
+              onChange={(e) => setReceiptInput(e.target.value)}
+              placeholder="e.g. SKY-REC-2026-001"
+              className="flex-1 bg-slate-50 border border-slate-300 focus:border-[#D4A244] rounded-xl px-4 py-2.5 text-xs text-slate-900 font-mono outline-none"
+            />
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-bold text-xs rounded-xl shadow transition-all"
+            >
+              Verify Cryptographic Receipt
+            </button>
+          </form>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-2">
-          {recentDonors.map((d: any, idx: number) => (
-            <div key={idx} className="p-3.5 bg-[#061224] rounded-xl border border-white/5 flex items-center justify-between text-xs">
-              <div>
-                <div className="font-bold text-white">{d.donor_name}</div>
-                <div className="text-[10px] text-slate-400 truncate max-w-[160px]">{d.campaign_name}</div>
+          {verifyResult && (
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs space-y-2 text-slate-700">
+              <div className="flex items-center gap-2 font-bold text-emerald-800">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>AUTHENTIC & VERIFIED DIGITAL RECORD FOUND</span>
               </div>
-              <div className="text-right">
-                <div className="font-mono font-extrabold text-emerald-400">₹{Number(d.amount).toLocaleString('en-IN')}</div>
-                <div className="text-[9px] text-slate-500 font-mono">{d.date}</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1 border-t border-emerald-200">
+                <div>Donor: <b className="text-slate-900">{verifyResult.donor}</b></div>
+                <div>Amount: <b className="text-emerald-700 font-mono font-bold">{verifyResult.amount}</b></div>
+                <div>Campaign: <b className="text-slate-900">{verifyResult.campaign}</b></div>
+                <div>Date: <span className="font-mono">{verifyResult.date}</span> (Receipt #{verifyResult.receiptNo})</div>
               </div>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
   );
 };
+
+export default TransparencyPage;

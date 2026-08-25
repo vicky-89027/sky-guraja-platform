@@ -116,229 +116,308 @@
         </div>
       </div>
     </a>
-
-    <!-- Top Action Buttons -->
-    <div className="flex items-center gap-3">
-      <button onclick="openDonateModal()" class="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all transform active:scale-95">
-        <i data-lucide="heart" class="w-3.5 h-3.5 fill-slate-950"></i>
-        <span>Donate Online</span>
+    <div class="flex items-center gap-2.5">
+      <button onclick="handleTransferFundsClick()" class="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all transform active:scale-95">
+        <i data-lucide="coins" class="w-3.5 h-3.5 fill-slate-950"></i>
+        <span>Transfer Funds</span>
       </button>
 
-      <a href="http://localhost:5000" target="_blank" class="flex items-center gap-1.5 px-4 py-2 bg-[#0B1B36] hover:bg-[#12274A] border border-amber-500/40 text-amber-300 font-bold text-xs rounded-xl transition-all shadow-md">
-        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-        <span>Full-Stack App</span>
-        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-      </a>
+      <button onclick="handleMakeChangesClick()" class="flex items-center gap-1.5 px-3.5 py-2 bg-[#0B1B36] hover:bg-[#12274A] border border-amber-500/40 text-amber-300 font-bold text-xs rounded-xl transition-all shadow-md">
+        <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>Make Changes</span>
+      </button>
+
+      <div id="auth-nav-container" class="flex items-center gap-1.5">
+        <button onclick="openAuthModal('login')" class="px-3 py-2 bg-[#0B1B36] hover:bg-[#12274A] border border-white/15 text-slate-200 text-xs font-semibold rounded-xl">
+          Login
+        </button>
+        <button onclick="openAuthModal('register')" class="px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-bold rounded-xl">
+          Register
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- Hero Banner -->
-  <main class="flex-1 max-w-6xl mx-auto px-4 lg:px-8 py-10 space-y-12 w-full">
-    <div class="text-center space-y-5 py-8 px-6 bg-gradient-to-b from-[#0B1B36] via-[#0E2447] to-[#061224] border border-amber-500/35 rounded-3xl shadow-2xl relative overflow-hidden">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/15 text-amber-300 text-xs font-bold rounded-full border border-amber-500/40 uppercase tracking-widest">
-        <i data-lucide="globe" class="w-3.5 h-3.5"></i>
-        <span>Official Website • Every Rupee Traceable</span>
-      </div>
+  <!-- 1. Hero Section (Dark Luxury with 5 Pill Counters) -->
+  <section class="relative pt-12 pb-16 px-4 lg:px-8 text-center overflow-hidden bg-gradient-to-b from-[#050E1C] via-[#08152B] to-[#040C18]">
+    <div class="max-w-5xl mx-auto space-y-6 relative z-10">
+      <!-- Grand Emblem & Logo -->
+      <div class="flex flex-col items-center justify-center space-y-3">
+        <svg width="100" height="100" viewBox="0 0 200 200" fill="none" class="drop-shadow-[0_0_20px_rgba(245,158,11,0.45)]">
+          <circle cx="92" cy="96" r="78" stroke="url(#goldG1)" stroke-width="5" stroke-linecap="round" fill="none" stroke-dasharray="440 60" transform="rotate(-25 92 96)" />
+          <circle cx="92" cy="96" r="70" stroke="url(#goldG1)" stroke-width="1.5" stroke-opacity="0.5" fill="none" stroke-dasharray="4 8" />
+          <path d="M 68 62 C 50 62 40 74 40 88 C 40 102 52 110 68 116 C 84 122 92 130 92 144 C 92 162 76 172 58 172 C 44 172 34 164 30 156" stroke="url(#goldG1)" stroke-width="12" stroke-linecap="round" fill="none" />
+          <path d="M 88 50 L 88 152 M 142 56 L 88 106 L 146 160" stroke="url(#goldG1)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 124 100 L 152 100 Q 158 140 134 168 Q 112 190 84 186" stroke="url(#goldG1)" stroke-width="11" stroke-linecap="round" fill="none" />
+          <g transform="rotate(-18 120 135)">
+            <rect x="35" y="132" width="118" height="12" rx="6" fill="url(#goldG1)" stroke="#522703" stroke-width="1.5" />
+            <circle cx="58" cy="138" r="2.2" fill="#3D1A04" /><circle cx="70" cy="138" r="2.2" fill="#3D1A04" />
+            <circle cx="82" cy="138" r="2.2" fill="#3D1A04" /><circle cx="94" cy="138" r="2.2" fill="#3D1A04" />
+            <circle cx="106" cy="138" r="2.2" fill="#3D1A04" /><circle cx="118" cy="138" r="2.2" fill="#3D1A04" />
+          </g>
+          <g transform="translate(116, 12) rotate(15)">
+            <path d="M 28 58 Q 42 30 38 12 Q 32 -2 18 4 Q 4 12 6 36 Q 8 52 28 58 Z" fill="url(#featherO)" stroke="url(#goldG1)" stroke-width="1.5" />
+            <ellipse cx="22" cy="24" rx="12" ry="16" fill="#0284C7" />
+            <ellipse cx="22" cy="24" rx="7" ry="9" fill="url(#featherE)" />
+          </g>
+        </svg>
 
-      <div class="space-y-2">
-        <h1 class="text-3xl sm:text-5xl font-black font-display tracking-wide uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#FFFBEB] via-[#FBBF24] to-[#D97706]">
-          SRI KRISHNA YADAV YOUTH GURAJA
-        </h1>
-        <div class="flex items-center justify-center gap-2 text-amber-400 font-bold text-xs tracking-[0.3em] uppercase font-display">
-          <span>❖</span><span>UNITY • CULTURE • COMMUNITY SERVICE</span><span>❖</span>
+        <div class="space-y-1">
+          <h1 class="text-3xl sm:text-5xl font-black font-display uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#FFFBEB] via-[#FBBF24] to-[#D97706]">
+            SRI KRISHNA YADAV
+          </h1>
+          <div class="text-xs sm:text-sm font-extrabold tracking-[0.35em] text-amber-400 uppercase font-display">
+            YOUTH GURAJA
+          </div>
+          <div class="text-[11px] text-amber-200/80 font-mono tracking-wider pt-1">
+            Unity • Youth • Service • Community • Progress
+          </div>
         </div>
       </div>
 
-      <p class="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
-        "United for Community. Inspired by Krishna. Working for a Better Tomorrow."
-        <span class="block text-[11px] text-amber-200/70 font-mono mt-1">
-          Yadav Youth Bhavan, Main Road, Guraja, Krishna District, Andhra Pradesh - 521321
-        </span>
+      <p class="text-xs sm:text-sm text-amber-200/90 italic font-medium max-w-xl mx-auto">
+        "Together we serve, together we grow."
       </p>
 
-      <!-- 5 Core Brand Pillars -->
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-4xl mx-auto pt-3">
-        <div class="p-3 rounded-xl bg-[#061224]/80 border border-amber-500/25 text-center group">
-          <div class="text-xl mb-1">👥</div>
-          <div class="font-bold text-amber-300 text-xs uppercase font-display">UNITY</div>
-          <div class="text-[9px] text-slate-400">Youth Solidarity</div>
-        </div>
-        <div class="p-3 rounded-xl bg-[#061224]/80 border border-amber-500/25 text-center group">
-          <div class="text-xl mb-1">🪈</div>
-          <div class="font-bold text-amber-300 text-xs uppercase font-display">CULTURE</div>
-          <div class="text-[9px] text-slate-400">Krishna Heritage</div>
-        </div>
-        <div class="p-3 rounded-xl bg-[#061224]/80 border border-amber-500/25 text-center group">
-          <div class="text-xl mb-1">🤲</div>
-          <div class="font-bold text-amber-300 text-xs uppercase font-display">SEVA</div>
-          <div class="text-[9px] text-slate-400">Drinking Water & Aid</div>
-        </div>
-        <div class="p-3 rounded-xl bg-[#061224]/80 border border-amber-500/25 text-center group">
-          <div class="text-xl mb-1">✊</div>
-          <div class="font-bold text-amber-300 text-xs uppercase font-display">YOUTH POWER</div>
-          <div class="text-[9px] text-slate-400">Study & Sports</div>
-        </div>
-        <div class="p-3 rounded-xl bg-[#061224]/80 border border-amber-500/25 text-center group">
-          <div class="text-xl mb-1">📈</div>
-          <div class="font-bold text-amber-300 text-xs uppercase font-display">PROGRESS</div>
-          <div class="text-[9px] text-slate-400">Village Upliftment</div>
-        </div>
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+        <button onclick="handleTransferFundsClick()" class="px-8 py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-[0_0_25px_rgba(212,162,68,0.4)] transition-all transform active:scale-95">
+          SUPPORT A CAMPAIGN
+        </button>
+        <button onclick="document.getElementById('active-campaigns-sec').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3.5 bg-[#0A1B35]/80 hover:bg-[#122A52] text-white font-bold text-xs sm:text-sm uppercase tracking-wider rounded-xl border border-white/20 transition-all shadow-lg">
+          EXPLORE OUR WORK
+        </button>
       </div>
 
-      <!-- Action Button -->
-      <div class="pt-4 flex justify-center gap-3">
-        <button onclick="openDonateModal()" class="px-8 py-3 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-[0_0_25px_rgba(245,158,11,0.4)] transition-all flex items-center gap-2 transform active:scale-95">
-          <i data-lucide="heart" class="w-4 h-4 fill-slate-950"></i>
-          <span>Contribute Online to Guraja Youth Fund</span>
-        </button>
+      <!-- 5 Stat Counters in Row -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 max-w-5xl mx-auto pt-8 text-center">
+        <div class="p-4 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1">
+          <div class="text-lg sm:text-xl font-black text-amber-400 font-mono" id="kpi-collections">₹ 8,45,000 +</div>
+          <div class="text-[10px] text-slate-400 font-semibold">Total Funds Collected</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1">
+          <div class="text-lg sm:text-xl font-black text-amber-400 font-mono" id="kpi-expenses">₹ 5,20,000 +</div>
+          <div class="text-[10px] text-slate-400 font-semibold">Total Funds Utilized</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1">
+          <div class="text-lg sm:text-xl font-black text-amber-400 font-mono">32 +</div>
+          <div class="text-[10px] text-slate-400 font-semibold">Active Campaigns</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1">
+          <div class="text-lg sm:text-xl font-black text-amber-400 font-mono">1,250 +</div>
+          <div class="text-[10px] text-slate-400 font-semibold">Happy Donors</div>
+        </div>
+        <div class="col-span-2 sm:col-span-1 p-4 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1">
+          <div class="text-lg sm:text-xl font-black text-amber-400 font-mono">48 +</div>
+          <div class="text-[10px] text-slate-400 font-semibold">Events Organized</div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- Live Financial Transparency KPIs -->
-    <section class="space-y-4">
-      <div class="text-center space-y-1">
-        <h2 class="text-xl sm:text-2xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-200 to-amber-400 font-display">
-          Live Financial Transparency & Verified Reserve
+  <!-- 2. Active Campaigns (Crisp White/Light Section) -->
+  <section id="active-campaigns-sec" class="bg-[#F8FAFC] text-slate-900 py-16 px-4 lg:px-8">
+    <div class="max-w-6xl mx-auto space-y-8">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl sm:text-3xl font-black font-display tracking-tight text-slate-900 uppercase">
+          ACTIVE CAMPAIGNS
         </h2>
-        <p class="text-xs text-slate-400">Mathematical ledger derived values: Verified Credits minus Approved Debits</p>
+        <a href="#" onclick="handleTransferFundsClick()" class="text-xs sm:text-sm font-bold text-slate-600 hover:text-amber-600 flex items-center gap-1">
+          <span>View All Campaigns →</span>
+        </a>
       </div>
 
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="p-5 bg-[#0B1B36] border border-emerald-500/30 rounded-2xl text-center space-y-1 shadow-xl">
-          <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Total Collections</span>
-          <div class="text-2xl lg:text-3xl font-black text-emerald-400 font-mono" id="kpi-collections">₹1,30,000</div>
-          <span class="text-[10px] text-emerald-300 font-mono">100% Verified</span>
-        </div>
-
-        <div class="p-5 bg-[#0B1B36] border border-rose-500/30 rounded-2xl text-center space-y-1 shadow-xl">
-          <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Total Community Spend</span>
-          <div class="text-2xl lg:text-3xl font-black text-rose-400 font-mono" id="kpi-expenses">₹60,500</div>
-          <span class="text-[10px] text-rose-300 font-mono">Verified with Bills</span>
-        </div>
-
-        <div class="p-5 bg-gradient-to-b from-amber-500/15 to-[#0B1B36] border-2 border-amber-400 rounded-2xl text-center space-y-1 shadow-2xl">
-          <span class="text-[10px] text-amber-300 uppercase font-bold tracking-wider">Available Reserve</span>
-          <div class="text-2xl lg:text-3xl font-black text-amber-300 font-mono" id="kpi-balance">₹69,500</div>
-          <span class="text-[10px] text-amber-200 font-mono">Ledger Matched (ACID)</span>
-        </div>
-
-        <div class="p-5 bg-[#0B1B36] border border-purple-500/30 rounded-2xl text-center space-y-1 shadow-xl">
-          <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Completed Projects</span>
-          <div class="text-2xl lg:text-3xl font-black text-purple-300 font-mono">15+</div>
-          <span class="text-[10px] text-purple-200 font-mono">Village Initiatives</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Digital Receipt Verification Tool -->
-    <section class="p-6 bg-[#0B1B36] border border-amber-500/30 rounded-3xl shadow-xl space-y-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-          <i data-lucide="qr-code" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <h3 class="text-base sm:text-lg font-bold text-white font-display">Verify Authentic Digital Receipt</h3>
-          <p class="text-xs text-slate-300">Enter receipt number (e.g. <span class="font-mono text-amber-300 font-bold">SKY-REC-2026-001</span>) to verify its authentic cryptographic record:</p>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-2.5">
-        <input id="receipt-search-input" type="text" placeholder="Enter Receipt Number (e.g. SKY-REC-2026-001)" class="flex-1 bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-4 py-2.5 text-xs text-white font-mono outline-none" value="SKY-REC-2026-001" />
-        <button onclick="verifyReceipt()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all">
-          Verify Cryptographic Receipt
-        </button>
-      </div>
-
-      <div id="receipt-result-box" class="p-4 rounded-xl text-xs space-y-2 border bg-emerald-500/15 border-emerald-500/40 text-emerald-200">
-        <div class="flex items-center gap-2 font-bold text-sm">
-          <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
-          <span>AUTHENTIC & VERIFIED DIGITAL RECEIPT</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-emerald-500/20 text-slate-300">
-          <div>Donor: <b class="text-white" id="rec-donor">M. Venkateswara Rao</b></div>
-          <div>Amount: <b class="text-emerald-300 font-mono" id="rec-amount">₹25,000/-</b> (Twenty Five Thousand Rupees Only)</div>
-          <div>Campaign: <b class="text-white">Sri Krishna Janmashtami 2026 Grand Celebration</b></div>
-          <div>Date: <b class="text-white font-mono">2026-07-05</b> • UPI/260705/889211</div>
-          <div class="col-span-2 text-[10px] font-mono text-emerald-300">Security Hash: HASH-49A1F29C3E1B</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Active Community Campaigns -->
-    <section class="space-y-4">
-      <h3 class="text-lg sm:text-xl font-bold text-white font-display">Active Community Campaigns</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Campaign 1 -->
-        <div class="p-6 bg-[#0B1B36] border border-white/10 rounded-2xl space-y-4 flex flex-col justify-between">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between group">
           <div>
-            <div class="flex justify-between items-start mb-2">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 uppercase">FESTIVAL</span>
-              <span class="font-mono text-emerald-400 font-bold text-xs">20% Achieved</span>
+            <div class="h-44 w-full bg-slate-100 overflow-hidden">
+              <img src="/images/gallery/youth_study_hall_library.png" onerror="this.src='https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80'" alt="Education for All" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
-            <h4 class="font-bold text-white text-base leading-snug">Sri Krishna Janmashtami 2026 Grand Celebration</h4>
-            <p class="text-xs text-slate-300 mt-1">Annadanam Seva, Utlotsavam (Dahi Handi), traditional bhajans, and youth merit awards.</p>
-          </div>
-          <div class="space-y-2">
-            <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-amber-500 to-emerald-500 rounded-full" style="width: 20%"></div>
-            </div>
-            <div class="flex justify-between text-xs text-slate-400">
-              <span>Raised: <b class="text-white font-mono">₹50,000</b></span>
-              <span>Target: <b class="text-amber-300 font-mono">₹2,50,000</b></span>
+            <div class="p-4 space-y-1.5">
+              <h3 class="font-bold text-slate-900 text-base">Education for All</h3>
+              <p class="text-xs text-slate-500 line-clamp-2">Support quality education for underprivileged students in Guraja.</p>
             </div>
           </div>
-          <button onclick="openDonateModal('Sri Krishna Janmashtami 2026')" class="w-full py-2.5 bg-[#16335F] hover:bg-amber-500 hover:text-slate-950 text-amber-300 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
-            <i data-lucide="heart" class="w-3.5 h-3.5"></i>
-            <span>Support Janmashtami Celebration</span>
-          </button>
+          <div class="p-4 pt-0 space-y-3">
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-mono">
+                <span class="font-bold text-slate-800">₹1,25,000 / <span class="text-slate-400">₹2,00,000</span></span>
+                <span class="font-bold text-slate-600">62.5%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-[#D4A244] rounded-full" style="width: 62.5%"></div>
+              </div>
+            </div>
+            <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
+              SUPPORT NOW
+            </button>
+          </div>
         </div>
 
         <!-- Campaign 2 -->
-        <div class="p-6 bg-[#0B1B36] border border-white/10 rounded-2xl space-y-4 flex flex-col justify-between">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between group">
           <div>
-            <div class="flex justify-between items-start mb-2">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 uppercase">COMMUNITY DEVELOPMENT</span>
-              <span class="font-mono text-emerald-400 font-bold text-xs">20% Achieved</span>
+            <div class="h-44 w-full bg-slate-100 overflow-hidden">
+              <img src="/images/gallery/guraja_ro_plant_field.png" onerror="this.src='https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80'" alt="Community Development" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
-            <h4 class="font-bold text-white text-base leading-snug">Youth Community Study Hall & Digital Library</h4>
-            <p class="text-xs text-slate-300 mt-1">High-speed internet, desks, and competitive exam books for Guraja village students.</p>
-          </div>
-          <div class="space-y-2">
-            <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-amber-500 to-emerald-500 rounded-full" style="width: 20%"></div>
-            </div>
-            <div class="flex justify-between text-xs text-slate-400">
-              <span>Raised: <b class="text-white font-mono">₹30,000</b></span>
-              <span>Target: <b class="text-amber-300 font-mono">₹1,50,000</b></span>
+            <div class="p-4 space-y-1.5">
+              <h3 class="font-bold text-slate-900 text-base">Community Development</h3>
+              <p class="text-xs text-slate-500 line-clamp-2">Building a better tomorrow for our community with clean drinking water.</p>
             </div>
           </div>
-          <button onclick="openDonateModal('Study Hall & Library')" class="w-full py-2.5 bg-[#16335F] hover:bg-amber-500 hover:text-slate-950 text-amber-300 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
-            <i data-lucide="heart" class="w-3.5 h-3.5"></i>
-            <span>Support Study Hall Initiative</span>
-          </button>
+          <div class="p-4 pt-0 space-y-3">
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-mono">
+                <span class="font-bold text-slate-800">₹2,10,000 / <span class="text-slate-400">₹3,00,000</span></span>
+                <span class="font-bold text-slate-600">70%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-[#D4A244] rounded-full" style="width: 70%"></div>
+              </div>
+            </div>
+            <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
+              SUPPORT NOW
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Recent Public Donors Wall -->
-    <section class="p-6 bg-[#0B1B36] border border-white/10 rounded-2xl space-y-4">
-      <h3 class="text-base sm:text-lg font-bold text-white font-display">Recent Community Donors Wall (Privacy Protected)</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
-        <div class="p-3.5 bg-[#061224] rounded-xl border border-white/5 flex items-center justify-between">
-          <div><b class="text-white">Guraja NRI Association (USA)</b><div class="text-[10px] text-slate-400">RO Water Plant Sponsor</div></div>
-          <div class="text-right font-mono text-emerald-400 font-bold">₹50,000</div>
+        <!-- Campaign 3 -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-44 w-full bg-slate-100 overflow-hidden">
+              <img src="/images/gallery/village_youth_social_service.png" onerror="this.src='https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80'" alt="Healthcare Support" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div class="p-4 space-y-1.5">
+              <h3 class="font-bold text-slate-900 text-base">Healthcare Support</h3>
+              <p class="text-xs text-slate-500 line-clamp-2">Provide essential healthcare to those in need in Guraja village.</p>
+            </div>
+          </div>
+          <div class="p-4 pt-0 space-y-3">
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-mono">
+                <span class="font-bold text-slate-800">₹75,000 / <span class="text-slate-400">₹1,50,000</span></span>
+                <span class="font-bold text-slate-600">50%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-[#D4A244] rounded-full" style="width: 50%"></div>
+              </div>
+            </div>
+            <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
+              SUPPORT NOW
+            </button>
+          </div>
         </div>
-        <div class="p-3.5 bg-[#061224] rounded-xl border border-white/5 flex items-center justify-between">
-          <div><b class="text-white">T. Rama Krishna</b><div class="text-[10px] text-slate-400">Study Hall Computers</div></div>
-          <div class="text-right font-mono text-emerald-400 font-bold">₹30,000</div>
-        </div>
-        <div class="p-3.5 bg-[#061224] rounded-xl border border-white/5 flex items-center justify-between">
-          <div><b class="text-white">M. Venkateswara Rao</b><div class="text-[10px] text-slate-400">Janmashtami Sponsor</div></div>
-          <div class="text-right font-mono text-emerald-400 font-bold">₹25,000</div>
+
+        <!-- Campaign 4 -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-44 w-full bg-slate-100 overflow-hidden">
+              <img src="/images/gallery/youth_sports_cricket_tournament.png" onerror="this.src='https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80'" alt="Youth Empowerment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div class="p-4 space-y-1.5">
+              <h3 class="font-bold text-slate-900 text-base">Youth Empowerment</h3>
+              <p class="text-xs text-slate-500 line-clamp-2">Skill training and sports development for village youth.</p>
+            </div>
+          </div>
+          <div class="p-4 pt-0 space-y-3">
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-mono">
+                <span class="font-bold text-slate-800">₹90,000 / <span class="text-slate-400">₹2,00,000</span></span>
+                <span class="font-bold text-slate-600">45%</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-[#D4A244] rounded-full" style="width: 45%"></div>
+              </div>
+            </div>
+            <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
+              SUPPORT NOW
+            </button>
+          </div>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+
+  <!-- 3. Our Recent Work (Crisp White/Light Section) -->
+  <section class="bg-[#F8FAFC] text-slate-900 pb-16 px-4 lg:px-8 border-t border-slate-200">
+    <div class="max-w-6xl mx-auto space-y-8 pt-10">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl sm:text-3xl font-black font-display tracking-tight text-slate-900 uppercase">
+          OUR RECENT WORK
+        </h2>
+        <a href="#" onclick="handleTransferFundsClick()" class="text-xs sm:text-sm font-bold text-slate-600 hover:text-amber-600 flex items-center gap-1">
+          <span>View All Work →</span>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden group">
+          <div class="h-44 w-full bg-slate-100 overflow-hidden">
+            <img src="/images/gallery/annadanam_prasad_distribution.png" onerror="this.src='https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80'" alt="Food Distribution Drive" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+          <div class="p-4 space-y-1">
+            <h3 class="font-bold text-slate-900 text-sm">Food Distribution Drive</h3>
+            <p class="text-xs font-mono text-slate-400">May 2024</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden group">
+          <div class="h-44 w-full bg-slate-100 overflow-hidden">
+            <img src="/images/gallery/tree_plantation_drive.png" onerror="this.src='https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80'" alt="Tree Plantation" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+          <div class="p-4 space-y-1">
+            <h3 class="font-bold text-slate-900 text-sm">Tree Plantation</h3>
+            <p class="text-xs font-mono text-slate-400">April 2024</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden group">
+          <div class="h-44 w-full bg-slate-100 overflow-hidden">
+            <img src="/images/gallery/medical_camp_doctors.png" onerror="this.src='https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80'" alt="Medical Camp" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+          <div class="p-4 space-y-1">
+            <h3 class="font-bold text-slate-900 text-sm">Medical Camp</h3>
+            <p class="text-xs font-mono text-slate-400">April 2024</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl transition-all overflow-hidden group">
+          <div class="h-44 w-full bg-slate-100 overflow-hidden">
+            <img src="/images/gallery/youth_sports_kabaddi_event.png" onerror="this.src='https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=600&q=80'" alt="Youth Sports Event" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+          <div class="p-4 space-y-1">
+            <h3 class="font-bold text-slate-900 text-sm">Youth Sports Event</h3>
+            <p class="text-xs font-mono text-slate-400">March 2024</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Divine Krishna Silhouette Transition Banner -->
+  <section class="relative py-20 px-4 text-center overflow-hidden bg-gradient-to-b from-[#061224] via-[#08152B] to-[#040C18] border-t border-amber-500/20">
+    <div class="max-w-4xl mx-auto space-y-4 relative z-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/15 text-amber-300 text-xs font-mono font-bold rounded-full border border-amber-500/40 uppercase">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        <span>COMMUNITY PRIDE • GURAJA VILLAGE</span>
+      </div>
+
+      <h2 class="text-2xl sm:text-4xl font-black text-white font-display uppercase tracking-tight">
+        "Serving Humanity is True Devotion to Krishna"
+      </h2>
+
+      <p class="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+        Every contribution made towards education, clean drinking water, and cultural festivals is recorded with 100% mathematical integrity in our public books.
+      </p>
+
+      <div class="pt-3">
+        <button onclick="handleTransferFundsClick()" class="px-8 py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-[0_0_25px_rgba(212,162,68,0.4)]">
+          MAKE A DIFFERENCE TODAY
+        </button>
+      </div>
+    </div>
+  </section>
 
   <!-- Footer -->
   <footer class="mt-auto bg-[#030914] border-t border-white/10 py-8 px-4 text-center text-xs text-slate-500 space-y-2">
@@ -349,36 +428,175 @@
     <p class="text-[10px] text-slate-600">Official Youth Committee Operating Platform • Every Rupee Traceable</p>
   </footer>
 
-  <!-- Online Donation Modal -->
+  <!-- Authentication Modal (Register / Login) -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#08152B] border border-amber-500/40 rounded-3xl w-full max-w-md shadow-2xl p-6 space-y-4 relative">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1">✕</button>
+
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-base font-display">SKY</div>
+        <div>
+          <h3 class="text-base font-black text-white font-display uppercase tracking-tight">Sri Krishna Yadav Youth</h3>
+          <p class="text-[10px] text-amber-300 font-mono">Official Guraja Member Portal</p>
+        </div>
+      </div>
+
+      <div id="auth-prompt-box" class="p-3 bg-amber-500/15 border border-amber-500/30 rounded-xl text-xs text-amber-200 hidden"></div>
+
+      <!-- Mode Toggle -->
+      <div class="grid grid-cols-2 gap-1.5 p-1 bg-[#061021] rounded-xl border border-white/10 text-xs font-bold">
+        <button id="tab-btn-login" onclick="switchAuthTab('login')" class="py-2 rounded-lg bg-amber-500 text-slate-950">Sign In</button>
+        <button id="tab-btn-register" onclick="switchAuthTab('register')" class="py-2 rounded-lg text-slate-400 hover:text-white">Register</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Mobile / Email / Username *</label>
+          <input id="login-identifier" type="text" placeholder="e.g. 9848011111 or admin" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none" />
+        </div>
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Password *</label>
+          <input id="login-password" type="password" placeholder="Enter password" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none" />
+        </div>
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-lg">
+          SIGN IN SECURELY
+        </button>
+
+        <div class="pt-2 border-t border-white/10">
+          <span class="text-[10px] text-slate-400 block mb-1">Quick Demo Sign In:</span>
+          <div class="grid grid-cols-3 gap-1 text-[10px]">
+            <button type="button" onclick="quickLogin('SUPER_ADMIN', 'Venkata Krishna Yadav', '9848011111')" class="p-1.5 bg-[#0B1B36] text-amber-300 rounded border border-white/10">👑 Admin</button>
+            <button type="button" onclick="quickLogin('TREASURER', 'Ramesh Yadav', '9848044444')" class="p-1.5 bg-[#0B1B36] text-cyan-300 rounded border border-white/10">💰 Treasurer</button>
+            <button type="button" onclick="quickLogin('MEMBER', 'Pavan Kalyan Yadav', '9848055555')" class="p-1.5 bg-[#0B1B36] text-emerald-300 rounded border border-white/10">👥 Member</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-2.5 text-xs hidden">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Full Name (As per ID) *</label>
+          <input id="reg-name" type="text" placeholder="e.g. K. Venkata Ramana Yadav" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Mobile (10 digits) *</label>
+            <input id="reg-phone" type="tel" placeholder="98480 12345" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Village *</label>
+            <input id="reg-village" type="text" value="Guraja" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Password *</label>
+          <input id="reg-pass" type="password" placeholder="Create password" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
+        </div>
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-lg">
+          COMPLETE REGISTRATION
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Online Transfer Funds Modal -->
   <div id="donateModal" class="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 hidden">
-    <div class="bg-[#0B1B36] border border-amber-500/30 rounded-2xl w-full max-w-md shadow-2xl p-6 space-y-4">
+    <div class="bg-[#0B1B36] border border-amber-500/40 rounded-3xl w-full max-w-md shadow-2xl p-6 space-y-4 relative">
       <div class="flex justify-between items-center border-b border-white/10 pb-3">
-        <h3 class="text-base font-bold text-white font-display flex items-center gap-2">
-          <i data-lucide="heart" class="w-5 h-5 text-amber-400 fill-amber-400"></i>
-          Online Donation Gateway
-        </h3>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+            <i data-lucide="coins" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white font-display">Transfer Funds & Contribute</h3>
+            <p class="text-[10px] text-amber-200 font-mono" id="transfer-logged-user">Authenticating...</p>
+          </div>
+        </div>
         <button onclick="closeDonateModal()" class="text-slate-400 hover:text-white">✕</button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-300 font-semibold mb-1">Donor Name *</label>
-          <input id="donor-input-name" type="text" placeholder="e.g. N. Jagadeesh Yadav" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2 text-white outline-none" required />
+          <label class="block text-slate-300 font-semibold mb-1">Select Campaign</label>
+          <select id="transfer-campaign" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2.5 text-white outline-none">
+            <option value="Sri Krishna Janmashtami 2026 Grand Celebration">Sri Krishna Janmashtami 2026 Grand Celebration</option>
+            <option value="Youth Community Study Hall & Digital Library">Youth Community Study Hall & Digital Library</option>
+            <option value="Guraja Clean Drinking Water (RO Plant Maintenance)">Guraja Clean Drinking Water (RO Plant Maintenance)</option>
+            <option value="Emergency Medical Aid & Youth Blood Donation Wing">Emergency Medical Aid & Youth Blood Donation Wing</option>
+          </select>
         </div>
-        <div>
-          <label class="block text-slate-300 font-semibold mb-1">Mobile Phone</label>
-          <input id="donor-input-phone" type="tel" placeholder="e.g. 98480 12345" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2 text-white outline-none" />
-        </div>
+
         <div>
           <label class="block text-amber-300 font-semibold mb-1">Amount (₹) *</label>
-          <input id="donor-input-amount" type="number" value="1000" class="w-full bg-[#061224] border border-amber-500/40 rounded-xl px-3 py-2 text-amber-300 font-bold font-mono text-sm outline-none" min="1" required />
+          <input id="donor-input-amount" type="number" value="2000" class="w-full bg-[#061224] border border-amber-500/40 rounded-xl px-3 py-2 text-amber-300 font-bold font-mono text-base outline-none" min="1" required />
+        </div>
+
+        <div class="p-3 bg-[#061224] rounded-2xl border border-white/10 space-y-2 text-center">
+          <div class="font-mono text-amber-300 font-bold">UPI ID: skyguraja@sbi</div>
+          <div class="text-[11px] text-slate-400">Bank: State Bank of India, Guraja Branch • A/C: 38491029384</div>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">UPI Ref / UTR / Transaction No (Optional)</label>
+          <input id="transfer-ref" type="text" placeholder="e.g. 423891823901" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2 text-white outline-none" />
         </div>
       </div>
 
       <div class="pt-2 flex justify-end gap-2">
         <button onclick="closeDonateModal()" class="px-4 py-2 bg-[#16335F] text-slate-300 text-xs rounded-xl">Cancel</button>
-        <button onclick="submitDonation()" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-lg">
-          Complete Contribution
+        <button onclick="submitDonation()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-lg">
+          CONFIRM TRANSFER & GENERATE RECEIPT
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Make Changes Modal (Committee) -->
+  <div id="changesModal" class="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#08152B] border border-amber-500/40 rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-4 relative">
+      <button onclick="closeChangesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1">✕</button>
+
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+          <i data-lucide="edit-3" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-black text-white font-display uppercase tracking-tight">Record Committee Changes</h3>
+          <p class="text-[10px] text-emerald-400 font-mono">Submit Vouchers, Campaigns & Meetings</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Action Type</label>
+          <select id="change-type" class="w-full bg-[#061021] border border-white/15 rounded-xl px-3 py-2 text-white outline-none">
+            <option value="EXPENSE">Submit Expense Voucher</option>
+            <option value="CAMPAIGN">Propose New Campaign</option>
+            <option value="MEETING">Schedule Committee Meeting</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Title / Purpose *</label>
+          <input id="change-title" type="text" placeholder="e.g. Stage & Sound hire for Utlotsavam" class="w-full bg-[#061021] border border-white/15 rounded-xl px-3 py-2 text-white outline-none" required />
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Amount (₹) / Budget</label>
+          <input id="change-amount" type="number" placeholder="e.g. 15000" class="w-full bg-[#061021] border border-white/15 rounded-xl px-3 py-2 text-white font-mono outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Details / Notes</label>
+          <textarea id="change-notes" rows="3" placeholder="Enter voucher details, vendor name, or agenda..." class="w-full bg-[#061021] border border-white/15 rounded-xl px-3 py-2 text-white outline-none"></textarea>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end gap-2">
+        <button onclick="closeChangesModal()" class="px-4 py-2 bg-[#16335F] text-slate-300 text-xs rounded-xl">Cancel</button>
+        <button onclick="submitCommitteeChange()" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-lg">
+          SAVE & SUBMIT TO LEDGER
         </button>
       </div>
     </div>
@@ -387,25 +605,147 @@
   <script>
     lucide.createIcons();
 
-    function openDonateModal(campaign) {
+    let currentUser = null;
+    let pendingIntent = null;
+
+    try {
+      const saved = localStorage.getItem('sky_user');
+      if (saved) {
+        currentUser = JSON.parse(saved);
+        updateNavUser();
+      }
+    } catch(e) {}
+
+    function updateNavUser() {
+      const container = document.getElementById('auth-nav-container');
+      if (currentUser) {
+        container.innerHTML = `
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-[#0B1B36] border border-amber-500/30 rounded-xl text-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <b class="text-white">${currentUser.fullName.split(' ')[0]}</b>
+            <span class="text-[9px] text-amber-300 font-mono">(${currentUser.role})</span>
+            <button onclick="logoutUser()" class="text-rose-400 hover:text-rose-300 ml-1">✕</button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <button onclick="openAuthModal('login')" class="px-3 py-2 bg-[#0B1B36] hover:bg-[#12274A] border border-white/15 text-slate-200 text-xs font-semibold rounded-xl">Login</button>
+          <button onclick="openAuthModal('register')" class="px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-bold rounded-xl">Register</button>
+        `;
+      }
+    }
+
+    function openAuthModal(mode, prompt, intent) {
+      document.getElementById('authModal').classList.remove('hidden');
+      pendingIntent = intent;
+      switchAuthTab(mode || 'login');
+      const pBox = document.getElementById('auth-prompt-box');
+      if (prompt) {
+        pBox.innerText = prompt;
+        pBox.classList.remove('hidden');
+      } else {
+        pBox.classList.add('hidden');
+      }
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function switchAuthTab(mode) {
+      const isLogin = mode === 'login';
+      document.getElementById('loginForm').classList.toggle('hidden', !isLogin);
+      document.getElementById('registerForm').classList.toggle('hidden', isLogin);
+      document.getElementById('tab-btn-login').className = isLogin ? 'py-2 rounded-lg bg-amber-500 text-slate-950 font-bold' : 'py-2 rounded-lg text-slate-400';
+      document.getElementById('tab-btn-register').className = !isLogin ? 'py-2 rounded-lg bg-amber-500 text-slate-950 font-bold' : 'py-2 rounded-lg text-slate-400';
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('login-identifier').value;
+      quickLogin('MEMBER', id || 'K. Venkata Ramana', '9848011111');
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const phone = document.getElementById('reg-phone').value;
+      quickLogin('MEMBER', name, phone);
+    }
+
+    function quickLogin(role, name, phone) {
+      currentUser = { fullName: name, phone: phone, role: role };
+      localStorage.setItem('sky_user', JSON.stringify(currentUser));
+      updateNavUser();
+      closeAuthModal();
+      confetti({ particleCount: 80, spread: 70 });
+      if (pendingIntent === 'transfer_funds') openDonateModal();
+      else if (pendingIntent === 'make_changes') openChangesModal();
+      pendingIntent = null;
+    }
+
+    function logoutUser() {
+      currentUser = null;
+      localStorage.removeItem('sky_user');
+      updateNavUser();
+    }
+
+    function handleTransferFundsClick() {
+      if (!currentUser) {
+        openAuthModal('register', 'Please register or sign in first to transfer funds.', 'transfer_funds');
+      } else {
+        openDonateModal();
+      }
+    }
+
+    function handleMakeChangesClick() {
+      if (!currentUser) {
+        openAuthModal('login', 'Please sign in or register to make committee changes.', 'make_changes');
+      } else {
+        openChangesModal();
+      }
+    }
+
+    function openDonateModal() {
+      if (!currentUser) {
+        openAuthModal('register', 'Please register or sign in first to transfer funds.', 'transfer_funds');
+        return;
+      }
+      document.getElementById('transfer-logged-user').innerText = `Contributor: ${currentUser.fullName} (${currentUser.phone})`;
       document.getElementById('donateModal').classList.remove('hidden');
     }
+
     function closeDonateModal() {
       document.getElementById('donateModal').classList.add('hidden');
     }
 
     function submitDonation() {
-      const name = document.getElementById('donor-input-name').value;
       const amt = document.getElementById('donor-input-amount').value;
-      if (!name || !amt) {
-        alert('Please fill your name and amount');
-        return;
-      }
-      confetti({ particleCount: 100, spread: 80 });
-      alert(`Thank you ${name}! Your donation of ₹${amt} was recorded into the Sri Krishna Yadav Youth Guraja ledger.`);
+      const campaign = document.getElementById('transfer-campaign').value;
+      if (!amt || Number(amt) <= 0) return;
+      confetti({ particleCount: 120, spread: 80 });
+      alert(`Thank you, ${currentUser.fullName}! Your transfer of ₹${Number(amt).toLocaleString('en-IN')} for "${campaign}" has been recorded. Official receipt SKY-REC-2026-${Math.floor(1000 + Math.random()*9000)} generated.`);
       closeDonateModal();
       document.getElementById('kpi-collections').innerText = `₹${(130000 + Number(amt)).toLocaleString('en-IN')}`;
       document.getElementById('kpi-balance').innerText = `₹${(69500 + Number(amt)).toLocaleString('en-IN')}`;
+    }
+
+    function openChangesModal() {
+      document.getElementById('changesModal').classList.remove('hidden');
+    }
+
+    function closeChangesModal() {
+      document.getElementById('changesModal').classList.add('hidden');
+    }
+
+    function submitCommitteeChange() {
+      const title = document.getElementById('change-title').value;
+      const amt = document.getElementById('change-amount').value;
+      const type = document.getElementById('change-type').value;
+      if (!title) { alert('Please fill in title'); return; }
+      confetti({ particleCount: 80, spread: 70 });
+      alert(`Success! ${type} entry "${title}" (${amt ? '₹' + amt : 'Recorded'}) submitted for Sri Krishna Yadav Youth Guraja records.`);
+      closeChangesModal();
     }
 
     function verifyReceipt() {

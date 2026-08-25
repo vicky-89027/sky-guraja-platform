@@ -1,215 +1,185 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { MapPin, Phone, Mail, Send, CheckCircle2, MessageCircle } from 'lucide-react';
 
 export const ContactPage: React.FC = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [honeypot, setHoneypot] = useState(''); // Anti-spam honeypot
   const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (honeypot) return; // Silent discard for bot spam
-    setSending(true);
-
-    setTimeout(() => {
-      setSending(false);
-      setSent(true);
-      setName('');
-      setPhone('');
-      setEmail('');
-      setSubject('');
-      setMessage('');
-      setTimeout(() => setSent(false), 5000);
-    }, 1000);
+    setSent(true);
+    setName('');
+    setPhone('');
+    setEmail('');
+    setMessage('');
+    setTimeout(() => setSent(false), 6000);
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 lg:px-8 py-10 space-y-12">
-      <div className="text-center space-y-3 max-w-2xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl font-black text-white font-display uppercase tracking-tight">
-          Contact Sri Krishna Yadav Youth Guraja
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-300">
-          Have questions, wish to support a campaign, or need emergency assistance? Reach out to our village youth secretariat.
-        </p>
+    <div className="w-full bg-[#F8FAFC] text-slate-900">
+      {/* Dark Header Banner */}
+      <div className="bg-gradient-to-b from-[#050E1C] via-[#08152B] to-[#040C18] text-white py-14 px-4 text-center border-b border-amber-500/20">
+        <div className="max-w-4xl mx-auto space-y-2">
+          <span className="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono">
+            REACH OUT TO US
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black font-display uppercase tracking-tight text-white">
+            CONTACT US
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
+            Have inquiries or wish to collaborate with our committee? Get in touch with our team.
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Contact Information & Office Card */}
-        <div className="space-y-6">
-          <div className="p-8 bg-[#0B1B36] border border-amber-500/30 rounded-3xl space-y-6 shadow-xl">
-            <h2 className="text-xl font-bold text-white font-display">
-              Headquarters & Secretariat
+      {/* Main Content Area */}
+      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Left Column: Get In Touch Card */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-8 space-y-6">
+            <h2 className="text-2xl font-black font-display text-slate-900">
+              Get in Touch
             </h2>
 
-            <div className="space-y-4 text-xs text-slate-300">
+            <div className="space-y-4 text-xs text-slate-600">
               <div className="flex items-start gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400">
-                  <MapPin className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#D4A244] flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-4 h-4" />
                 </div>
                 <div>
-                  <b className="text-white text-sm block">Yadav Youth Bhavan</b>
-                  <span>Main Road, Guraja Village, Krishna District, Andhra Pradesh - 521321, India</span>
+                  <b className="text-slate-900 text-sm block">Address</b>
+                  <span>Yadav Youth Bhavan, Main Road, Guraja Village, Krishna District, Andhra Pradesh - 521321, India</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400">
-                  <Phone className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-4 h-4" />
                 </div>
                 <div>
-                  <b className="text-white text-sm block">Helpline & WhatsApp</b>
-                  <span>+91 98480 22334 / +91 94401 55678</span>
+                  <b className="text-slate-900 text-sm block">Phone Number</b>
+                  <span>+91 98480 22334</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-400">
-                  <Mail className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-4 h-4" />
                 </div>
                 <div>
-                  <b className="text-white text-sm block">Official Correspondence</b>
-                  <span>contact@skyguraja.org / support@skyguraja.org</span>
+                  <b className="text-slate-900 text-sm block">Email Address</b>
+                  <span>info@skyouthguraja.org</span>
                 </div>
               </div>
+            </div>
 
+            {/* Follow Us */}
+            <div className="pt-4 border-t border-slate-100 space-y-2">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                Follow Us
+              </span>
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-400">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <b className="text-white text-sm block">Office Timings</b>
-                  <span>Monday - Sunday: 08:00 AM - 08:00 PM</span>
-                </div>
+                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-[#D4A244] hover:text-slate-950 flex items-center justify-center transition-all">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  </svg>
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-[#D4A244] hover:text-slate-950 flex items-center justify-center transition-all">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-[#D4A244] hover:text-slate-950 flex items-center justify-center transition-all">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                  </svg>
+                </a>
+                <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-[#D4A244] hover:text-slate-950 flex items-center justify-center transition-all">
+                  <MessageCircle className="w-4 h-4" />
+                </a>
               </div>
             </div>
           </div>
 
-          {/* Social Channels Card */}
-          <div className="p-6 bg-[#0B1B36] border border-white/10 rounded-3xl space-y-3 shadow-xl">
-            <h3 className="text-sm font-bold text-white font-display">Official Social Channels</h3>
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <a
-                href="https://instagram.com/sky_youth_guraja"
-                target="_blank"
-                rel="noreferrer"
-                className="p-3 bg-[#061224] rounded-xl border border-white/5 hover:border-amber-500/40 text-slate-300 hover:text-white"
-              >
-                <div className="font-bold">Instagram</div>
-                <div className="text-[10px] text-amber-400">@sky_youth_guraja</div>
-              </a>
-              <a
-                href="https://facebook.com/skyguraja"
-                target="_blank"
-                rel="noreferrer"
-                className="p-3 bg-[#061224] rounded-xl border border-white/5 hover:border-amber-500/40 text-slate-300 hover:text-white"
-              >
-                <div className="font-bold">Facebook</div>
-                <div className="text-[10px] text-emerald-400">@skyguraja</div>
-              </a>
-            </div>
-          </div>
-        </div>
+          {/* Right Column: Contact Form */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-8 space-y-5">
+            <h2 className="text-2xl font-black font-display text-slate-900">
+              Send a Message
+            </h2>
 
-        {/* Anti-Spam Contact Form */}
-        <div className="p-8 bg-[#0B1B36] border border-white/10 rounded-3xl shadow-xl space-y-5">
-          <h2 className="text-xl font-bold text-white font-display">Send a Message to Committee</h2>
-          <p className="text-xs text-slate-300">We respond to all community inquiries within 24 hours.</p>
+            {sent && (
+              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <span>Thank you! Your message has been sent to Sri Krishna Yadav Youth Guraja.</span>
+              </div>
+            )}
 
-          {sent && (
-            <div className="p-4 bg-emerald-500/15 border border-emerald-500/40 rounded-2xl text-xs text-emerald-300 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-              <span>Thank you! Your message has been received by the Guraja youth committee.</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-            {/* Honeypot hidden input for spam bots */}
-            <input
-              type="text"
-              name="company_trap"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-              className="hidden"
-              tabIndex={-1}
-              autoComplete="off"
-            />
-
-            <div>
-              <label className="block text-slate-300 font-semibold mb-1">Your Full Name *</label>
-              <input
-                type="text"
-                placeholder="e.g. S. Jagadeesh Yadav"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Mobile Phone *</label>
+                <label className="block text-slate-700 font-semibold mb-1">Your Name *</label>
                 <input
-                  type="tel"
-                  placeholder="98480 12345"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                  type="text"
                   required
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-[#D4A244] rounded-xl px-3.5 py-2.5 text-slate-900 outline-none"
                 />
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-semibold mb-1">Phone Number *</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="e.g. 98480 12345"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-300 focus:border-[#D4A244] rounded-xl px-3.5 py-2.5 text-slate-900 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-semibold mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-300 focus:border-[#D4A244] rounded-xl px-3.5 py-2.5 text-slate-900 outline-none"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Email Address</label>
-                <input
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                <label className="block text-slate-700 font-semibold mb-1">Your Message *</label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Write your message here..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 focus:border-[#D4A244] rounded-xl px-3.5 py-2.5 text-slate-900 outline-none"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-slate-300 font-semibold mb-1">Subject</label>
-              <input
-                type="text"
-                placeholder="e.g. Inquiry about Janmashtami celebration / Donation"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="w-full bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-slate-300 font-semibold mb-1">Your Message *</label>
-              <textarea
-                rows={4}
-                placeholder="Write your message or inquiry here..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={sending}
-              className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
-            >
-              <Send className="w-4 h-4" />
-              <span>{sending ? 'Sending Message...' : 'Submit Message'}</span>
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="w-full py-3 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow transition-all flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                <span>SEND MESSAGE</span>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default ContactPage;

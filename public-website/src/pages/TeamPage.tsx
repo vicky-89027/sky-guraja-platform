@@ -118,18 +118,30 @@ export const TeamPage: React.FC<TeamPageProps> = ({ user }) => {
 
   return (
     <div className="w-full bg-[#F8FAFC] text-slate-900">
-      {/* Dark Header Banner */}
-      <div className="bg-gradient-to-b from-[#050E1C] via-[#08152B] to-[#040C18] text-white py-14 px-4 text-center border-b border-amber-500/20 relative">
-        <div className="max-w-4xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 border border-amber-500/30 rounded-full text-[11px] font-mono font-bold text-amber-300 uppercase">
+      {/* Dark Header Banner with Lord Krishna Peacock Deity Artwork Background */}
+      <div className="relative py-16 px-4 text-center border-b border-amber-500/25 overflow-hidden bg-[#030914]">
+        {/* Background Artwork */}
+        <div
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-60 mix-blend-screen pointer-events-none"
+          style={{
+            backgroundImage: `url('/images/team_header_krishna_bg.png')`
+          }}
+        />
+
+        {/* Subtle Vignette & Central Glow */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#030914]/80 via-transparent to-[#030914] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[300px] bg-amber-500/15 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto space-y-3 relative z-10">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500/15 border border-amber-500/35 rounded-full text-[11px] font-mono font-bold text-amber-300 uppercase shadow-lg backdrop-blur-sm">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>COMMITTEE LEADERSHIP & ROSTER</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-black font-display uppercase tracking-tight text-white">
+          <h1 className="text-3xl sm:text-5xl font-black font-serif uppercase tracking-[0.15em] text-transparent bg-clip-text bg-gradient-to-b from-[#FFFBEB] via-[#FBBF24] to-[#D97706] drop-shadow-[0_4px_25px_rgba(212,162,68,0.4)]">
             OUR TEAM
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
+          <p className="text-xs sm:text-sm text-amber-100/80 max-w-xl mx-auto font-medium leading-relaxed">
             Dedicated youth committee members who volunteer their time, energy, and leadership to serve Guraja village.
           </p>
 
@@ -138,7 +150,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ user }) => {
             <div className="pt-3 flex items-center justify-center gap-3">
               <button
                 onClick={handleOpenAdd}
-                className="px-4 py-2 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center gap-1.5 hover:from-[#E5B869] transition-all"
+                className="px-4 py-2 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center gap-1.5 hover:from-[#E5B869] transition-all transform active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Team Member</span>

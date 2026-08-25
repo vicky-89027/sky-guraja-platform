@@ -13,19 +13,23 @@ export const SkyLogo: React.FC<SkyLogoProps> = ({
 }) => {
   const sizeMap = {
     sm: { img: 'w-10 h-10', text: 'text-xs', sub: 'text-[9px]' },
-    md: { img: 'w-14 h-14', text: 'text-sm sm:text-base', sub: 'text-[10px]' },
+    md: { img: 'w-12 h-12 sm:w-14 sm:h-14', text: 'text-sm sm:text-base', sub: 'text-[10px]' },
     lg: { img: 'w-24 h-24', text: 'text-xl', sub: 'text-xs' },
-    xl: { img: 'w-36 h-36 sm:w-44 sm:h-44', text: 'text-2xl sm:text-4xl', sub: 'text-xs sm:text-sm' }
+    xl: { img: 'w-40 h-40 sm:w-52 sm:h-52', text: 'text-2xl sm:text-4xl', sub: 'text-xs sm:text-sm' }
   };
 
   const currentSize = sizeMap[size];
 
-  // The official master monogram image uploaded by user
+  // Seamless in-built blended master monogram (zero box edges, natural glow onto backdrop)
   const MonogramImg = (
     <img
       src="/images/sky_official_monogram.png"
       alt="SKY Monogram"
-      className={`${currentSize.img} object-contain rounded-full drop-shadow-[0_0_25px_rgba(245,158,11,0.55)] flex-shrink-0 transition-transform duration-300 group-hover:scale-105`}
+      className={`${currentSize.img} object-contain mix-blend-screen filter drop-shadow-[0_0_35px_rgba(245,158,11,0.75)] flex-shrink-0 transition-transform duration-300 group-hover:scale-105`}
+      style={{
+        maskImage: 'radial-gradient(circle at center, black 62%, transparent 98%)',
+        WebkitMaskImage: 'radial-gradient(circle at center, black 62%, transparent 98%)'
+      }}
     />
   );
 
@@ -41,7 +45,7 @@ export const SkyLogo: React.FC<SkyLogoProps> = ({
     return (
       <div className={`flex flex-col items-center text-center space-y-4 ${className}`}>
         <div className="relative group">
-          <div className="absolute -inset-4 bg-amber-500/25 rounded-full blur-2xl group-hover:bg-amber-500/40 transition-all" />
+          <div className="absolute -inset-6 bg-amber-500/25 rounded-full blur-3xl group-hover:bg-amber-500/40 transition-all" />
           <div className="relative">{MonogramImg}</div>
         </div>
 
@@ -91,7 +95,7 @@ export const SkyLogo: React.FC<SkyLogoProps> = ({
         <img
           src="/images/sky_official_monogram.png"
           alt="SKY Logo"
-          className="w-16 h-16 object-contain rounded-full drop-shadow-md"
+          className="w-16 h-16 object-contain rounded-full drop-shadow-md mix-blend-multiply"
         />
         <div className="text-left">
           <div className="font-serif font-black text-slate-900 tracking-wider text-base uppercase leading-tight">

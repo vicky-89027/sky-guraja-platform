@@ -7,9 +7,7 @@ import {
   Layers,
   Users,
   Coins,
-  TrendingUp,
-  Heart,
-  ShieldCheck
+  TrendingUp
 } from 'lucide-react';
 
 interface HomePageProps {
@@ -99,35 +97,35 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="w-full bg-[#050E1C]">
       {/* ========================================================
-          1. HERO SECTION (Exact Reference Extraction)
+          1. HERO SECTION (Exact Seamless Reference Extraction)
           ======================================================== */}
-      <section className="relative pt-8 pb-24 px-4 lg:px-8 text-center overflow-hidden min-h-[92vh] flex flex-col justify-between items-center bg-[#050E1C]">
+      <section className="relative pt-6 pb-24 px-4 lg:px-8 text-center overflow-hidden min-h-[92vh] flex flex-col justify-between items-center bg-[#050E1C]">
         {/* Cinematic Temple Gopuram Backdrop with Golden Aura Glow */}
         <div
-          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40 mix-blend-screen pointer-events-none"
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-45 mix-blend-screen pointer-events-none"
           style={{
             backgroundImage: `url('/images/hero_temple_backdrop.jpg')`
           }}
         />
 
         {/* Subtle Dark Vignette & Gradient Fog */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050E1C]/80 via-transparent to-[#050E1C] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050E1C]/85 via-transparent to-[#050E1C] pointer-events-none" />
 
         {/* Radiant Central Glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-amber-500/20 rounded-full blur-[150px] pointer-events-none" />
 
-        <div className="max-w-5xl mx-auto space-y-6 relative z-10 my-auto pt-6">
-          {/* Centered Grand SKY Monogram Logo */}
+        <div className="max-w-5xl mx-auto space-y-6 relative z-10 my-auto pt-4">
+          {/* Centered Grand Seamless SKY Monogram Logo (Built-In Blended) */}
           <div className="flex justify-center transform hover:scale-105 transition-transform duration-700">
             <div className="relative">
-              <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-2xl transform scale-125" />
-              <SkyLogo variant="icon" size="xl" className="relative z-10 drop-shadow-[0_10px_35px_rgba(212,162,68,0.5)]" />
+              <div className="absolute -inset-8 bg-amber-400/25 rounded-full blur-3xl pointer-events-none" />
+              <SkyLogo variant="icon" size="xl" className="relative z-10" />
             </div>
           </div>
 
           {/* Grand Organization Title */}
-          <div className="space-y-1.5 pt-2">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-serif uppercase tracking-[0.18em] text-transparent bg-clip-text bg-gradient-to-b from-[#FFF3C4] via-[#F5BD55] to-[#B38020] drop-shadow-[0_4px_25px_rgba(212,162,68,0.35)]">
+          <div className="space-y-1.5 pt-1">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-serif uppercase tracking-[0.18em] text-transparent bg-clip-text bg-gradient-to-b from-[#FFF3C4] via-[#F5BD55] to-[#B38020] drop-shadow-[0_4px_25px_rgba(212,162,68,0.4)]">
               SRI KRISHNA YADAV
             </h1>
             <h2 className="text-xl sm:text-3xl lg:text-4xl font-black font-sans uppercase tracking-[0.45em] sm:tracking-[0.6em] text-[#FCD34D] drop-shadow-md">
@@ -158,7 +156,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
             <button
               onClick={() => onOpenDonate()}
               className="px-8 py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] hover:to-[#D4A244] text-slate-950 font-black text-xs sm:text-sm tracking-widest uppercase rounded-xl shadow-[0_0_35px_rgba(212,162,68,0.45)] hover:shadow-[0_0_45px_rgba(212,162,68,0.65)] transition-all transform active:scale-95"

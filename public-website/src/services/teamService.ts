@@ -1,156 +1,165 @@
+import {
+  getSupabaseMembers,
+  upsertSupabaseMember,
+  deleteSupabaseMember,
+  clearAllSupabaseMembers,
+  SupabaseCommitteeMember
+} from './supabaseService';
+
 export interface TeamMember {
   id: string;
   name: string;
   role: string;
   bio: string;
+  image: string;
   phone?: string;
   email?: string;
-  username?: string;
   initials: string;
-  image: string;
+  username?: string;
   order: number;
 }
 
-const STORAGE_KEY_TEAM = 'sky_team_members_v2026_live';
+const STORAGE_KEY_TEAM = 'sky_team_members_dynamic_v2026';
 
-export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
-  {
-    id: 'team-01',
-    name: 'Nagaraju Yadav',
-    role: 'President',
-    bio: 'Leading Sri Krishna Yadav Youth with grassroots community experience in Guraja. Dedicated to cultural unity, temple festivals, youth welfare, and village development.',
-    initials: 'NY',
-    phone: '+91 98480 22222',
-    email: 'president@skyguraja.org',
-    username: 'president',
-    image: '/images/gallery/guraja_youth_volunteers_group.png',
-    order: 1
-  },
-  {
-    id: 'team-02',
-    name: 'Suresh Kumar Yadav',
-    role: 'General Secretary',
-    bio: 'Coordinates village cultural drives, event operations, youth volunteers, keeps official records of committee meetings, and public resolutions.',
-    initials: 'SY',
-    phone: '+91 98480 33333',
-    email: 'secretary@skyguraja.org',
-    username: 'secretary',
-    image: '/images/gallery/youth_tractor_ratham_procession.png',
-    order: 2
-  },
-  {
-    id: 'team-03',
-    name: 'Ramesh Yadav',
-    role: 'Treasurer',
-    bio: 'Manages the double-entry accounting ledger, digital receipt verification, vendor disbursements, collections, and verified bank records.',
-    initials: 'RY',
-    phone: '+91 98480 44444',
-    email: 'treasurer@skyguraja.org',
-    username: 'treasurer',
-    image: '/images/gallery/krishna_swamy_golden_arch.jpg',
-    order: 3
-  },
-  {
-    id: 'team-04',
-    name: 'Venkatesh Yadav',
-    role: 'Joint Secretary',
-    bio: 'Oversees youth festival rallies, sound & lighting setup, stage arrangements, and village community welfare programs.',
-    initials: 'VY',
-    phone: '+91 98480 55555',
-    email: 'jointsec@skyguraja.org',
-    username: 'jointsec',
-    image: '/images/gallery/guraja_youth_procession_rally.png',
-    order: 4
-  },
-  {
-    id: 'team-05',
-    name: 'PAVAN YADAV',
-    role: 'YOUTH COORDINATOR',
-    bio: 'Directs youth volunteer squads for Janmashtami, blood donation drives, educational library initiatives, and disaster relief assistance.',
-    initials: 'PY',
-    phone: '+91 98480 66666',
-    email: 'pavan@skyguraja.org',
-    username: 'pavan',
-    image: '/images/gallery/marble_krishna_alankaram.jpg',
-    order: 5
-  },
-  {
-    id: 'team-06',
-    name: 'SIVA NAGARAJU YADAV',
-    role: 'COMMITTEE IN-CHARGE',
-    bio: 'Manages youth sports tournaments, ground preparations, emergency community transport, and volunteer equipment logistics.',
-    initials: 'SN',
-    phone: '+91 98480 77777',
-    email: 'sivanagaraju@skyguraja.org',
-    username: 'sivanagaraju',
-    image: '/images/gallery/guraja_night_utsav_sound_rally.png',
-    order: 6
-  },
-  {
-    id: 'team-07',
-    name: 'Koteswara Rao Yadav',
-    role: 'MEMBER',
-    bio: 'Organizes temple Utsavams, Bhajana programs, Utlotsavam (Dahi Handi) coordination, and stage artist felicitations.',
-    initials: 'KY',
-    phone: '+91 98480 88888',
-    email: 'koti.yadav@skyguraja.org',
-    username: 'koteswara',
-    image: '/images/gallery/radha_krishna_murti_alankaram.jpg',
-    order: 7
-  },
-  {
-    id: 'team-08',
-    name: 'S GANESH YADAV',
-    role: 'CHIEF COORDINATOR',
-    bio: 'Oversees digital transparency portal, verified receipt infrastructure, cloud database integrity, and overall organization strategy.',
-    initials: 'SG',
-    phone: '+91 98480 11111',
-    email: 'admin@skyguraja.org',
-    username: 'admin',
-    image: '/images/gallery/sky_official_brand_concept.jpg',
-    order: 8
-  },
-  {
-    id: 'team-09',
-    name: 'G PHANI KUMAR YADAV',
-    role: 'FINANCIAL AUDITOR & ADVISOR',
-    bio: 'Conducts regular audit reviews of all double-entry ledger vouchers, verified bank statements, and tax compliance for SKY Guraja.',
-    initials: 'GP',
-    phone: '+91 98480 99999',
-    email: 'auditor@skyguraja.org',
-    username: 'auditor',
-    image: '/images/gallery/krishna_flute_gomata.jpg',
-    order: 9
-  },
-  {
-    id: 'team-10',
-    name: 'T SIRNU YADAV',
-    role: 'YOUTH COORDINATOR',
-    bio: 'Dedicated youth devotee and community contributor supporting temple Annadanam and village sanitation drives.',
-    initials: 'TS',
-    phone: '+91 98480 12345',
-    email: 'srinu@skyguraja.org',
-    username: 'donor',
-    image: '/images/gallery/guraja_women_holi_vasantotsavam.jpg',
-    order: 10
-  }
-];
+// Starts clean and empty so the user can add all members dynamically to Supabase
+export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [];
 
 export function getTeamMembers(): TeamMember[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_TEAM);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length >= 4) {
-        return parsed.sort((a, b) => a.order - b.order);
+      if (Array.isArray(parsed)) {
+        return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
       }
     }
   } catch (err) {
     console.error('Error reading team members from storage:', err);
   }
-  // Initialize defaults
-  saveTeamMembers(DEFAULT_TEAM_MEMBERS);
-  return DEFAULT_TEAM_MEMBERS;
+  return [];
+}
+
+export function saveTeamMembers(members: TeamMember[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(members));
+  } catch (err) {
+    console.error('Error saving team members to storage:', err);
+  }
+}
+
+/**
+ * Fetch live data from Supabase and cache locally
+ */
+export async function hydrateTeamFromSupabase(): Promise<TeamMember[]> {
+  try {
+    const cloudMembers = await getSupabaseMembers();
+    if (cloudMembers && Array.isArray(cloudMembers)) {
+      const mapped: TeamMember[] = cloudMembers.map((m, idx) => ({
+        id: m.id,
+        name: m.name,
+        role: m.role,
+        bio: m.bio || '',
+        phone: m.phone || undefined,
+        email: m.email || undefined,
+        initials: m.initials || m.name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2),
+        image: m.image || '/images/gallery/guraja_youth_volunteers_group.png',
+        order: m.order ?? (idx + 1)
+      }));
+      saveTeamMembers(mapped);
+      return mapped;
+    }
+  } catch (err) {
+    console.error('Failed hydrating team from Supabase:', err);
+  }
+  return getTeamMembers();
+}
+
+/**
+ * Add or update member dynamically in Supabase and local storage
+ */
+export async function addOrUpdateTeamMember(
+  member: Partial<TeamMember> & { name: string; role: string; bio: string; image: string }
+): Promise<TeamMember> {
+  const current = getTeamMembers();
+  const initials = member.name
+    .split(' ')
+    .map((w) => w.charAt(0).toUpperCase())
+    .slice(0, 2)
+    .join('');
+
+  let targetMember: TeamMember;
+
+  if (member.id) {
+    const idx = current.findIndex((m) => m.id === member.id);
+    targetMember = {
+      id: member.id,
+      name: member.name.trim(),
+      role: member.role.trim(),
+      bio: member.bio.trim(),
+      phone: member.phone?.trim() || undefined,
+      email: member.email?.trim() || undefined,
+      initials,
+      image: member.image || '/images/gallery/guraja_youth_volunteers_group.png',
+      order: idx !== -1 ? current[idx].order : current.length + 1
+    };
+    if (idx !== -1) {
+      current[idx] = targetMember;
+    } else {
+      current.push(targetMember);
+    }
+  } else {
+    targetMember = {
+      id: `mem-${Date.now()}`,
+      name: member.name.trim(),
+      role: member.role.trim(),
+      bio: member.bio.trim(),
+      phone: member.phone?.trim() || undefined,
+      email: member.email?.trim() || undefined,
+      initials,
+      image: member.image || '/images/gallery/guraja_youth_volunteers_group.png',
+      order: current.length + 1
+    };
+    current.push(targetMember);
+  }
+
+  saveTeamMembers(current);
+
+  // Sync to Supabase in real-time
+  await upsertSupabaseMember({
+    id: targetMember.id,
+    name: targetMember.name,
+    role: targetMember.role,
+    bio: targetMember.bio,
+    phone: targetMember.phone,
+    email: targetMember.email,
+    initials: targetMember.initials,
+    image: targetMember.image,
+    order: targetMember.order
+  });
+
+  return targetMember;
+}
+
+/**
+ * Delete a member from Supabase and local storage
+ */
+export async function deleteTeamMember(id: string): Promise<void> {
+  const current = getTeamMembers().filter((m) => m.id !== id);
+  saveTeamMembers(current);
+  await deleteSupabaseMember(id);
+}
+
+/**
+ * Clear all members from Supabase and local storage
+ */
+export async function removeAllTeamMembers(): Promise<void> {
+  saveTeamMembers([]);
+  await clearAllSupabaseMembers();
+}
+
+export function resetTeamMembersToDefault(): TeamMember[] {
+  saveTeamMembers([]);
+  return [];
 }
 
 export function getMemberPhoto(identifier: string): string {
@@ -167,98 +176,3 @@ export function getMemberPhoto(identifier: string): string {
   );
   return found?.image || '/images/gallery/guraja_youth_volunteers_group.png';
 }
-
-import { syncMembersToSupabase, fetchSupabaseMembers } from './supabaseService';
-
-export async function hydrateTeamFromSupabase(): Promise<TeamMember[]> {
-  try {
-    const cloudMembers = await fetchSupabaseMembers();
-    if (cloudMembers && cloudMembers.length > 0) {
-      const mapped: TeamMember[] = cloudMembers.map((m) => ({
-        id: m.id,
-        name: m.name,
-        role: m.role,
-        bio: m.bio || '',
-        phone: m.phone || undefined,
-        email: m.email || undefined,
-        initials: m.initials || m.name.split(' ').map((w: string) => w[0]).join(''),
-        image: m.image || '/images/gallery/guraja_youth_volunteers_group.png',
-        order: m.order || 1
-      }));
-      localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(mapped));
-      return mapped;
-    }
-  } catch (err) {
-    console.error('Failed hydrating team from Supabase:', err);
-  }
-  return getTeamMembers();
-}
-
-export function saveTeamMembers(members: TeamMember[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY_TEAM, JSON.stringify(members));
-    
-    // 1. Sync to Supabase Cloud Database (if configured)
-    syncMembersToSupabase(members).catch(() => {});
-
-    // 2. Background sync with backend database (if reachable)
-    fetch('/api/members/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ members })
-    }).catch(() => {});
-  } catch (err) {
-    console.error('Error saving team members to storage:', err);
-  }
-}
-
-export function addOrUpdateTeamMember(member: Partial<TeamMember> & { name: string; role: string; bio: string; image: string }): TeamMember {
-  const current = getTeamMembers();
-  const initials = member.name
-    .split(' ')
-    .map((w) => w.charAt(0).toUpperCase())
-    .slice(0, 2)
-    .join('');
-
-  if (member.id) {
-    // Update
-    const idx = current.findIndex((m) => m.id === member.id);
-    if (idx !== -1) {
-      current[idx] = {
-        ...current[idx],
-        ...member,
-        initials
-      };
-      saveTeamMembers(current);
-      return current[idx];
-    }
-  }
-
-  // Create New
-  const newMember: TeamMember = {
-    id: `team-${Date.now()}`,
-    name: member.name.trim(),
-    role: member.role.trim(),
-    bio: member.bio.trim(),
-    phone: member.phone?.trim() || undefined,
-    email: member.email?.trim() || undefined,
-    initials,
-    image: member.image || '/images/gallery/guraja_youth_volunteers_group.png',
-    order: current.length + 1
-  };
-
-  current.push(newMember);
-  saveTeamMembers(current);
-  return newMember;
-}
-
-export function deleteTeamMember(id: string): void {
-  const current = getTeamMembers().filter((m) => m.id !== id);
-  saveTeamMembers(current);
-}
-
-export function resetTeamMembersToDefault(): TeamMember[] {
-  saveTeamMembers(DEFAULT_TEAM_MEMBERS);
-  return DEFAULT_TEAM_MEMBERS;
-}
-

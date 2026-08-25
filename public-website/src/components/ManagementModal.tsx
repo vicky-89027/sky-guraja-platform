@@ -31,6 +31,7 @@ import {
   getTeamMembers,
   addOrUpdateTeamMember,
   deleteTeamMember,
+  removeAllTeamMembers,
   resetTeamMembersToDefault,
   TeamMember,
   saveTeamMembers
@@ -150,10 +151,10 @@ export const ManagementModal: React.FC<ManagementModalProps> = ({
     }
   };
 
-  const handleResetTeamDefaults = () => {
-    if (window.confirm('Reset committee roster to default official entries?')) {
-      resetTeamMembersToDefault();
-      showNotification('Roster reset to official defaults.');
+  const handleResetTeamDefaults = async () => {
+    if (window.confirm('Clear all committee members so you can add new entries dynamically to Supabase?')) {
+      await removeAllTeamMembers();
+      showNotification('Committee roster cleared. Ready for new members.');
       loadTeamMembers();
     }
   };

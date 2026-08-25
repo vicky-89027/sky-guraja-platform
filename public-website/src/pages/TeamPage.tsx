@@ -166,92 +166,113 @@ export const TeamPage: React.FC<TeamPageProps> = ({ user }) => {
 
       {/* Main Content Area */}
       <div className="max-w-6xl mx-auto px-4 lg:px-8 py-14">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {members.map((m) => (
-            <div
-              key={m.id || m.name}
-              className="bg-white rounded-3xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col justify-between text-center group relative overflow-hidden"
-            >
-              {/* Top Accent Gradient Line */}
-              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#B38020]" />
-
-              {/* Admin Action Overlay Buttons */}
-              {isAdmin && (
-                <div className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-[#051124]/90 backdrop-blur-md p-1.5 rounded-xl border border-white/15 shadow-md">
-                  <button
-                    onClick={() => handleOpenEdit(m)}
-                    className="p-1 bg-amber-500 text-slate-950 rounded-lg hover:bg-amber-400 transition-all text-xs font-bold flex items-center gap-1"
-                    title="Edit Member Details & Photo"
-                  >
-                    <Edit3 className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteMember(m.id, m.name)}
-                    className="p-1 bg-rose-500/80 text-white rounded-lg hover:bg-rose-600 transition-all text-xs"
-                    title="Delete Member"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-
-              <div className="space-y-4 pt-2">
-                {/* Circular Profile Frame with Golden Dual Ring */}
-                <div className="relative mx-auto w-32 h-32 sm:w-36 sm:h-36">
-                  {/* Subtle Aura Glow */}
-                  <div className="absolute -inset-2 bg-amber-400/20 rounded-full blur-xl group-hover:bg-amber-400/35 transition-all pointer-events-none" />
-
-                  {/* Circular Avatar Container with Gold Double Border */}
-                  <div className="relative w-full h-full rounded-full p-1 bg-gradient-to-tr from-[#B38020] via-[#F5BD55] to-[#D4A244] shadow-xl overflow-hidden">
-                    <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
-                      <img
-                        src={m.image}
-                        alt={m.name}
-                        className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Initials Badge */}
-                  <div className="absolute bottom-1 right-1 bg-[#051124] text-amber-300 border-2 border-amber-400 text-[10px] font-black font-mono w-7 h-7 rounded-full flex items-center justify-center shadow-lg">
-                    {m.initials}
-                  </div>
-                </div>
-
-                {/* Member Info */}
-                <div className="space-y-1.5 pt-1">
-                  <h3 className="font-bold text-slate-900 text-lg leading-snug">
-                    {m.name}
-                  </h3>
-
-                  <div className="inline-block px-3 py-0.5 rounded-full bg-amber-50 text-[#C49132] border border-[#D4A244]/40 font-black text-xs uppercase tracking-wider">
-                    {m.role}
-                  </div>
-
-                  <p className="text-xs text-slate-500 leading-relaxed pt-2 line-clamp-3">
-                    {m.bio}
-                  </p>
-
-                  {m.phone && (
-                    <div className="flex items-center justify-center gap-1.5 text-xs text-slate-600 font-mono font-semibold pt-1">
-                      <Phone className="w-3.5 h-3.5 text-amber-600" />
-                      <span>{m.phone}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Bottom Card Footer */}
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-                <span>SKY Youth Guraja</span>
-                <span className="text-emerald-700 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                  <UserCheck className="w-3 h-3 text-emerald-600" />
-                  <span>Guraja, AP</span>
-                </span>
-              </div>
+        {members.length === 0 ? (
+          <div className="max-w-md mx-auto text-center p-8 bg-white rounded-3xl border border-dashed border-amber-500/40 shadow-xl space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-600">
+              <UserCheck className="w-8 h-8" />
             </div>
-          ))}
-        </div>
+            <div className="space-y-1">
+              <h3 className="font-bold text-slate-900 text-lg font-serif">Roster Ready for New Members</h3>
+              <p className="text-xs text-slate-500">
+                All previous mock entries removed. Click below to add your real committee members dynamically to Supabase.
+              </p>
+            </div>
+            <button
+              onClick={handleOpenAdd}
+              className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-md hover:from-amber-400 flex items-center justify-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Add Committee Member</span>
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {members.map((m) => (
+              <div
+                key={m.id || m.name}
+                className="bg-white rounded-3xl border border-slate-200 shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col justify-between text-center group relative overflow-hidden"
+              >
+                {/* Top Accent Gradient Line */}
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#B38020]" />
+
+                {/* Admin Action Overlay Buttons */}
+                {isAdmin && (
+                  <div className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-[#051124]/90 backdrop-blur-md p-1.5 rounded-xl border border-white/15 shadow-md">
+                    <button
+                      onClick={() => handleOpenEdit(m)}
+                      className="p-1 bg-amber-500 text-slate-950 rounded-lg hover:bg-amber-400 transition-all text-xs font-bold flex items-center gap-1"
+                      title="Edit Member Details & Photo"
+                    >
+                      <Edit3 className="w-3 h-3" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteMember(m.id, m.name)}
+                      className="p-1 bg-rose-500/80 text-white rounded-lg hover:bg-rose-600 transition-all text-xs"
+                      title="Delete Member"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-4 pt-2">
+                  {/* Circular Profile Frame with Golden Dual Ring */}
+                  <div className="relative mx-auto w-32 h-32 sm:w-36 sm:h-36">
+                    {/* Subtle Aura Glow */}
+                    <div className="absolute -inset-2 bg-amber-400/20 rounded-full blur-xl group-hover:bg-amber-400/35 transition-all pointer-events-none" />
+
+                    {/* Circular Avatar Container with Gold Double Border */}
+                    <div className="relative w-full h-full rounded-full p-1 bg-gradient-to-tr from-[#B38020] via-[#F5BD55] to-[#D4A244] shadow-xl overflow-hidden">
+                      <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                        <img
+                          src={m.image}
+                          alt={m.name}
+                          className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Initials Badge */}
+                    <div className="absolute bottom-1 right-1 bg-[#051124] text-amber-300 border-2 border-amber-400 text-[10px] font-black font-mono w-7 h-7 rounded-full flex items-center justify-center shadow-lg">
+                      {m.initials}
+                    </div>
+                  </div>
+
+                  {/* Member Info */}
+                  <div className="space-y-1.5 pt-1">
+                    <h3 className="font-bold text-slate-900 text-lg leading-snug">
+                      {m.name}
+                    </h3>
+
+                    <div className="inline-block px-3 py-0.5 rounded-full bg-amber-50 text-[#C49132] border border-[#D4A244]/40 font-black text-xs uppercase tracking-wider">
+                      {m.role}
+                    </div>
+
+                    <p className="text-xs text-slate-500 leading-relaxed pt-2 line-clamp-3">
+                      {m.bio}
+                    </p>
+
+                    {m.phone && (
+                      <div className="flex items-center justify-center gap-1.5 text-xs text-slate-600 font-mono font-semibold pt-1">
+                        <Phone className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{m.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bottom Card Footer */}
+                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>SKY Youth Guraja</span>
+                  <span className="text-emerald-700 font-bold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                    <UserCheck className="w-3 h-3 text-emerald-600" />
+                    <span>Guraja, AP</span>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* =========================================================================

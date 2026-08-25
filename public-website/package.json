@@ -9,6 +9,7 @@
     "preview": "vite preview --port 3000"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.4",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "html2canvas": "^1.4.1",

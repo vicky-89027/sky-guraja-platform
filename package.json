@@ -2,16 +2,41 @@
   "name": "sky-guraja-platform",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Sri Krishna Yadav Youth Guraja - Official Platform and Verified Financial Ledger",
   "workspaces": [
     "public-website"
   ],
   "scripts": {
-    "build": "npm run build --workspace=public-website",
+    "build": "node build.js",
     "build:website": "npm run build --workspace=public-website",
     "build:app": "npm run build --prefix client",
     "build:server": "npm run build --prefix server",
     "test": "npm test --prefix server"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.4",
+    "clsx": "^2.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "lucide-react": "^1.16.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.15.1",
+    "tailwind-merge": "^3.5.4"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.2",
+    "vite": "^8.2.2"
   },
   "keywords": [
     "sri-krishna-yadav-youth-guraja",

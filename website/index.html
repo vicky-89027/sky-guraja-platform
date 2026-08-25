@@ -246,7 +246,7 @@
                 <span class="font-bold text-slate-600">62.5%</span>
               </div>
               <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-[#D4A244] rounded-full" style="width: 62.5%"></div>
+                <div class="h-full bg-[#D4A244] rounded-full w-[62.5%]"></div>
               </div>
             </div>
             <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
@@ -273,7 +273,7 @@
                 <span class="font-bold text-slate-600">70%</span>
               </div>
               <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-[#D4A244] rounded-full" style="width: 70%"></div>
+                <div class="h-full bg-[#D4A244] rounded-full w-[70%]"></div>
               </div>
             </div>
             <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
@@ -300,7 +300,7 @@
                 <span class="font-bold text-slate-600">50%</span>
               </div>
               <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-[#D4A244] rounded-full" style="width: 50%"></div>
+                <div class="h-full bg-[#D4A244] rounded-full w-[50%]"></div>
               </div>
             </div>
             <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
@@ -327,7 +327,7 @@
                 <span class="font-bold text-slate-600">45%</span>
               </div>
               <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-[#D4A244] rounded-full" style="width: 45%"></div>
+                <div class="h-full bg-[#D4A244] rounded-full w-[45%]"></div>
               </div>
             </div>
             <button onclick="handleTransferFundsClick()" class="w-full py-2.5 bg-[#D4A244] hover:bg-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow text-center">
@@ -486,12 +486,12 @@
           </div>
           <div>
             <label class="block text-slate-300 font-semibold mb-1">Village *</label>
-            <input id="reg-village" type="text" value="Guraja" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
+            <input id="reg-village" type="text" value="Guraja" placeholder="Village Name" title="Village" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
           </div>
         </div>
         <div>
           <label class="block text-slate-300 font-semibold mb-1">Password *</label>
-          <input id="reg-pass" type="password" placeholder="Create password" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
+          <input id="reg-pass" type="password" placeholder="Create password" title="Password" required class="w-full bg-[#061021] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-white outline-none" />
         </div>
         <button type="submit" class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-lg">
           COMPLETE REGISTRATION
@@ -519,7 +519,7 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block text-slate-300 font-semibold mb-1">Select Campaign</label>
-          <select id="transfer-campaign" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2.5 text-white outline-none">
+          <select id="transfer-campaign" title="Select Campaign" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2.5 text-white outline-none">
             <option value="Sri Krishna Janmashtami 2026 Grand Celebration">Sri Krishna Janmashtami 2026 Grand Celebration</option>
             <option value="Youth Community Study Hall & Digital Library">Youth Community Study Hall & Digital Library</option>
             <option value="Guraja Clean Drinking Water (RO Plant Maintenance)">Guraja Clean Drinking Water (RO Plant Maintenance)</option>
@@ -529,7 +529,7 @@
 
         <div>
           <label class="block text-amber-300 font-semibold mb-1">Amount (₹) *</label>
-          <input id="donor-input-amount" type="number" value="2000" class="w-full bg-[#061224] border border-amber-500/40 rounded-xl px-3 py-2 text-amber-300 font-bold font-mono text-base outline-none" min="1" required />
+          <input id="donor-input-amount" type="number" value="2000" placeholder="Enter amount" title="Amount in Rupees" class="w-full bg-[#061224] border border-amber-500/40 rounded-xl px-3 py-2 text-amber-300 font-bold font-mono text-base outline-none" min="1" required />
         </div>
 
         <div class="p-3 bg-[#061224] rounded-2xl border border-white/10 space-y-2 text-center">
@@ -539,7 +539,7 @@
 
         <div>
           <label class="block text-slate-300 font-semibold mb-1">UPI Ref / UTR / Transaction No (Optional)</label>
-          <input id="transfer-ref" type="text" placeholder="e.g. 423891823901" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2 text-white outline-none" />
+          <input id="transfer-ref" type="text" placeholder="e.g. 423891823901" title="UPI Reference Number" class="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2 text-white outline-none" />
         </div>
       </div>
 
@@ -570,7 +570,7 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block text-slate-300 font-semibold mb-1">Action Type</label>
-          <select id="change-type" class="w-full bg-[#061021] border border-white/15 rounded-xl px-3 py-2 text-white outline-none">
+          <select id="change-type" title="Action Type" class="w-full bg-[#061021] border border-white/15 rounded-xl px-3 py-2 text-white outline-none">
             <option value="EXPENSE">Submit Expense Voucher</option>
             <option value="CAMPAIGN">Propose New Campaign</option>
             <option value="MEETING">Schedule Committee Meeting</option>

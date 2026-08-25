@@ -1,6 +1,7 @@
 {
   "name": "sky-guraja-server",
   "version": "1.0.0",
+  "type": "module",
   "description": "Sri Krishna Yadav Youth Guraja Fund Management & Operations Backend",
   "main": "src/index.ts",
   "scripts": {

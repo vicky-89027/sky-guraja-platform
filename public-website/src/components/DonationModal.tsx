@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Heart,
   X,
-  CheckCircle2,
   ShieldCheck,
   QrCode,
   Lock,
   ArrowRight,
   IndianRupee,
-  Building2,
   Copy,
   Check,
-  Coins,
-  UserCheck
+  CheckCircle2,
+  ExternalLink,
+  Coins
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { AuthUser } from './AuthModal';
+import { initiateAndVerifyUPIContribution, RealReceipt } from '../services/receiptService';
 
 interface DonationModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultCampaign?: string;
-  onReceiptGenerated: (receiptNumber: string) => void;
+  onReceiptGenerated: (receipt: RealReceipt) => void;
   user: AuthUser | null;
   onRequireAuth: (intent?: string) => void;
 }
@@ -29,27 +28,24 @@ interface DonationModalProps {
 export const DonationModal: React.FC<DonationModalProps> = ({
   isOpen,
   onClose,
-  defaultCampaign = 'Sri Krishna Janmashtami 2026 Grand Celebration',
+  defaultCampaign = 'Sri Krishna Janmashtami & Utlotsavam Mahotsavam',
   onReceiptGenerated,
-  user,
-  onRequireAuth
+  user
 }) => {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [campaign, setCampaign] = useState(defaultCampaign);
   const [amount, setAmount] = useState<string>('2000');
-  const [donorName, setDonorName] = useState('');
+  const [contributorName, setContributorName] = useState('');
   const [phone, setPhone] = useState('');
-  const [pan, setPan] = useState('');
-  const [isPublicOptIn, setIsPublicOptIn] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'BANK' | 'CASH'>('UPI');
-  const [upiRef, setUpiRef] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('Guraja Village, Andhra Pradesh, India');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [verifiedReceipt, setVerifiedReceipt] = useState<any>(null);
-  const [copiedBank, setCopiedBank] = useState(false);
+  const [verifiedReceipt, setVerifiedReceipt] = useState<RealReceipt | null>(null);
+  const [copiedUpi, setCopiedUpi] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setDonorName(user.fullName || '');
+      setContributorName(user.fullName || '');
       setPhone(user.phone || '');
     }
   }, [user, isOpen]);
@@ -62,531 +58,338 @@ export const DonationModal: React.FC<DonationModalProps> = ({
 
   if (!isOpen) return null;
 
-  // If user is not logged in, prompt registration first
-  if (!user) {
-    return (
-      <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-[#0B1B36] border border-amber-500/40 rounded-3xl w-full max-w-md shadow-2xl p-6 text-center space-y-4 relative">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto border border-amber-500/40">
-            <UserCheck className="w-7 h-7" />
-          </div>
-
-          <div>
-            <h3 className="text-lg font-black text-white font-display uppercase tracking-tight">
-              Member Registration Required
-            </h3>
-            <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-              To ensure 100% financial transparency and issue a verified cryptographic receipt, please <b>Register</b> or <b>Sign In</b> before transferring funds.
-            </p>
-          </div>
-
-          <div className="p-3 bg-[#061224] rounded-2xl border border-white/10 text-left text-xs space-y-1 text-slate-300">
-            <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Direct member account attribution</span>
-            </div>
-            <div className="flex items-center gap-2 text-amber-300 font-semibold">
-              <QrCode className="w-4 h-4" />
-              <span>Instant digital receipt with QR verification</span>
-            </div>
-          </div>
-
-          <div className="pt-2 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                onClose();
-                onRequireAuth('transfer_funds');
-              }}
-              className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all"
-            >
-              REGISTER / SIGN IN NOW
-            </button>
-
-            <button
-              onClick={onClose}
-              className="w-full py-2 bg-transparent text-slate-400 hover:text-white text-xs"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const quickAmounts = ['500', '1000', '2000', '5000', '10000', '25000'];
-
-  const handleNextFromAmount = () => {
-    if (!amount || Number(amount) <= 0) {
-      alert('Please enter a valid contribution amount');
+  const handleStep1Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contributorName.trim() || !phone.trim() || !amount || Number(amount) <= 0) {
+      alert('Please fill in your name, mobile number, and a valid contribution amount.');
       return;
     }
     setStep(2);
   };
 
-  const handleNextFromDetails = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!donorName.trim()) {
-      alert('Please enter your full name');
-      return;
-    }
-    setStep(3);
-  };
-
-  const handleProcessTransfer = async () => {
-    setIsProcessing(true);
-    const paymentId = upiRef.trim() || `SKY_TXN_${Date.now().toString().slice(-6)}`;
-
+  const handleVerifyAndCompleteUPI = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/public/webhook/payment-gateway', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: 'PAYMENT_SUCCESS',
-          paymentId: paymentId,
-          amount: Number(amount),
-          donorName: donorName || user.fullName,
-          phone: phone || user.phone,
-          campaignName: campaign,
-          isPublicOptIn
-        })
+      setIsProcessing(true);
+      const receipt = await initiateAndVerifyUPIContribution({
+        contributorName: contributorName.trim(),
+        phone: phone.trim(),
+        email: email.trim() || undefined,
+        address: address.trim() || undefined,
+        campaignId: campaign.toLowerCase().replace(/\s+/g, '-'),
+        campaignTitle: campaign,
+        amount: Number(amount)
       });
 
-      const data = await res.json();
-      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-      const recNumber = data.receiptNumber || `SKY-REC-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      setVerifiedReceipt({
-        receiptNumber: recNumber,
-        donorName: donorName || user.fullName,
-        amount: Number(amount),
-        campaign,
-        paymentMethod,
-        refNo: paymentId,
-        date: new Date().toISOString().split('T')[0],
-        securityHash: `HASH-${Date.now().toString(16).toUpperCase()}`
-      });
-      setStep(4);
-    } catch {
-      confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
-      const recNumber = `SKY-REC-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-      setVerifiedReceipt({
-        receiptNumber: recNumber,
-        donorName: donorName || user.fullName,
-        amount: Number(amount),
-        campaign,
-        paymentMethod,
-        refNo: paymentId,
-        date: new Date().toISOString().split('T')[0],
-        securityHash: `HASH-${Date.now().toString(16).toUpperCase()}`
-      });
-      setStep(4);
+      setVerifiedReceipt(receipt);
+      setStep(3);
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      onReceiptGenerated(receipt);
+    } catch (err: any) {
+      alert(err.message || 'Payment verification failed. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const copyBankDetails = () => {
-    const text = `Sri Krishna Yadav Youth Guraja\nA/C: 38491029384\nIFSC: SBIN0001234\nState Bank of India, Guraja Branch`;
-    navigator.clipboard.writeText(text);
-    setCopiedBank(true);
-    setTimeout(() => setCopiedBank(false), 3000);
-  };
-
-  const handleClose = () => {
-    setStep(1);
-    setVerifiedReceipt(null);
-    setUpiRef('');
-    onClose();
+  const handleCopyUpiId = () => {
+    navigator.clipboard.writeText('skyouthguraja@sbi');
+    setCopiedUpi(true);
+    setTimeout(() => setCopiedUpi(false), 2000);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#0B1B36] border border-amber-500/40 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden relative my-8">
-        {/* Modal Header */}
-        <div className="p-5 border-b border-white/10 flex items-center justify-between bg-[#061224]/90">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-              <Heart className="w-5 h-5 fill-amber-400" />
-            </div>
-            <div>
-              <h3 className="text-base font-black text-white font-display uppercase tracking-tight">
-                Transfer Funds & Contribute
-              </h3>
-              <p className="text-[10px] text-amber-200/80 font-mono">
-                Logged in as: <b className="text-white">{user.fullName}</b> ({user.role})
-              </p>
-            </div>
-          </div>
-          <button onClick={handleClose} className="text-slate-400 hover:text-white p-1 rounded-lg">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-[#08152B] border border-amber-500/40 rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-4 relative my-auto">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-slate-400 hover:text-white p-1"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-        {/* Step Indicator */}
-        <div className="px-6 pt-3 flex items-center justify-between text-[11px] text-slate-400 font-semibold border-b border-white/5 pb-2.5">
-          <span className={step >= 1 ? 'text-amber-400 font-bold' : ''}>1. Amount</span>
-          <span>→</span>
-          <span className={step >= 2 ? 'text-amber-400 font-bold' : ''}>2. Contributor Info</span>
-          <span>→</span>
-          <span className={step >= 3 ? 'text-amber-400 font-bold' : ''}>3. Transfer / Pay</span>
-          <span>→</span>
-          <span className={step >= 4 ? 'text-emerald-400 font-bold' : ''}>4. Digital Receipt</span>
-        </div>
-
-        <div className="p-6">
-          {/* STEP 1: CAMPAIGN & AMOUNT */}
-          {step === 1 && (
-            <div className="space-y-5">
+        {/* =========================================================================
+            STEP 1: CONTRIBUTOR DETAILS & AMOUNT
+            ========================================================================= */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#D4A244] to-[#B38020] text-slate-950 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <Coins className="w-5 h-5 fill-slate-950" />
+              </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Select Initiative</label>
+                <h3 className="text-base font-black text-white font-serif uppercase tracking-wide">
+                  Make a Contribution (UPI)
+                </h3>
+                <p className="text-[10px] text-amber-300 font-mono">
+                  Official Sri Krishna Yadav Youth Guraja Seva Fund
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleStep1Submit} className="space-y-3 text-xs">
+              {/* Campaign Selector */}
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Purpose / Campaign *
+                </label>
                 <select
                   value={campaign}
                   onChange={(e) => setCampaign(e.target.value)}
-                  className="w-full bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
+                  className="w-full bg-[#050F21] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
                 >
-                  <option value="Sri Krishna Janmashtami 2026 Grand Celebration">Sri Krishna Janmashtami 2026 Grand Celebration</option>
-                  <option value="Youth Community Study Hall & Digital Library">Youth Community Study Hall & Digital Library</option>
-                  <option value="Guraja Clean Drinking Water (RO Plant Maintenance)">Guraja Clean Drinking Water (RO Plant Maintenance)</option>
-                  <option value="Emergency Medical Aid & Youth Blood Donation Wing">Emergency Medical Aid & Youth Blood Donation Wing</option>
-                  <option value="General Youth Development & Village Welfare Fund">General Youth Development & Village Welfare Fund</option>
+                  <option value="Sri Krishna Janmashtami & Utlotsavam Mahotsavam">
+                    Sri Krishna Janmashtami & Utlotsavam Mahotsavam
+                  </option>
+                  <option value="Guraja Youth Community Seva & Village Upliftment">
+                    Guraja Youth Community Seva & Village Upliftment
+                  </option>
+                  <option value="Sri Krishna Swamy Temple Arch & Mandir Alankaram">
+                    Sri Krishna Swamy Temple Arch & Mandir Alankaram
+                  </option>
+                  <option value="Devi Navaratri Mahotsavam & Cultural Celebrations">
+                    Devi Navaratri Mahotsavam & Cultural Celebrations
+                  </option>
+                  <option value="General Youth Seva Fund">
+                    General Youth Seva Fund
+                  </option>
                 </select>
               </div>
 
+              {/* Amount Presets */}
               <div>
-                <label className="block text-xs font-semibold text-amber-300 mb-2">Select Contribution Amount (₹)</label>
-                <div className="grid grid-cols-3 gap-2.5 mb-3">
-                  {quickAmounts.map((q) => (
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Contribution Amount (₹) *
+                </label>
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  {['500', '1000', '2000', '5000'].map((val) => (
                     <button
-                      key={q}
+                      key={val}
                       type="button"
-                      onClick={() => setAmount(q)}
-                      className={`py-2 rounded-xl text-xs font-mono font-bold transition-all border ${
-                        amount === q
-                          ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
-                          : 'bg-[#061224] text-slate-300 border-white/10 hover:border-amber-500/40'
+                      onClick={() => setAmount(val)}
+                      className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                        amount === val
+                          ? 'bg-amber-500/20 text-amber-300 border-amber-400'
+                          : 'bg-[#050F21] text-slate-300 border-white/10 hover:border-white/20'
                       }`}
                     >
-                      ₹{Number(q).toLocaleString('en-IN')}
+                      ₹{val}
                     </button>
                   ))}
                 </div>
-
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-amber-400 font-bold font-mono text-sm">₹</span>
+                  <span className="absolute left-3.5 top-2.5 text-amber-400 font-bold text-base">₹</span>
                   <input
                     type="number"
+                    required
+                    min="1"
+                    placeholder="Enter custom amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Enter custom amount"
-                    className="w-full bg-[#061224] border border-amber-500/40 rounded-xl pl-8 pr-4 py-2.5 text-sm font-bold font-mono text-amber-300 outline-none"
-                    min="1"
+                    className="w-full bg-[#050F21] border border-amber-500/40 focus:border-amber-400 rounded-xl pl-8 pr-3.5 py-2.5 text-amber-300 font-black text-base outline-none font-mono"
                   />
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end">
-                <button
-                  type="button"
-                  onClick={handleNextFromAmount}
-                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-1.5"
-                >
-                  <span>Continue</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: CONTRIBUTOR DETAILS */}
-          {step === 2 && (
-            <form onSubmit={handleNextFromDetails} className="space-y-4">
+              {/* Contributor Information */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Donor / Member Name *</label>
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Full Name (As per Bank / ID) *
+                </label>
                 <input
                   type="text"
-                  placeholder="e.g. S. Jagadeesh Yadav"
-                  value={donorName}
-                  onChange={(e) => setDonorName(e.target.value)}
-                  className="w-full bg-[#061224] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none"
                   required
+                  placeholder="e.g. K. Venkata Ramana Yadav"
+                  value={contributorName}
+                  onChange={(e) => setContributorName(e.target.value)}
+                  className="w-full bg-[#050F21] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Mobile (WhatsApp Receipt)</label>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    Mobile Number *
+                  </label>
                   <input
                     type="tel"
+                    required
                     placeholder="98480 12345"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    className="w-full bg-[#050F21] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none font-mono"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">PAN Number (Optional)</label>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    Email (For E-Receipt)
+                  </label>
                   <input
-                    type="text"
-                    placeholder="ABCDE1234F"
-                    value={pan}
-                    onChange={(e) => setPan(e.target.value.toUpperCase())}
-                    className="w-full bg-[#061224] border border-white/15 rounded-xl px-3 py-2 text-xs text-white font-mono uppercase outline-none"
+                    type="email"
+                    placeholder="name@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-[#050F21] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
                   />
                 </div>
               </div>
 
-              <div className="p-3 bg-[#061224] border border-white/10 rounded-xl">
-                <label className="flex items-start gap-2.5 cursor-pointer text-xs text-slate-300">
-                  <input
-                    type="checkbox"
-                    checked={isPublicOptIn}
-                    onChange={(e) => setIsPublicOptIn(e.target.checked)}
-                    className="w-4 h-4 rounded text-amber-500 accent-amber-500 mt-0.5"
-                  />
-                  <span>
-                    <b>Display my contribution on Public Donors Wall</b>
-                    <span className="block text-[10px] text-slate-500 mt-0.5">
-                      Your identity and receipt will be credited in the village transparency books.
-                    </span>
-                  </span>
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">
+                  Address / Village
                 </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Guraja Village, Krishna District"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full bg-[#050F21] border border-white/15 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-white outline-none"
+                />
               </div>
 
-              <div className="pt-2 flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="px-4 py-2 bg-[#16335F] text-slate-300 text-xs rounded-xl"
-                >
-                  Back
-                </button>
+              <div className="pt-2">
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg flex items-center gap-1.5"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] text-slate-950 font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95"
                 >
-                  <span>Choose Transfer Mode</span>
+                  <span>PROCEED TO UPI PAYMENT</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </form>
-          )}
+          </div>
+        )}
 
-          {/* STEP 3: PAYMENT / TRANSFER METHOD */}
-          {step === 3 && (
-            <div className="space-y-4">
-              <div className="p-3.5 bg-[#061224] rounded-2xl border border-amber-500/30 text-center space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Contribution Amount</span>
-                <div className="text-3xl font-black text-amber-300 font-mono">
-                  ₹{Number(amount).toLocaleString('en-IN')}
-                </div>
-                <div className="text-[11px] text-emerald-400 font-medium">
-                  Campaign: {campaign}
-                </div>
-              </div>
+        {/* =========================================================================
+            STEP 2: UPI PAYMENT GATEWAY & SCAN QR
+            ========================================================================= */}
+        {step === 2 && (
+          <div className="space-y-4 text-center">
+            <div className="border-b border-white/10 pb-3">
+              <span className="text-[10px] text-amber-400 font-mono tracking-wider uppercase block">
+                Official UPI Gateway
+              </span>
+              <h3 className="text-base font-black text-white font-serif uppercase">
+                Scan & Pay ₹{Number(amount).toLocaleString('en-IN')}
+              </h3>
+            </div>
 
-              {/* Mode Selector */}
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('UPI')}
-                  className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
-                    paymentMethod === 'UPI'
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500'
-                      : 'bg-[#061224] text-slate-400 border-white/10'
-                  }`}
-                >
-                  📱 UPI QR / App
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('BANK')}
-                  className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
-                    paymentMethod === 'BANK'
-                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500'
-                      : 'bg-[#061224] text-slate-400 border-white/10'
-                  }`}
-                >
-                  🏦 Bank NEFT/IMPS
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('CASH')}
-                  className={`p-2.5 rounded-xl text-xs font-bold transition-all border ${
-                    paymentMethod === 'CASH'
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500'
-                      : 'bg-[#061224] text-slate-400 border-white/10'
-                  }`}
-                >
-                  💵 Cash Handover
-                </button>
-              </div>
-
-              {/* 1. UPI Mode */}
-              {paymentMethod === 'UPI' && (
-                <div className="p-4 bg-[#061224] border border-amber-500/20 rounded-2xl space-y-3 text-center">
-                  <div className="inline-block p-3 bg-white rounded-2xl shadow-lg">
-                    <QrCode className="w-36 h-36 text-slate-950 mx-auto" />
-                  </div>
-                  <div className="text-xs space-y-1">
-                    <div className="font-mono text-amber-300 font-bold">UPI ID: skyguraja@sbi</div>
-                    <p className="text-[11px] text-slate-400">
-                      Scan using Google Pay, PhonePe, Paytm, or BHIM UPI
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-left text-[11px] text-slate-300 font-semibold mb-1">
-                      UPI Reference / UTR Number (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 423891823901"
-                      value={upiRef}
-                      onChange={(e) => setUpiRef(e.target.value)}
-                      className="w-full bg-[#0B1B36] border border-white/15 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-white outline-none"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 2. Direct Bank Transfer */}
-              {paymentMethod === 'BANK' && (
-                <div className="p-4 bg-[#061224] border border-cyan-500/20 rounded-2xl space-y-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <b className="text-cyan-300 text-sm">Official Bank Account</b>
-                    <button
-                      onClick={copyBankDetails}
-                      className="flex items-center gap-1 text-[10px] text-amber-400 hover:underline"
-                    >
-                      {copiedBank ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                      <span>{copiedBank ? 'Copied!' : 'Copy Bank Details'}</span>
-                    </button>
-                  </div>
-                  <div className="p-3 bg-[#0B1B36] rounded-xl space-y-1 text-slate-300 font-mono text-[11px]">
-                    <div>Account Name: <b>Sri Krishna Yadav Youth Guraja</b></div>
-                    <div>A/C Number: <b className="text-white">38491029384</b></div>
-                    <div>IFSC Code: <b className="text-amber-300">SBIN0001234</b></div>
-                    <div>Bank: State Bank of India, Guraja Branch</div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] text-slate-300 font-semibold mb-1">
-                      Bank Transaction Reference / UTR *
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. UTR-2026-98124"
-                      value={upiRef}
-                      onChange={(e) => setUpiRef(e.target.value)}
-                      className="w-full bg-[#0B1B36] border border-white/15 focus:border-cyan-400 rounded-xl px-3 py-2 text-xs text-white outline-none"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 3. Cash Mode */}
-              {paymentMethod === 'CASH' && (
-                <div className="p-4 bg-[#061224] border border-emerald-500/20 rounded-2xl space-y-2 text-xs">
-                  <b className="text-emerald-300 text-sm block">Cash Handover at Guraja</b>
-                  <p className="text-slate-300 leading-relaxed">
-                    You can hand over cash directly to authorized committee collectors at <b>Yadav Youth Bhavan, Main Road, Guraja</b> or to any registered youth representative.
-                  </p>
-                  <div>
-                    <label className="block text-[11px] text-slate-300 font-semibold mb-1">
-                      Collector / Receipt Book Reference (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Received by Treasurer / Book #14"
-                      value={upiRef}
-                      onChange={(e) => setUpiRef(e.target.value)}
-                      className="w-full bg-[#0B1B36] border border-white/15 focus:border-emerald-400 rounded-xl px-3 py-2 text-xs text-white outline-none"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="pt-2 flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="px-4 py-2 bg-[#16335F] text-slate-300 text-xs rounded-xl"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  onClick={handleProcessTransfer}
-                  disabled={isProcessing}
-                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-lg flex items-center gap-2"
-                >
-                  {isProcessing ? 'Verifying & Recording...' : `CONFIRM ₹${Number(amount).toLocaleString('en-IN')} TRANSFER`}
-                </button>
+            {/* UPI QR Display */}
+            <div className="p-4 bg-white rounded-2xl inline-block shadow-2xl border-4 border-amber-400/40">
+              <div className="w-44 h-44 bg-slate-100 rounded-xl flex flex-col items-center justify-center p-2 border border-slate-300 text-slate-900 space-y-1">
+                <QrCode className="w-24 h-24 text-slate-900" />
+                <span className="text-[9px] font-bold text-slate-600 font-mono">
+                  UPI ID: skyouthguraja@sbi
+                </span>
+                <span className="text-[10px] font-black text-slate-900">
+                  ₹{Number(amount).toLocaleString('en-IN')}.00
+                </span>
               </div>
             </div>
-          )}
 
-          {/* STEP 4: VERIFIED RECEIPT */}
-          {step === 4 && verifiedReceipt && (
-            <div className="space-y-4 text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/40">
-                <CheckCircle2 className="w-7 h-7" />
+            {/* UPI ID Copy Bar */}
+            <div className="flex items-center justify-between p-3 bg-[#050F21] rounded-xl border border-white/10 text-xs">
+              <div className="text-left">
+                <div className="text-[10px] text-slate-400">Official Committee UPI VPA</div>
+                <div className="font-mono font-bold text-amber-300">skyouthguraja@sbi</div>
               </div>
+              <button
+                onClick={handleCopyUpiId}
+                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg font-bold flex items-center gap-1 text-[11px]"
+              >
+                {copiedUpi ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedUpi ? 'Copied' : 'Copy'}</span>
+              </button>
+            </div>
 
-              <div>
-                <h4 className="text-base font-bold text-white font-display">
-                  Funds Transferred & Receipt Generated!
-                </h4>
-                <p className="text-xs text-slate-300 mt-1">
-                  Thank you, <b className="text-amber-300">{verifiedReceipt.donorName}</b>. Your contribution of <b className="text-emerald-400 font-mono">₹{Number(verifiedReceipt.amount).toLocaleString('en-IN')}</b> has been posted to the Sri Krishna Yadav Youth Guraja verified ledger.
-                </p>
+            <div className="space-y-2 pt-2">
+              <button
+                onClick={handleVerifyAndCompleteUPI}
+                disabled={isProcessing}
+                className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95"
+              >
+                <ShieldCheck className="w-4 h-4 fill-slate-950 text-emerald-500" />
+                <span>{isProcessing ? 'VERIFYING PAYMENT WITH GATEWAY...' : 'I HAVE PAID • VERIFY & ISSUE E-RECEIPT'}</span>
+              </button>
+
+              <button
+                onClick={() => setStep(1)}
+                className="text-xs text-slate-400 hover:text-white"
+              >
+                Edit Amount or Contributor Details
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            STEP 3: PAYMENT VERIFIED & SUCCESS SCREEN
+            ========================================================================= */}
+        {step === 3 && verifiedReceipt && (
+          <div className="space-y-5 text-center py-4 animate-fadeIn">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-400 flex items-center justify-center mx-auto shadow-2xl">
+              <CheckCircle2 className="w-10 h-10" />
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-white font-serif uppercase tracking-wide">
+                Contribution Verified!
+              </h3>
+              <p className="text-xs text-emerald-300 font-mono">
+                Official E-Receipt Generated Successfully
+              </p>
+            </div>
+
+            <div className="p-4 bg-[#050F21] rounded-2xl border border-amber-500/30 text-xs space-y-2 text-left">
+              <div className="flex justify-between border-b border-white/10 pb-1.5">
+                <span className="text-slate-400">Receipt Number</span>
+                <span className="font-mono font-black text-amber-300 text-sm">
+                  {verifiedReceipt.receiptNumber}
+                </span>
               </div>
-
-              <div className="p-4 bg-[#061224] rounded-2xl border border-white/10 text-left text-xs space-y-1.5 text-slate-300">
-                <div className="flex justify-between">
-                  <span>Receipt Number:</span>
-                  <b className="text-amber-300 font-mono">{verifiedReceipt.receiptNumber}</b>
-                </div>
-                <div className="flex justify-between">
-                  <span>Campaign:</span>
-                  <b className="text-white truncate max-w-[200px]">{verifiedReceipt.campaign}</b>
-                </div>
-                <div className="flex justify-between">
-                  <span>Transfer Mode:</span>
-                  <span className="text-cyan-300 font-mono font-bold">{verifiedReceipt.paymentMethod}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Security Hash:</span>
-                  <span className="text-[10px] font-mono text-emerald-400">{verifiedReceipt.securityHash}</span>
-                </div>
+              <div className="flex justify-between border-b border-white/10 pb-1.5">
+                <span className="text-slate-400">Contributor</span>
+                <span className="font-bold text-white">
+                  {verifiedReceipt.contribution.contributorName}
+                </span>
               </div>
-
-              <div className="pt-2 flex justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleClose();
-                    onReceiptGenerated(verifiedReceipt.receiptNumber);
-                  }}
-                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-lg flex items-center gap-1.5"
-                >
-                  <QrCode className="w-4 h-4" />
-                  <span>View Official Digital Receipt</span>
-                </button>
+              <div className="flex justify-between border-b border-white/10 pb-1.5">
+                <span className="text-slate-400">Amount</span>
+                <span className="font-mono font-bold text-white">
+                  ₹ {verifiedReceipt.contribution.amount.toLocaleString('en-IN')}.00
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Payment Method</span>
+                <span className="font-mono font-semibold text-emerald-300">
+                  {verifiedReceipt.contribution.paymentMethod} (VERIFIED)
+                </span>
               </div>
             </div>
-          )}
-        </div>
+
+            <div className="space-y-2 pt-2">
+              <button
+                onClick={() => {
+                  onClose();
+                  onReceiptGenerated(verifiedReceipt);
+                }}
+                className="w-full py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] text-slate-950 font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>VIEW OFFICIAL E-RECEIPT (PDF / PRINT)</span>
+              </button>
+
+              <button
+                onClick={onClose}
+                className="text-xs text-slate-400 hover:text-white"
+              >
+                Close and Return to Website
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
+export default DonationModal;

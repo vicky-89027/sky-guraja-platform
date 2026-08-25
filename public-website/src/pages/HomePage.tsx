@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SkyLogo } from '../components/SkyLogo';
 import {
   ArrowRight,
@@ -9,6 +9,7 @@ import {
   Coins,
   TrendingUp
 } from 'lucide-react';
+import { getRealStats } from '../services/receiptService';
 
 interface HomePageProps {
   onOpenDonate: (campaignName?: string) => void;
@@ -20,13 +21,11 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenDonate,
   onNavigateTab
 }) => {
-  const [stats] = useState({
-    totalCollected: '₹ 8,45,000 +',
-    totalUtilized: '₹ 5,20,000 +',
-    activeCampaigns: '32 +',
-    happyDonors: '1,250 +',
-    eventsOrganized: '48 +'
-  });
+  const [stats, setStats] = useState(getRealStats());
+
+  useEffect(() => {
+    setStats(getRealStats());
+  }, []);
 
   const activeCampaigns = [
     {
@@ -182,7 +181,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <Coins className="w-4 h-4" />
               </div>
               <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
-                {stats.totalCollected}
+                {stats.totalCollectedFormatted}
               </div>
               <div className="text-[11px] font-semibold text-slate-300">
                 Total Funds Collected
@@ -195,7 +194,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <TrendingUp className="w-4 h-4" />
               </div>
               <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
-                {stats.totalUtilized}
+                {stats.totalUtilizedFormatted}
               </div>
               <div className="text-[11px] font-semibold text-slate-300">
                 Total Funds Utilized
@@ -221,7 +220,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <Users className="w-4 h-4" />
               </div>
               <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
-                {stats.happyDonors}
+                {stats.donorsCount}
               </div>
               <div className="text-[11px] font-semibold text-slate-300">
                 Happy Donors

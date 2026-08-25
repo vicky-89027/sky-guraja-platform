@@ -17,6 +17,7 @@ import auditLogsRoutes from './routes/auditLogs';
 import reportsRoutes from './routes/reports';
 import settingsRoutes from './routes/settings';
 import publicRoutes from './routes/public';
+import receiptsRoutes from './routes/receipts';
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/uploads', express.static(UPLOADS_DIR));
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/contributions', contributionsRoutes);
+app.use('/api/receipts', receiptsRoutes);
 app.use('/api/expenses', expensesRoutes);
 app.use('/api/campaigns', campaignsRoutes);
 app.use('/api/members', membersRoutes);

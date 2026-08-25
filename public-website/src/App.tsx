@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { DonationModal } from './components/DonationModal';
+import { CashContributionModal } from './components/CashContributionModal';
 import { ReceiptModal } from './components/ReceiptModal';
 import { AuthModal, AuthUser } from './components/AuthModal';
 import { ManagementModal } from './components/ManagementModal';
@@ -20,6 +21,8 @@ import { ReportsPage } from './pages/ReportsPage';
 import { ContactPage } from './pages/ContactPage';
 import { JoinUsPage } from './pages/JoinUsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ReceiptVerificationPage } from './pages/ReceiptVerificationPage';
+import { RealReceipt, getRealReceiptsList } from './services/receiptService';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('home');
@@ -27,8 +30,9 @@ export const App: React.FC = () => {
 
   // Modals state
   const [isDonateOpen, setIsDonateOpen] = useState(false);
+  const [isCashOpen, setIsCashOpen] = useState(false);
   const [donateCampaign, setDonateCampaign] = useState<string | undefined>(undefined);
-  const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<RealReceipt | null>(null);
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -36,10 +40,18 @@ export const App: React.FC = () => {
   const [pendingIntent, setPendingIntent] = useState<string | undefined>(undefined);
 
   const [isManagementOpen, setIsManagementOpen] = useState(false);
+  const [verificationToken, setVerificationToken] = useState<string | null>(null);
 
-  // Load existing user session from localStorage
+  // Check URL search params for ?verify=TOKEN or ?receipt=...
   useEffect(() => {
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const verifyToken = urlParams.get('verify') || urlParams.get('token');
+      if (verifyToken) {
+        setVerificationToken(verifyToken);
+        setActiveTab('verify-receipt');
+      }
+
       const saved = localStorage.getItem('sky_user');
       if (saved) {
         setUser(JSON.parse(saved));
@@ -50,16 +62,16 @@ export const App: React.FC = () => {
   }, []);
 
   const handleOpenDonate = (campaignName?: string) => {
-    if (!user) {
-      setDonateCampaign(campaignName);
-      setAuthMode('register');
-      setAuthPrompt('Please register or sign in first to transfer funds and record verified contributions.');
-      setPendingIntent('transfer_funds');
-      setIsAuthOpen(true);
-      return;
-    }
     setDonateCampaign(campaignName);
     setIsDonateOpen(true);
+  };
+
+  const handleOpenCashContribution = () => {
+    if (!user || !['MEMBER', 'ADMIN', 'SUPER_ADMIN'].includes(user.role)) {
+      handleOpenAuth('login', 'Please sign in with your authorized Member account to record cash contributions.', 'record_cash');
+      return;
+    }
+    setIsCashOpen(true);
   };
 
   const handleOpenAuth = (mode: 'login' | 'register' = 'login', prompt?: string, intent?: string) => {
@@ -75,6 +87,8 @@ export const App: React.FC = () => {
       setIsDonateOpen(true);
     } else if (intent === 'make_changes') {
       setIsManagementOpen(true);
+    } else if (intent === 'record_cash') {
+      setIsCashOpen(true);
     }
   };
 
@@ -84,8 +98,9 @@ export const App: React.FC = () => {
     setUser(null);
   };
 
-  const handleVerifyReceipt = (receiptNumber: string) => {
-    setSelectedReceipt(receiptNumber);
+  const handleVerifyReceipt = (receiptNumberOrToken: string) => {
+    setVerificationToken(receiptNumberOrToken);
+    setActiveTab('verify-receipt');
   };
 
   return (
@@ -129,12 +144,24 @@ export const App: React.FC = () => {
         {activeTab === 'event-details' && (
           <EventDetailsPage onBack={() => setActiveTab('events')} />
         )}
-        {activeTab === 'transparency' && <TransparencyPage onVerifyReceipt={handleVerifyReceipt} />}
+        {activeTab === 'transparency' && (
+          <TransparencyPage
+            onVerifyReceipt={handleVerifyReceipt}
+            onOpenReceiptModal={(r) => setSelectedReceipt(r)}
+          />
+        )}
         {activeTab === 'reports' && <ReportsPage />}
         {activeTab === 'team' && <TeamPage />}
         {activeTab === 'gallery' && <GalleryPage />}
         {activeTab === 'contact' && <ContactPage />}
         {activeTab === 'join' && <JoinUsPage />}
+        {activeTab === 'verify-receipt' && verificationToken && (
+          <ReceiptVerificationPage
+            token={verificationToken}
+            onBack={() => setActiveTab('home')}
+            onOpenReceiptModal={(r) => setSelectedReceipt(r)}
+          />
+        )}
         {activeTab === '404' && <NotFoundPage onGoHome={() => setActiveTab('home')} />}
       </main>
 
@@ -154,15 +181,27 @@ export const App: React.FC = () => {
         pendingIntent={pendingIntent}
       />
 
-      {/* Fund Transfer & Donation Modal */}
+      {/* Public UPI Contribution Modal */}
       <DonationModal
         isOpen={isDonateOpen}
         onClose={() => setIsDonateOpen(false)}
         defaultCampaign={donateCampaign}
-        onReceiptGenerated={(recNo) => setSelectedReceipt(recNo)}
+        onReceiptGenerated={(r) => setSelectedReceipt(r)}
         user={user}
         onRequireAuth={(intent) => handleOpenAuth('register', 'Please register or sign in to transfer funds.', intent)}
       />
+
+      {/* Member-Only Cash Contribution Modal */}
+      {isCashOpen && (
+        <CashContributionModal
+          user={user}
+          onClose={() => setIsCashOpen(false)}
+          onSuccess={(r) => {
+            setIsCashOpen(false);
+            setSelectedReceipt(r);
+          }}
+        />
+      )}
 
       {/* Make Changes & Committee Management Modal */}
       <ManagementModal
@@ -172,10 +211,13 @@ export const App: React.FC = () => {
       />
 
       {/* Digital Receipt Modal with QR and PDF */}
-      <ReceiptModal
-        receiptNumber={selectedReceipt}
-        onClose={() => setSelectedReceipt(null)}
-      />
+      {selectedReceipt && (
+        <ReceiptModal
+          receipt={selectedReceipt}
+          onClose={() => setSelectedReceipt(null)}
+          onNavigateToVerify={(token) => handleVerifyReceipt(token)}
+        />
+      )}
     </div>
   );
 };

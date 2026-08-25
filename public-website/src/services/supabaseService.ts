@@ -20,7 +20,7 @@ export const getSupabaseConfig = (): SupabaseConfig => {
   } catch {}
 
   return {
-    url: (import.meta as any).env?.VITE_SUPABASE_URL || '',
+    url: (import.meta as any).env?.VITE_SUPABASE_URL || 'https://hctgwcazsrpglcalcxgf.supabase.co',
     anonKey: (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || ''
   };
 };

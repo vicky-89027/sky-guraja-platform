@@ -7,7 +7,9 @@ import {
   Layers,
   Users,
   Coins,
-  TrendingUp
+  TrendingUp,
+  Heart,
+  ShieldCheck
 } from 'lucide-react';
 
 interface HomePageProps {
@@ -95,107 +97,148 @@ export const HomePage: React.FC<HomePageProps> = ({
   ];
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-[#050E1C]">
       {/* ========================================================
-          1. HERO SECTION (Dark Temple Silhouette & Royal Gold)
+          1. HERO SECTION (Exact Reference Extraction)
           ======================================================== */}
-      <section className="relative pt-12 pb-20 px-4 lg:px-8 text-center overflow-hidden bg-gradient-to-b from-[#050E1C] via-[#08152B] to-[#040C18]">
-        {/* Background Aura */}
+      <section className="relative pt-8 pb-24 px-4 lg:px-8 text-center overflow-hidden min-h-[92vh] flex flex-col justify-between items-center bg-[#050E1C]">
+        {/* Cinematic Temple Gopuram Backdrop with Golden Aura Glow */}
         <div
-          className="absolute inset-0 opacity-20 pointer-events-none bg-center bg-no-repeat bg-cover"
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40 mix-blend-screen pointer-events-none"
           style={{
-            backgroundImage: `radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.25) 0%, transparent 65%)`
+            backgroundImage: `url('/images/hero_temple_backdrop.jpg')`
           }}
         />
 
-        <div className="max-w-5xl mx-auto space-y-6 relative z-10">
-          {/* Grand Logo */}
-          <div className="flex justify-center pt-2">
-            <SkyLogo variant="full" size="xl" />
+        {/* Subtle Dark Vignette & Gradient Fog */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050E1C]/80 via-transparent to-[#050E1C] pointer-events-none" />
+
+        {/* Radiant Central Glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto space-y-6 relative z-10 my-auto pt-6">
+          {/* Centered Grand SKY Monogram Logo */}
+          <div className="flex justify-center transform hover:scale-105 transition-transform duration-700">
+            <div className="relative">
+              <div className="absolute inset-0 bg-amber-400/20 rounded-full blur-2xl transform scale-125" />
+              <SkyLogo variant="icon" size="xl" className="relative z-10 drop-shadow-[0_10px_35px_rgba(212,162,68,0.5)]" />
+            </div>
+          </div>
+
+          {/* Grand Organization Title */}
+          <div className="space-y-1.5 pt-2">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-serif uppercase tracking-[0.18em] text-transparent bg-clip-text bg-gradient-to-b from-[#FFF3C4] via-[#F5BD55] to-[#B38020] drop-shadow-[0_4px_25px_rgba(212,162,68,0.35)]">
+              SRI KRISHNA YADAV
+            </h1>
+            <h2 className="text-xl sm:text-3xl lg:text-4xl font-black font-sans uppercase tracking-[0.45em] sm:tracking-[0.6em] text-[#FCD34D] drop-shadow-md">
+              YOUTH GURAJA
+            </h2>
+          </div>
+
+          {/* Lotus Divider & Tagline */}
+          <div className="flex items-center justify-center gap-3 pt-1">
+            <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-r from-transparent to-amber-400/60" />
+            <div className="flex items-center gap-2 text-amber-300/90 text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase font-serif">
+              <span>Unity</span>
+              <span className="text-amber-500">•</span>
+              <span>Youth</span>
+              <span className="text-amber-500">•</span>
+              <span>Service</span>
+              <span className="text-amber-500">•</span>
+              <span>Community</span>
+              <span className="text-amber-500">•</span>
+              <span>Progress</span>
+            </div>
+            <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-l from-transparent to-amber-400/60" />
           </div>
 
           {/* Slogan */}
-          <p className="text-sm sm:text-base text-amber-200/90 font-medium max-w-xl mx-auto italic tracking-wide">
+          <p className="text-sm sm:text-base text-amber-100/80 font-medium max-w-xl mx-auto italic tracking-wide">
             "Together we serve, together we grow."
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <button
               onClick={() => onOpenDonate()}
-              className="px-8 py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] hover:to-[#D4A244] text-slate-950 font-black text-xs sm:text-sm tracking-wider uppercase rounded-xl shadow-[0_0_30px_rgba(212,162,68,0.4)] transition-all transform active:scale-95"
+              className="px-8 py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] hover:to-[#D4A244] text-slate-950 font-black text-xs sm:text-sm tracking-widest uppercase rounded-xl shadow-[0_0_35px_rgba(212,162,68,0.45)] hover:shadow-[0_0_45px_rgba(212,162,68,0.65)] transition-all transform active:scale-95"
             >
               SUPPORT A CAMPAIGN
             </button>
 
             <button
               onClick={() => onNavigateTab('work')}
-              className="px-8 py-3.5 bg-[#0A1B35]/80 hover:bg-[#122A52] text-white font-bold text-xs sm:text-sm tracking-wider uppercase rounded-xl border border-white/20 transition-all shadow-lg"
+              className="px-8 py-3.5 bg-[#08152B]/80 hover:bg-[#102445] text-white font-bold text-xs sm:text-sm tracking-widest uppercase rounded-xl border border-amber-500/40 hover:border-amber-400 transition-all shadow-lg backdrop-blur-sm"
             >
               EXPLORE OUR WORK
             </button>
           </div>
         </div>
 
-        {/* 5 Stats Counter Row */}
-        <div className="max-w-6xl mx-auto mt-16 px-4">
+        {/* 5 Stats Counter Row (Exact Glassmorphic Cards) */}
+        <div className="w-full max-w-6xl mx-auto mt-12 px-4 relative z-10">
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 text-center">
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1.5 backdrop-blur-sm group hover:border-amber-500/50 transition-all">
-              <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-2">
+            {/* Card 1 */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#081730]/90 border border-amber-500/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] space-y-2 backdrop-blur-md group hover:border-amber-500/60 transition-all">
+              <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Coins className="w-4 h-4" />
               </div>
-              <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
+              <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
                 {stats.totalCollected}
               </div>
-              <div className="text-[11px] font-semibold text-slate-400">
+              <div className="text-[11px] font-semibold text-slate-300">
                 Total Funds Collected
               </div>
             </div>
 
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1.5 backdrop-blur-sm group hover:border-amber-500/50 transition-all">
-              <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-2">
+            {/* Card 2 */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#081730]/90 border border-amber-500/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] space-y-2 backdrop-blur-md group hover:border-amber-500/60 transition-all">
+              <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <TrendingUp className="w-4 h-4" />
               </div>
-              <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
+              <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
                 {stats.totalUtilized}
               </div>
-              <div className="text-[11px] font-semibold text-slate-400">
+              <div className="text-[11px] font-semibold text-slate-300">
                 Total Funds Utilized
               </div>
             </div>
 
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1.5 backdrop-blur-sm group hover:border-amber-500/50 transition-all">
-              <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-2">
+            {/* Card 3 */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#081730]/90 border border-amber-500/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] space-y-2 backdrop-blur-md group hover:border-amber-500/60 transition-all">
+              <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Layers className="w-4 h-4" />
               </div>
-              <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
+              <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
                 {stats.activeCampaigns}
               </div>
-              <div className="text-[11px] font-semibold text-slate-400">
+              <div className="text-[11px] font-semibold text-slate-300">
                 Active Campaigns
               </div>
             </div>
 
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1.5 backdrop-blur-sm group hover:border-amber-500/50 transition-all">
-              <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-2">
+            {/* Card 4 */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#081730]/90 border border-amber-500/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] space-y-2 backdrop-blur-md group hover:border-amber-500/60 transition-all">
+              <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Users className="w-4 h-4" />
               </div>
-              <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
+              <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
                 {stats.happyDonors}
               </div>
-              <div className="text-[11px] font-semibold text-slate-400">
+              <div className="text-[11px] font-semibold text-slate-300">
                 Happy Donors
               </div>
             </div>
 
-            <div className="col-span-2 sm:col-span-1 p-4 sm:p-5 rounded-2xl bg-[#091830]/90 border border-amber-500/20 shadow-xl space-y-1.5 backdrop-blur-sm group hover:border-amber-500/50 transition-all">
-              <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-2">
+            {/* Card 5 */}
+            <div className="col-span-2 sm:col-span-1 p-4 sm:p-5 rounded-2xl bg-[#081730]/90 border border-amber-500/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] space-y-2 backdrop-blur-md group hover:border-amber-500/60 transition-all">
+              <div className="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform">
                 <Calendar className="w-4 h-4" />
               </div>
-              <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
+              <div className="text-lg sm:text-2xl font-black text-amber-400 font-mono tracking-tight">
                 {stats.eventsOrganized}
               </div>
-              <div className="text-[11px] font-semibold text-slate-400">
+              <div className="text-[11px] font-semibold text-slate-300">
                 Events Organized
               </div>
             </div>

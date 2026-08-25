@@ -9,14 +9,17 @@ import { ManagementModal } from './components/ManagementModal';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
 import { CampaignsPage } from './pages/CampaignsPage';
+import { CampaignDetailsPage } from './pages/CampaignDetailsPage';
 import { TransparencyPage } from './pages/TransparencyPage';
 import { WorkPage } from './pages/WorkPage';
 import { EventsPage } from './pages/EventsPage';
+import { EventDetailsPage } from './pages/EventDetailsPage';
 import { TeamPage } from './pages/TeamPage';
 import { GalleryPage } from './pages/GalleryPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { ContactPage } from './pages/ContactPage';
 import { JoinUsPage } from './pages/JoinUsPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('home');
@@ -115,14 +118,24 @@ export const App: React.FC = () => {
         )}
         {activeTab === 'about' && <AboutPage />}
         {activeTab === 'campaigns' && <CampaignsPage onOpenDonate={handleOpenDonate} />}
+        {activeTab === 'campaign-details' && (
+          <CampaignDetailsPage
+            onOpenDonate={handleOpenDonate}
+            onBack={() => setActiveTab('campaigns')}
+          />
+        )}
         {activeTab === 'work' && <WorkPage />}
         {activeTab === 'events' && <EventsPage onOpenDonate={handleOpenDonate} />}
+        {activeTab === 'event-details' && (
+          <EventDetailsPage onBack={() => setActiveTab('events')} />
+        )}
         {activeTab === 'transparency' && <TransparencyPage onVerifyReceipt={handleVerifyReceipt} />}
         {activeTab === 'reports' && <ReportsPage />}
         {activeTab === 'team' && <TeamPage />}
         {activeTab === 'gallery' && <GalleryPage />}
         {activeTab === 'contact' && <ContactPage />}
         {activeTab === 'join' && <JoinUsPage />}
+        {activeTab === '404' && <NotFoundPage onGoHome={() => setActiveTab('home')} />}
       </main>
 
       {/* Global Footer */}

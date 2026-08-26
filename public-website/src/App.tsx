@@ -47,11 +47,22 @@ export const App: React.FC = () => {
   const [isManagementOpen, setIsManagementOpen] = useState(false);
   const [verificationToken, setVerificationToken] = useState<string | null>(null);
 
-  // Check URL search params for ?verify=TOKEN, ?page=checkout, or ?receipt=...
+  // Check URL search params or pathname for QR verification (?verify=TOKEN, /verify/receipt/TOKEN, etc.)
   useEffect(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const verifyToken = urlParams.get('verify') || urlParams.get('token');
+      const pathname = window.location.pathname;
+
+      let verifyToken = urlParams.get('verify') || urlParams.get('token') || urlParams.get('receipt');
+
+      // Check pathname patterns like /verify/receipt/:token or /verify/:token or /receipt/:token
+      if (!verifyToken && pathname) {
+        const verifyMatch = pathname.match(/^\/(?:verify\/receipt|verify|receipt)\/([^/]+)/i);
+        if (verifyMatch && verifyMatch[1]) {
+          verifyToken = decodeURIComponent(verifyMatch[1]);
+        }
+      }
+
       if (verifyToken) {
         setVerificationToken(verifyToken);
         setActiveTab('verify-receipt');

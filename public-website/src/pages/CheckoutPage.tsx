@@ -896,25 +896,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                             </div>
                           </div>
                         </div>
-
-                        {/* Confirmation trigger for direct QR transfers */}
-                        <div className="pt-2">
-                          <button
-                            type="button"
-                            onClick={() => handleSubmitContribution({ preventDefault: () => {} } as any)}
-                            disabled={isSubmitting}
-                            className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                          >
-                            {isSubmitting ? (
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                              <>
-                                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                                <span>I Have Transferred via UPI • Issue My E-Receipt</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
                       </div>
                     ) : (
                       /* CASH HANDOVER CARD (MEMBERS ONLY) */

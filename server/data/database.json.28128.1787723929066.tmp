@@ -936,65 +936,8 @@
       "amount": 3000,
       "amountInWords": "Rupees Three Thousand Only",
       "paymentMethod": "UPI",
-      "status": "VOIDED",
-      "createdAt": "2026-08-26T05:58:49.066Z",
-      "receiptNumber": "SKYG/26-27/000037",
-      "verificationToken": "SKYG-VERIFY-B6D7-AD14-C319"
-    },
-    {
-      "id": "cnt-upi-1787723929190-597",
-      "contributorName": "Devotee <script>alert(\"xss\")</script>",
-      "phone": "9848011223",
-      "address": "<script>alert(\"xss\")</script>",
-      "campaignId": "general",
-      "campaignTitle": "General Youth Seva Fund",
-      "amount": 2000,
-      "amountInWords": "Rupees Two Thousand Only",
-      "paymentMethod": "UPI",
       "status": "PENDING",
-      "createdAt": "2026-08-26T05:58:49.191Z"
-    },
-    {
-      "id": "cnt-upi-1787725960681-36",
-      "contributorName": "K. Subrahmanyam Yadav",
-      "phone": "9849112233",
-      "email": "k.subbu@yahoo.com",
-      "campaignId": "general",
-      "campaignTitle": "Village Seva Fund",
-      "amount": 25000,
-      "amountInWords": "Rupees Twenty Five Thousand Only",
-      "paymentMethod": "UPI",
-      "status": "VERIFIED",
-      "createdAt": "2026-08-26T06:32:40.681Z",
-      "receiptNumber": "SKYG/26-27/000038",
-      "verificationToken": "SKYG-VERIFY-E52B-CBE8-2376"
-    },
-    {
-      "id": "cnt-upi-1787725960807-954",
-      "contributorName": "Test Void Donor",
-      "phone": "9848011223",
-      "campaignId": "general",
-      "campaignTitle": "General Youth Seva Fund",
-      "amount": 3000,
-      "amountInWords": "Rupees Three Thousand Only",
-      "paymentMethod": "UPI",
-      "status": "VOIDED",
-      "createdAt": "2026-08-26T06:32:40.807Z",
-      "receiptNumber": "SKYG/26-27/000039",
-      "verificationToken": "SKYG-VERIFY-5475-8567-6430"
-    },
-    {
-      "id": "cnt-upi-1787725960928-371",
-      "contributorName": "Devotee <script>alert(\"xss\")</script>",
-      "phone": "9848011223",
-      "address": "<script>alert(\"xss\")</script>",
-      "campaignId": "general",
-      "campaignTitle": "General Youth Seva Fund",
-      "amount": 2000,
-      "amountInWords": "Rupees Two Thousand Only",
-      "paymentMethod": "UPI",
-      "status": "PENDING",
-      "createdAt": "2026-08-26T06:32:40.929Z"
+      "createdAt": "2026-08-26T05:58:49.066Z"
     }
   ],
   "transactions": [
@@ -1506,39 +1449,8 @@
       "id": "txn-upi-1787723929066",
       "contributionId": "cnt-upi-1787723929066-909",
       "orderId": "ORDER_UPI_1787723929066",
-      "status": "VOIDED",
-      "timestamp": "2026-08-26T05:58:49.066Z",
-      "gatewayPaymentId": "UPI_PAY_1787723929079_8987"
-    },
-    {
-      "id": "txn-upi-1787723929191",
-      "contributionId": "cnt-upi-1787723929190-597",
-      "orderId": "ORDER_UPI_1787723929190",
       "status": "PENDING",
-      "timestamp": "2026-08-26T05:58:49.191Z"
-    },
-    {
-      "id": "txn-upi-1787725960683",
-      "contributionId": "cnt-upi-1787725960681-36",
-      "orderId": "ORDER_UPI_1787725960681",
-      "status": "VERIFIED",
-      "timestamp": "2026-08-26T06:32:40.683Z",
-      "gatewayPaymentId": "UPI_PAY_1787725960718_3265"
-    },
-    {
-      "id": "txn-upi-1787725960807",
-      "contributionId": "cnt-upi-1787725960807-954",
-      "orderId": "ORDER_UPI_1787725960807",
-      "status": "VOIDED",
-      "timestamp": "2026-08-26T06:32:40.807Z",
-      "gatewayPaymentId": "UPI_PAY_1787725960826_5060"
-    },
-    {
-      "id": "txn-upi-1787725960929",
-      "contributionId": "cnt-upi-1787725960928-371",
-      "orderId": "ORDER_UPI_1787725960928",
-      "status": "PENDING",
-      "timestamp": "2026-08-26T06:32:40.929Z"
+      "timestamp": "2026-08-26T05:58:49.066Z"
     }
   ],
   "receipts": [
@@ -1936,39 +1848,6 @@
       "issueDate": "26 Aug 2026",
       "issueTime": "11:28 am",
       "status": "ISSUED",
-      "signatoryTitle": "President / Treasurer"
-    },
-    {
-      "id": "rcpt-1787723929079",
-      "receiptNumber": "SKYG/26-27/000037",
-      "contributionId": "cnt-upi-1787723929066-909",
-      "verificationToken": "SKYG-VERIFY-B6D7-AD14-C319",
-      "qrCodeUrl": "/verify/receipt/SKYG-VERIFY-B6D7-AD14-C319",
-      "issueDate": "26 Aug 2026",
-      "issueTime": "11:28 am",
-      "status": "VOIDED",
-      "signatoryTitle": "President / Treasurer"
-    },
-    {
-      "id": "rcpt-1787725960767",
-      "receiptNumber": "SKYG/26-27/000038",
-      "contributionId": "cnt-upi-1787725960681-36",
-      "verificationToken": "SKYG-VERIFY-E52B-CBE8-2376",
-      "qrCodeUrl": "/verify/receipt/SKYG-VERIFY-E52B-CBE8-2376",
-      "issueDate": "26 Aug 2026",
-      "issueTime": "12:02 pm",
-      "status": "ISSUED",
-      "signatoryTitle": "President / Treasurer"
-    },
-    {
-      "id": "rcpt-1787725960827",
-      "receiptNumber": "SKYG/26-27/000039",
-      "contributionId": "cnt-upi-1787725960807-954",
-      "verificationToken": "SKYG-VERIFY-5475-8567-6430",
-      "qrCodeUrl": "/verify/receipt/SKYG-VERIFY-5475-8567-6430",
-      "issueDate": "26 Aug 2026",
-      "issueTime": "12:02 pm",
-      "status": "VOIDED",
       "signatoryTitle": "President / Treasurer"
     }
   ],
@@ -2724,66 +2603,6 @@
       "action": "UPI_PAYMENT_INITIATED",
       "details": "Initiated UPI contribution of ₹3000 for Test Void Donor",
       "timestamp": "2026-08-26T05:58:49.066Z"
-    },
-    {
-      "id": "audit-1787723929079",
-      "action": "UPI_PAYMENT_VERIFIED",
-      "details": "Verified ₹3000 UPI contribution from Test Void Donor. Issued Receipt: SKYG/26-27/000037",
-      "timestamp": "2026-08-26T05:58:49.079Z"
-    },
-    {
-      "id": "audit-1787723929091",
-      "action": "RECEIPT_VOIDED",
-      "details": "Receipt SKYG/26-27/000037 VOIDED by Administrator. Reason: Payment reversed by bank chargeback",
-      "timestamp": "2026-08-26T05:58:49.091Z"
-    },
-    {
-      "id": "audit-1787723929191",
-      "action": "UPI_PAYMENT_INITIATED",
-      "details": "Initiated UPI contribution of ₹2000 for Devotee <script>alert(\"xss\")</script>",
-      "timestamp": "2026-08-26T05:58:49.191Z"
-    },
-    {
-      "id": "audit-1787725960683",
-      "action": "UPI_PAYMENT_INITIATED",
-      "details": "Initiated UPI contribution of ₹25000 for K. Subrahmanyam Yadav",
-      "timestamp": "2026-08-26T06:32:40.683Z"
-    },
-    {
-      "id": "audit-1787725960767",
-      "action": "UPI_PAYMENT_VERIFIED",
-      "details": "Verified ₹25000 UPI contribution from K. Subrahmanyam Yadav. Issued Receipt: SKYG/26-27/000038",
-      "timestamp": "2026-08-26T06:32:40.718Z"
-    },
-    {
-      "id": "audit-1787725960783",
-      "action": "RECEIPT_VERIFIED",
-      "details": "QR verification scanned for Receipt SKYG/26-27/000038",
-      "timestamp": "2026-08-26T06:32:40.783Z"
-    },
-    {
-      "id": "audit-1787725960807",
-      "action": "UPI_PAYMENT_INITIATED",
-      "details": "Initiated UPI contribution of ₹3000 for Test Void Donor",
-      "timestamp": "2026-08-26T06:32:40.807Z"
-    },
-    {
-      "id": "audit-1787725960827",
-      "action": "UPI_PAYMENT_VERIFIED",
-      "details": "Verified ₹3000 UPI contribution from Test Void Donor. Issued Receipt: SKYG/26-27/000039",
-      "timestamp": "2026-08-26T06:32:40.826Z"
-    },
-    {
-      "id": "audit-1787725960840",
-      "action": "RECEIPT_VOIDED",
-      "details": "Receipt SKYG/26-27/000039 VOIDED by Administrator. Reason: Payment reversed by bank chargeback",
-      "timestamp": "2026-08-26T06:32:40.840Z"
-    },
-    {
-      "id": "audit-1787725960929",
-      "action": "UPI_PAYMENT_INITIATED",
-      "details": "Initiated UPI contribution of ₹2000 for Devotee <script>alert(\"xss\")</script>",
-      "timestamp": "2026-08-26T06:32:40.929Z"
     }
   ],
   "settings": {
@@ -2798,5 +2617,5 @@
     "financialYear": "26-27",
     "authorizedSignatory": "President / Treasurer"
   },
-  "receiptSequence": 39
+  "receiptSequence": 36
 }

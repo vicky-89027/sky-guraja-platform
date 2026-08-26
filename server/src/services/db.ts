@@ -57,9 +57,10 @@ export interface Receipt {
 
 export interface AuditLog {
   id: string;
-  action: 'CASH_RECEIVED' | 'UPI_PAYMENT_INITIATED' | 'UPI_PAYMENT_VERIFIED' | 'RECEIPT_GENERATED' | 'RECEIPT_VERIFIED' | 'RECEIPT_VOIDED';
+  action: 'CASH_RECEIVED' | 'UPI_PAYMENT_INITIATED' | 'UPI_PAYMENT_VERIFIED' | 'RECEIPT_GENERATED' | 'RECEIPT_VERIFIED' | 'RECEIPT_VOIDED' | 'RECEIPT_EMAILED';
   userId?: string;
   userName?: string;
+  performedByUserId?: string;
   details: string;
   timestamp: string;
 }

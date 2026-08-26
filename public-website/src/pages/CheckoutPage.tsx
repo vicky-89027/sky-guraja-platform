@@ -189,6 +189,89 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
     }
   };
 
+  const handleRazorpayPayment = async () => {
+    setErrorMessage('');
+    const cleanPhone = donorPhone.replace(/[^0-9]/g, '');
+
+    if (!donorName.trim() || cleanPhone.length < 10) {
+      setErrorMessage('Please enter your full name and a valid 10-digit mobile number.');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+      return;
+    }
+
+    if (!amount || amount <= 0) {
+      setErrorMessage('Contribution amount must be greater than ₹0.');
+      return;
+    }
+
+    const rzpKey = (import.meta as any).env?.VITE_RAZORPAY_KEY_ID || 'rzp_live_craftory';
+
+    if (typeof (window as any).Razorpay !== 'undefined') {
+      try {
+        setIsSubmitting(true);
+        const options = {
+          key: rzpKey,
+          amount: Math.round(amount * 100),
+          currency: 'INR',
+          name: 'Craftory',
+          description: `${selectedCampaign} • SKY Guraja`,
+          image: '/images/sky_official_monogram.png',
+          prefill: {
+            name: donorName.trim(),
+            contact: cleanPhone,
+            email: donorEmail.trim() || `${cleanPhone}@skyguraja.org`
+          },
+          notes: {
+            organization: 'Sri Krishna Yadav Youth Guraja',
+            campaign: selectedCampaign,
+            merchant: 'Craftory'
+          },
+          theme: {
+            color: '#D4A244'
+          },
+          handler: async function (response: any) {
+            try {
+              const receipt = await initiateAndVerifyUPIContribution({
+                contributorName: donorName.trim(),
+                phone: cleanPhone,
+                email: donorEmail.trim() || undefined,
+                address: donorAddress.trim() || 'Guraja Village, Andhra Pradesh',
+                campaignId: 'c1',
+                campaignTitle: selectedCampaign,
+                amount
+              });
+              setCompletedReceipt(receipt);
+              confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err: any) {
+              setErrorMessage(err.message || 'Payment recorded, receipt generation failed.');
+            } finally {
+              setIsSubmitting(false);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setIsSubmitting(false);
+            }
+          }
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', function (response: any) {
+          setErrorMessage(response?.error?.description || 'Razorpay transaction was cancelled or failed.');
+          setIsSubmitting(false);
+        });
+        rzp.open();
+        return;
+      } catch (err: any) {
+        setErrorMessage('Failed to launch Razorpay gateway. Falling back to direct QR.');
+      }
+    }
+
+    // Direct fallback
+    handleSubmitContribution({ preventDefault: () => {} } as any);
+  };
+
   const handlePrintReceipt = () => {
     window.print();
   };
@@ -594,10 +677,23 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                         </div>
                       </div>
 
+                      {/* Razorpay Gateway Button (Craftory) */}
+                      <div>
+                        <button
+                          type="button"
+                          onClick={handleRazorpayPayment}
+                          disabled={isSubmitting}
+                          className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-600 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all transform active:scale-95 disabled:opacity-50"
+                        >
+                          <Sparkles className="w-4 h-4 text-amber-300" />
+                          <span>Pay via Craftory Gateway (UPI / GPay / PhonePe / Paytm / Cards)</span>
+                        </button>
+                      </div>
+
                       {/* 1-Click Pay on Mobile */}
                       <div>
                         <span className="text-xs font-bold text-slate-300 block mb-2">
-                          1-Click Pay on Mobile (Auto-opens App):
+                          Direct App UPI Intent:
                         </span>
                         <div className="grid grid-cols-2 gap-2">
                           <a
@@ -616,7 +712,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                       </div>
 
                       <p className="text-[11px] text-slate-400 leading-relaxed">
-                        After transferring, click below to immediately issue your authenticated digital E-Receipt with sequential receipt number and QR verification seal.
+                        After completing payment, your authenticated digital E-Receipt with sequential receipt number and QR verification seal will be issued immediately.
                       </p>
                     </div>
                   </div>

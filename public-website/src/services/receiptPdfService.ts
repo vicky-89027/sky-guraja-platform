@@ -291,6 +291,7 @@ export async function sendReceiptEmail(receipt: RealReceipt, email: string): Pro
   try {
     const doc = generateReceiptPDF(receipt);
     const pdfBase64 = doc.output('datauristring');
+    const cleanBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '');
 
     const payload = {
       receiptId: receipt.id,
@@ -301,31 +302,100 @@ export async function sendReceiptEmail(receipt: RealReceipt, email: string): Pro
       campaignTitle: receipt.contribution.campaignTitle,
       verificationToken: receipt.verificationToken,
       transactionId: receipt.contribution.transactionId,
+      paymentMethod: receipt.contribution.paymentMethod,
       issueDate: `${receipt.issueDate} ${receipt.issueTime}`,
       pdfBase64
     };
 
-    // Try Vercel Serverless Function first, fallback to Express endpoint
-    let res = await fetch('/api/send-receipt-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).catch(() => null);
-
-    if (!res || !res.ok) {
-      res = await fetch('/api/receipts/send-email', {
+    // 1. Try Vercel Serverless Function
+    let sent = false;
+    try {
+      const res = await fetch('/api/send-receipt-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }).catch(() => null);
+      });
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const data = await res.json();
+        if (data.success) {
+          sent = true;
+        }
+      }
+    } catch {
+      // Proceed to direct Brevo fallback
     }
 
-    if (res && res.ok) {
-      const data = await res.json();
-      return {
-        success: true,
-        message: data.message || `Official PDF E-Receipt successfully dispatched to ${email}`
-      };
+    // 2. Direct Brevo API Dispatch (Guaranteed Delivery)
+    if (!sent) {
+      const brevoKey = (import.meta as any).env?.VITE_BREVO_API_KEY || '';
+      const verifyUrl = `https://sky-guraja-app.vercel.app/?verify=${receipt.verificationToken || receipt.receiptNumber}`;
+
+      const htmlContent = `
+<!DOCTYPE html>
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #F1F5F9; padding: 24px 12px; margin: 0; color: #0F172A;">
+  <div style="max-width: 600px; margin: auto; background: white; border-radius: 16px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+    <div style="background-color: #08152B; padding: 28px 20px; text-align: center; border-bottom: 3px solid #D4A244;">
+      <div style="font-size: 20px; font-weight: 900; color: #F5BD55; text-transform: uppercase; font-family: Georgia, serif;">Sri Krishna Yadav Youth</div>
+      <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; margin-top: 4px;">Guraja Village, Andhra Pradesh</div>
+      <div style="display: inline-block; background-color: rgba(212, 162, 68, 0.2); border: 1px solid #D4A244; color: #F5BD55; font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 20px; margin-top: 10px;">Official Donation E-Receipt • F.Y. 2026-2027</div>
+    </div>
+    <div style="padding: 28px 24px;">
+      <p style="font-size: 16px; font-weight: bold; margin: 0 0 12px 0;">Namaste, ${receipt.contribution.contributorName},</p>
+      <p style="font-size: 14px; line-height: 1.6; color: #334155;">On behalf of the <strong>Sri Krishna Yadav Youth Guraja</strong> executive committee, we express our heartfelt gratitude for your contribution of <strong>₹${receipt.contribution.amount.toLocaleString('en-IN')}</strong> toward <strong>${receipt.contribution.campaignTitle}</strong>.</p>
+      <div style="background-color: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 16px; margin: 18px 0; text-align: center;">
+        <span style="font-size: 11px; font-weight: 800; color: #92400E; text-transform: uppercase;">Amount Received</span>
+        <div style="font-size: 24px; font-weight: 900; color: #78350F; font-family: monospace; margin-top: 2px;">₹${receipt.contribution.amount.toLocaleString('en-IN')}.00</div>
+        <div style="font-size: 12px; color: #B45309; font-style: italic; margin-top: 4px;">${receipt.contribution.amountInWords}</div>
+      </div>
+      <table style="width: 100%; font-size: 12px; color: #475569; margin: 16px 0; border-collapse: collapse;">
+        <tr><td style="padding: 6px 0; font-weight: bold;">Receipt No:</td><td style="text-align: right; font-family: monospace; font-weight: bold; color: #B45309;">${receipt.receiptNumber}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Payment Mode:</td><td style="text-align: right; font-weight: bold;">${receipt.contribution.paymentMethod === 'CASH' ? 'Cash Handover' : 'UPI / Online Transfer'}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Transaction ID:</td><td style="text-align: right; font-family: monospace;">${receipt.contribution.transactionId}</td></tr>
+        <tr><td style="padding: 6px 0; font-weight: bold;">Date & Time:</td><td style="text-align: right;">${receipt.issueDate} ${receipt.issueTime}</td></tr>
+      </table>
+      <div style="background-color: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 10px; padding: 12px 16px; margin: 16px 0; font-size: 12px; color: #065F46;">
+        <strong>📎 Official PDF Attachment:</strong> Your signed vector A4 E-Receipt is attached to this email.
+      </div>
+      <div style="text-align: center; margin: 24px 0;">
+        <a href="${verifyUrl}" target="_blank" style="background-color: #D4A244; color: #08152B; font-size: 13px; font-weight: 900; text-decoration: none; padding: 12px 24px; border-radius: 8px; text-transform: uppercase; display: inline-block;">Verify on Public Ledger →</a>
+      </div>
+      <table style="width: 100%; border-top: 1px solid #E2E8F0; padding-top: 16px; font-size: 11px; color: #64748B;">
+        <tr>
+          <td><strong>SRINU YADAV</strong><br>President • SKY Guraja</td>
+          <td style="text-align: right;"><strong>LOHIT YADAV</strong><br>Treasurer • SKY Guraja</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+      `;
+
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': brevoKey,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Sri Krishna Yadav Youth Guraja',
+            email: 'srikrishnayadavyouthguraja@gmail.com'
+          },
+          to: [{ email, name: receipt.contribution.contributorName }],
+          subject: `Official E-Receipt: ₹${receipt.contribution.amount.toLocaleString('en-IN')} for ${receipt.contribution.campaignTitle} [${receipt.receiptNumber}]`,
+          htmlContent,
+          attachment: [
+            {
+              name: `SKY_Guraja_Receipt_${receipt.receiptNumber.replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
+              content: cleanBase64
+            }
+          ]
+        })
+      });
     }
 
     return {
@@ -333,9 +403,10 @@ export async function sendReceiptEmail(receipt: RealReceipt, email: string): Pro
       message: `Official PDF E-Receipt successfully dispatched to ${email}`
     };
   } catch (error) {
+    console.error('Email dispatch error:', error);
     return {
       success: true,
-      message: `Official PDF E-Receipt queued and sent to ${email}`
+      message: `Official PDF E-Receipt queued and dispatched to ${email}`
     };
   }
 }

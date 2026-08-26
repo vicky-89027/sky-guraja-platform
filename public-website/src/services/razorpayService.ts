@@ -37,7 +37,7 @@ export interface CheckoutOptions {
 }
 
 const RAZORPAY_KEY_ID =
-  import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_TUPBdxOO32AKd1';
+  import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_TUPpBnksFT8u59';
 const MERCHANT_NAME =
   import.meta.env.VITE_RAZORPAY_MERCHANT_NAME || 'Sri Krishna Yadav Youth Guraja';
 const THEME_COLOR = import.meta.env.VITE_RAZORPAY_THEME_COLOR || '#D4A244';

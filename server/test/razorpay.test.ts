@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import app from '../src/app';
 
 describe('RAZORPAY STANDARD WEB CHECKOUT SUITE', () => {
-  const testKeySecret = process.env.RAZORPAY_KEY_SECRET || 'kxCOHz6gJHknD4iScB9c9n2g';
+  const testKeySecret = process.env.RAZORPAY_KEY_SECRET || 'n8uTFFsr2Gr2lmqsQ4wHHFe7';
 
   it('RZP-01: Rejects create-order if amount < 100 paise', async () => {
     const res = await request(app)

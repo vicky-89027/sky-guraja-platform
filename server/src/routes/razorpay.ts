@@ -22,8 +22,8 @@ router.post('/create-order', async (req: Request, res: Response) => {
       });
     }
 
-    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TUPBdxOO32AKd1';
-    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'kxCOHz6gJHknD4iScB9c9n2g';
+    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TUPpBnksFT8u59';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'n8uTFFsr2Gr2lmqsQ4wHHFe7';
 
     if (!keyId || !keySecret) {
       return res.status(401).json({
@@ -68,7 +68,7 @@ router.post('/create-order', async (req: Request, res: Response) => {
 // 2. Verify Razorpay Payment Signature
 router.post('/verify-payment', (req: Request, res: Response) => {
   try {
-    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'kxCOHz6gJHknD4iScB9c9n2g';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'n8uTFFsr2Gr2lmqsQ4wHHFe7';
 
     const {
       razorpay_order_id,

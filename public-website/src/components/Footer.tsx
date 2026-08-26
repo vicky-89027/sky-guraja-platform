@@ -143,7 +143,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDonate }) =>
             </div>
             <div className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              <span>+91 98765 43210</span>
+              <span>+91 98480 11111</span>
             </div>
             <div className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-amber-400 flex-shrink-0" />

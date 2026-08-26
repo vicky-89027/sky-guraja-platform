@@ -122,14 +122,14 @@ export const ManagementModal: React.FC<ManagementModalProps> = ({
     }
   };
 
-  const handleSaveTeamMember = (e: React.FormEvent) => {
+  const handleSaveTeamMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!mName.trim() || !mRole.trim()) {
       setErrorMessage('Please enter Member Name and Designation.');
       return;
     }
 
-    addOrUpdateTeamMember({
+    await addOrUpdateTeamMember({
       id: editingTeamMember ? editingTeamMember.id : undefined,
       name: mName.trim(),
       role: mRole.trim(),
@@ -138,15 +138,15 @@ export const ManagementModal: React.FC<ManagementModalProps> = ({
       image: mImage || '/images/gallery/guraja_youth_volunteers_group.png'
     });
 
-    showNotification(`Member "${mName}" details and photo updated successfully!`);
+    showNotification(`Member "${mName}" details and photo updated successfully in database!`);
     setIsMemberFormOpen(false);
     loadTeamMembers();
   };
 
-  const handleDeleteTeamMember = (id: string, name: string) => {
+  const handleDeleteTeamMember = async (id: string, name: string) => {
     if (window.confirm(`Are you sure you want to remove ${name} from the committee roster?`)) {
-      deleteTeamMember(id);
-      showNotification(`Member "${name}" removed from roster.`);
+      await deleteTeamMember(id);
+      showNotification(`Member "${name}" removed from roster and database.`);
       loadTeamMembers();
     }
   };

@@ -134,7 +134,7 @@ function getDefaultData(): DBData {
       subTitle: 'Sri Krishna Yadav Youth Association',
       tagline: 'UNITY • YOUTH • SERVICE • COMMUNITY • PROGRESS',
       address: 'Guraja Village, Krishna District, Andhra Pradesh, India - 521321',
-      phone: '+91 98765 43210',
+      phone: '+91 98480 11111',
       email: 'info@skyouthguraja.org',
       website: 'https://skyouthguraja.org',
       receiptPrefix: 'SKYG',
@@ -145,25 +145,41 @@ function getDefaultData(): DBData {
   };
 }
 
+let memoryCache: DBData | null = null;
+
 export function loadDB(): DBData {
+  if (memoryCache) {
+    return memoryCache;
+  }
   try {
     if (fs.existsSync(DATA_FILE)) {
       const data = fs.readFileSync(DATA_FILE, 'utf-8');
-      return JSON.parse(data);
+      if (data && data.trim().length > 0) {
+        memoryCache = JSON.parse(data);
+        return memoryCache!;
+      }
     }
   } catch (err) {
     console.error('Error reading database file, using defaults:', err);
   }
   const defaults = getDefaultData();
+  memoryCache = defaults;
   saveDB(defaults);
   return defaults;
 }
 
 export function saveDB(data: DBData): void {
+  memoryCache = data;
   try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    const tempFile = `${DATA_FILE}.${process.pid}.${Date.now()}.tmp`;
+    fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), 'utf-8');
+    fs.renameSync(tempFile, DATA_FILE);
   } catch (err) {
-    console.error('Error saving database file:', err);
+    try {
+      fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (writeErr) {
+      console.error('Error saving database file:', writeErr);
+    }
   }
 }
 

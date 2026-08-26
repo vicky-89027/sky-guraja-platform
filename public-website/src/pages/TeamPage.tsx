@@ -91,14 +91,14 @@ export const TeamPage: React.FC<TeamPageProps> = ({ user }) => {
     }
   };
 
-  const handleSaveMember = (e: React.FormEvent) => {
+  const handleSaveMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || !formRole.trim()) {
       alert('Please fill in Member Name and Role.');
       return;
     }
 
-    addOrUpdateTeamMember({
+    await addOrUpdateTeamMember({
       id: editingMember ? editingMember.id : undefined,
       name: formName.trim(),
       role: formRole.trim(),
@@ -113,9 +113,9 @@ export const TeamPage: React.FC<TeamPageProps> = ({ user }) => {
     loadMembers();
   };
 
-  const handleDeleteMember = (id: string, name: string) => {
+  const handleDeleteMember = async (id: string, name: string) => {
     if (window.confirm(`Are you sure you want to remove ${name} from the leadership team?`)) {
-      deleteTeamMember(id);
+      await deleteTeamMember(id);
       loadMembers();
     }
   };

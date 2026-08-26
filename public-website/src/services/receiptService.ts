@@ -57,7 +57,7 @@ export const DEFAULT_VERIFIED_CONTRIBUTIONS: RealContribution[] = [
   {
     id: 'con-02',
     contributorName: 'T. Rama Krishna',
-    phone: '9876543210',
+    phone: '9848077621',
     email: 'tramak@outlook.com',
     address: 'Main Road, Guraja',
     campaignId: 'c2',

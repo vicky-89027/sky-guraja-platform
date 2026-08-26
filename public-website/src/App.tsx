@@ -24,6 +24,9 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { ReceiptVerificationPage } from './pages/ReceiptVerificationPage';
 import { RealReceipt, getRealReceiptsList } from './services/receiptService';
 
+import { OFFICIAL_MEMBERS } from './components/AuthModal';
+import { getTeamMembers } from './services/teamService';
+
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -42,7 +45,7 @@ export const App: React.FC = () => {
   const [isManagementOpen, setIsManagementOpen] = useState(false);
   const [verificationToken, setVerificationToken] = useState<string | null>(null);
 
-  // Check URL search params for ?verify=TOKEN or ?receipt=...
+  // Check URL search params for ?verify=TOKEN or ?receipt=... and sync active user session
   useEffect(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -52,10 +55,46 @@ export const App: React.FC = () => {
         setActiveTab('verify-receipt');
       }
 
-      const saved = localStorage.getItem('sky_user');
-      if (saved) {
-        setUser(JSON.parse(saved));
-      }
+      const syncActiveSession = () => {
+        const saved = localStorage.getItem('sky_user');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            const liveMembers = getTeamMembers();
+            const cleanPhone = (parsed.phone || '').replace(/[^0-9]/g, '');
+
+            const matched = liveMembers.find(
+              (m) =>
+                (cleanPhone && m.phone && m.phone.replace(/[^0-9]/g, '') === cleanPhone) ||
+                m.role.toUpperCase() === (parsed.role || '').toUpperCase() ||
+                (parsed.username && m.username?.toLowerCase() === parsed.username.toLowerCase())
+            ) || OFFICIAL_MEMBERS.find(
+              (m) =>
+                (cleanPhone && m.phone && m.phone.replace(/[^0-9]/g, '') === cleanPhone) ||
+                m.role.toUpperCase() === (parsed.role || '').toUpperCase() ||
+                (parsed.username && m.username.toLowerCase() === parsed.username.toLowerCase())
+            );
+
+            if (matched) {
+              parsed.fullName = (matched as any).name || (matched as any).fullName;
+              parsed.role = matched.role;
+              parsed.roleTitle = (matched as any).roleTitle || matched.role;
+              parsed.image = matched.image || parsed.image;
+              parsed.photoUrl = matched.image || parsed.photoUrl;
+              parsed.phone = matched.phone || parsed.phone;
+              parsed.email = matched.email || parsed.email;
+              localStorage.setItem('sky_user', JSON.stringify(parsed));
+            }
+            setUser(parsed);
+          } catch {
+            setUser(null);
+          }
+        }
+      };
+
+      syncActiveSession();
+      window.addEventListener('storage', syncActiveSession);
+      return () => window.removeEventListener('storage', syncActiveSession);
     } catch {
       // Ignore
     }

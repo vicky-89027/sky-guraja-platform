@@ -40,7 +40,7 @@ export async function seedDatabase(): Promise<void> {
       username: 'admin',
       email: 'admin@skyguraja.org',
       phone: '9848011111',
-      full_name: 'Venkata Krishna Yadav',
+      full_name: 'S GANESH YADAV',
       role: 'SUPER_ADMIN'
     },
     {
@@ -48,7 +48,7 @@ export async function seedDatabase(): Promise<void> {
       username: 'president',
       email: 'president@skyguraja.org',
       phone: '9848022222',
-      full_name: 'Nagaraju Yadav',
+      full_name: 'SRINU YADAV',
       role: 'PRESIDENT'
     },
     {
@@ -56,7 +56,7 @@ export async function seedDatabase(): Promise<void> {
       username: 'secretary',
       email: 'secretary@skyguraja.org',
       phone: '9848033333',
-      full_name: 'Suresh Kumar Yadav',
+      full_name: 'MANIKANTA YADAV',
       role: 'SECRETARY'
     },
     {
@@ -64,7 +64,7 @@ export async function seedDatabase(): Promise<void> {
       username: 'treasurer',
       email: 'treasurer@skyguraja.org',
       phone: '9848044444',
-      full_name: 'Ramesh Yadav',
+      full_name: 'LOHIT YADAV',
       role: 'TREASURER'
     },
     {
@@ -72,7 +72,7 @@ export async function seedDatabase(): Promise<void> {
       username: 'jointsec',
       email: 'jointsec@skyguraja.org',
       phone: '9848055555',
-      full_name: 'Venkatesh Yadav',
+      full_name: 'VENKAT YADAV',
       role: 'JOINT_SECRETARY'
     },
     {
@@ -96,7 +96,7 @@ export async function seedDatabase(): Promise<void> {
       username: 'koteswara',
       email: 'koti.yadav@skyguraja.org',
       phone: '9848088888',
-      full_name: 'Koteswara Rao Yadav',
+      full_name: 'KOTESWARA RAO YADAV',
       role: 'MEMBER'
     },
     {
@@ -109,11 +109,11 @@ export async function seedDatabase(): Promise<void> {
     },
     {
       id: 'usr-donor-01',
-      username: 'donor',
-      email: 'srinu@skyguraja.org',
+      username: 'nagaraju',
+      email: 'nagaraju@skyguraja.org',
       phone: '9848012345',
-      full_name: 'T SIRNU YADAV',
-      role: 'USER'
+      full_name: 'NAGARAJU YADAV',
+      role: 'MEMBER'
     }
   ];
 
@@ -130,8 +130,8 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-01',
       user_id: 'usr-pres-01',
-      name: 'Nagaraju Yadav',
-      role_title: 'President',
+      name: 'SRINU YADAV',
+      role_title: 'PRESIDENT',
       phone: '9848022222',
       email: 'president@skyguraja.org',
       joining_date: '2022-01-15',
@@ -141,8 +141,8 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-02',
       user_id: 'usr-sec-01',
-      name: 'Suresh Kumar Yadav',
-      role_title: 'General Secretary',
+      name: 'MANIKANTA YADAV',
+      role_title: 'GENERAL SECRETARY',
       phone: '9848033333',
       email: 'secretary@skyguraja.org',
       joining_date: '2022-01-15',
@@ -152,8 +152,8 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-03',
       user_id: 'usr-tres-01',
-      name: 'Ramesh Yadav',
-      role_title: 'Treasurer',
+      name: 'LOHIT YADAV',
+      role_title: 'TREASURER',
       phone: '9848044444',
       email: 'treasurer@skyguraja.org',
       joining_date: '2022-01-15',
@@ -163,8 +163,8 @@ export async function seedDatabase(): Promise<void> {
     {
       id: 'mem-04',
       user_id: 'usr-jsec-01',
-      name: 'Venkatesh Yadav',
-      role_title: 'Joint Secretary',
+      name: 'VENKAT YADAV',
+      role_title: 'JOINT SECRETARY',
       phone: '9848055555',
       email: 'jointsec@skyguraja.org',
       joining_date: '2022-03-10',
@@ -412,7 +412,7 @@ export async function seedDatabase(): Promise<void> {
       id: 'con-04',
       receipt_num: 'SKY-REC-2026-004',
       donor_name: 'T. Rama Krishna',
-      phone: '9876543210',
+      phone: '9848077621',
       email: 'tramak@outlook.com',
       amount: 30000,
       date: '2026-05-15',

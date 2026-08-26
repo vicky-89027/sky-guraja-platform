@@ -35,9 +35,9 @@ export const OFFICIAL_MEMBERS = [
   {
     role: 'PRESIDENT',
     roleTitle: '🎖️ President',
-    fullName: 'Nagaraju Yadav',
+    fullName: 'SRINU YADAV',
     username: 'president',
-    altUsernames: ['nagaraju', 'nagaraju_yadav'],
+    altUsernames: ['srinu', 'srinu_yadav'],
     phone: '9848022222',
     email: 'president@skyguraja.org',
     password: 'SRIKRISHNA26',
@@ -46,9 +46,9 @@ export const OFFICIAL_MEMBERS = [
   {
     role: 'SECRETARY',
     roleTitle: '📝 General Secretary',
-    fullName: 'Suresh Kumar Yadav',
+    fullName: 'MANIKANTA YADAV',
     username: 'secretary',
-    altUsernames: ['suresh', 'suresh_yadav'],
+    altUsernames: ['manikanta', 'mani', 'manikanta_yadav'],
     phone: '9848033333',
     email: 'secretary@skyguraja.org',
     password: 'SRIKRISHNA26',
@@ -57,9 +57,9 @@ export const OFFICIAL_MEMBERS = [
   {
     role: 'TREASURER',
     roleTitle: '💰 Treasurer',
-    fullName: 'Ramesh Yadav',
+    fullName: 'LOHIT YADAV',
     username: 'treasurer',
-    altUsernames: ['ramesh', 'ramesh_yadav'],
+    altUsernames: ['lohit', 'lohit_yadav'],
     phone: '9848044444',
     email: 'treasurer@skyguraja.org',
     password: 'SRIKRISHNA26',
@@ -68,9 +68,9 @@ export const OFFICIAL_MEMBERS = [
   {
     role: 'JOINT_SECRETARY',
     roleTitle: '⚡ Joint Secretary',
-    fullName: 'Venkatesh Yadav',
+    fullName: 'VENKAT YADAV',
     username: 'jointsec',
-    altUsernames: ['venkatesh', 'venkatesh_yadav'],
+    altUsernames: ['venkat', 'venkat_yadav'],
     phone: '9848055555',
     email: 'jointsec@skyguraja.org',
     password: 'SRIKRISHNA26',
@@ -101,7 +101,7 @@ export const OFFICIAL_MEMBERS = [
   {
     role: 'MEMBER',
     roleTitle: '🎭 Cultural Secretary',
-    fullName: 'Koteswara Rao Yadav',
+    fullName: 'KOTESWARA RAO YADAV',
     username: 'koteswara',
     altUsernames: ['koti', 'koteswararao'],
     phone: '9848088888',
@@ -132,13 +132,13 @@ export const OFFICIAL_MEMBERS = [
     image: '/images/gallery/krishna_flute_gomata.jpg'
   },
   {
-    role: 'USER',
-    roleTitle: '🙏 Youth Coordinator / Contributor',
-    fullName: 'T SIRNU YADAV',
-    username: 'donor',
-    altUsernames: ['srinu', 'sirnu', 'srinu_yadav'],
+    role: 'MEMBER',
+    roleTitle: '🙏 Senior Advisor / Founder',
+    fullName: 'NAGARAJU YADAV',
+    username: 'nagaraju',
+    altUsernames: ['nagaraju_yadav', 'elder'],
     phone: '9848012345',
-    email: 'srinu@skyguraja.org',
+    email: 'nagaraju@skyguraja.org',
     password: 'SRIKRISHNA26',
     image: '/images/gallery/guraja_women_holi_vasantotsavam.jpg'
   }

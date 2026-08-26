@@ -1,5 +1,5 @@
 import process from 'node:process';
-import Razorpay from 'razorpay';
+import { Buffer } from 'node:buffer';
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -23,7 +23,8 @@ export default async function handler(req, res) {
   const keySecret = process.env.RAZORPAY_KEY_SECRET || 'n8uTFFsr2Gr2lmqsQ4wHHFe7';
 
   try {
-    const { amount, currency = 'INR', receipt, notes } = req.body || {};
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+    const { amount, currency = 'INR', receipt, notes } = body;
 
     if (!amount) {
       return res.status(400).json({ error: 'Amount is required.' });
@@ -38,36 +39,45 @@ export default async function handler(req, res) {
       });
     }
 
-    const razorpay = new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret
+    // Direct official Razorpay Orders REST API call (zero ESM/CJS runtime crash risk on Vercel)
+    const authHeader = `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString('base64')}`;
+
+    const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader
+      },
+      body: JSON.stringify({
+        amount: parsedAmount,
+        currency: currency || 'INR',
+        receipt: receipt || `rcpt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        notes: notes || {}
+      })
     });
 
-    const options = {
-      amount: parsedAmount,
-      currency: currency || 'INR',
-      receipt: receipt || `rcpt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-      notes: notes || {}
-    };
+    const data = await rzpResponse.json();
 
-    const order = await razorpay.orders.create(options);
+    if (!rzpResponse.ok) {
+      console.error('Razorpay API error response:', data);
+      return res.status(rzpResponse.status).json({
+        error: data?.error?.description || 'Razorpay order creation failed.'
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      order_id: order.id,
-      id: order.id,
-      amount: order.amount,
-      currency: order.currency,
-      receipt: order.receipt,
-      status: order.status
+      order_id: data.id,
+      id: data.id,
+      amount: data.amount,
+      currency: data.currency,
+      receipt: data.receipt,
+      status: data.status
     });
   } catch (error) {
-    console.error('Error creating Razorpay order:', error);
-    if (error?.statusCode === 401 || error?.error?.code === 'BAD_REQUEST_ERROR' && error?.error?.description?.includes('auth')) {
-      return res.status(401).json({ error: 'Razorpay authentication failed.' });
-    }
+    console.error('Server error creating Razorpay order:', error);
     return res.status(500).json({
-      error: error?.error?.description || error.message || 'Failed to create Razorpay order.'
+      error: error.message || 'Internal server error while creating Razorpay order.'
     });
   }
 }

@@ -22,6 +22,7 @@ import { ContactPage } from './pages/ContactPage';
 import { JoinUsPage } from './pages/JoinUsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ReceiptVerificationPage } from './pages/ReceiptVerificationPage';
+import { CheckoutPage } from './pages/CheckoutPage';
 import { RealReceipt, getRealReceiptsList } from './services/receiptService';
 
 import { OFFICIAL_MEMBERS } from './components/AuthModal';
@@ -45,7 +46,7 @@ export const App: React.FC = () => {
   const [isManagementOpen, setIsManagementOpen] = useState(false);
   const [verificationToken, setVerificationToken] = useState<string | null>(null);
 
-  // Check URL search params for ?verify=TOKEN or ?receipt=... and sync active user session
+  // Check URL search params for ?verify=TOKEN, ?page=checkout, or ?receipt=...
   useEffect(() => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -53,6 +54,13 @@ export const App: React.FC = () => {
       if (verifyToken) {
         setVerificationToken(verifyToken);
         setActiveTab('verify-receipt');
+      } else if (
+        urlParams.get('page') === 'checkout' ||
+        urlParams.get('page') === 'donate' ||
+        urlParams.get('donate') !== null ||
+        urlParams.get('checkout') !== null
+      ) {
+        setActiveTab('checkout');
       }
 
       const syncActiveSession = () => {
@@ -104,7 +112,8 @@ export const App: React.FC = () => {
 
   const handleOpenDonate = (campaignName?: string) => {
     setDonateCampaign(campaignName);
-    setIsDonateOpen(true);
+    setActiveTab('checkout');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenCashContribution = () => {
@@ -196,6 +205,17 @@ export const App: React.FC = () => {
         {activeTab === 'gallery' && <GalleryPage />}
         {activeTab === 'contact' && <ContactPage />}
         {activeTab === 'join' && <JoinUsPage />}
+        {(activeTab === 'checkout' || activeTab === 'donate') && (
+          <CheckoutPage
+            user={user}
+            onOpenAuth={handleOpenAuth}
+            onNavigateHome={() => {
+              setActiveTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            initialCampaignTitle={donateCampaign}
+          />
+        )}
         {activeTab === 'verify-receipt' && verificationToken && (
           <ReceiptVerificationPage
             token={verificationToken}

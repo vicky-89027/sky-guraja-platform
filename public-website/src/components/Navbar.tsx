@@ -56,6 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'reports', label: 'REPORTS' },
     { id: 'team', label: 'TEAM' },
     { id: 'gallery', label: 'GALLERY' },
+    { id: 'checkout', label: 'CHECKOUT' },
   ];
 
   const handleNavClick = (id: string) => {
@@ -65,11 +66,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const handleSupportUsClick = () => {
-    if (!user) {
-      onOpenAuth('register', 'Please register or sign in first to transfer funds and receive an official E-Receipt.', 'transfer_funds');
-    } else {
-      onOpenDonate();
-    }
+    setActiveTab('checkout');
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleMakeChangesClick = () => {

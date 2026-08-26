@@ -84,8 +84,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [cashReference, setCashReference] = useState('');
   const [cashNotes, setCashNotes] = useState('');
 
-  // 2-Step Flow: Step 1 = Donor & Campaign Details, Step 2 = Select Payment Mode
-  const [step, setStep] = useState<1 | 2>(1);
+  // 3-Step Flow: Step 1 = Donor Details, Step 2 = Select Mode, Step 3 = Respective Payment Channel
+  const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Processing & Receipt
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -369,16 +369,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8">
         {!completedReceipt ? (
           /* =========================================================================
-             CHECKOUT 2-STEP FLOW
+             CHECKOUT 3-STEP FLOW
              ========================================================================= */
           <div className="space-y-8">
-            {/* Step Progress Stepper */}
-            <div className="max-w-md mx-auto mb-6">
+            {/* Step Progress Stepper (3 Steps) */}
+            <div className="max-w-xl mx-auto mb-6">
               <div className="flex items-center justify-between relative">
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-slate-200 w-full -z-0 rounded-full" />
                 <div
                   className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-amber-500 transition-all duration-300 -z-0 rounded-full"
-                  style={{ width: step === 1 ? '50%' : '100%' }}
+                  style={{ width: step === 1 ? '16%' : step === 2 ? '50%' : '100%' }}
                 />
 
                 {/* Step 1 Pill */}
@@ -388,16 +388,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     setStep(1);
                     window.scrollTo({ top: 200, behavior: 'smooth' });
                   }}
-                  className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
+                  className={`relative z-10 flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
                     step === 1
                       ? 'bg-amber-500 text-slate-950 shadow-md ring-4 ring-amber-100 scale-105'
                       : 'bg-white text-slate-700 border border-slate-300 hover:border-amber-400'
                   }`}
                 >
-                  <span className="w-5 h-5 rounded-full bg-slate-950 text-white flex items-center justify-center text-[10px] font-black">
+                  <span className="w-4 h-4 rounded-full bg-slate-950 text-white flex items-center justify-center text-[10px] font-black">
                     1
                   </span>
-                  <span>Donor & Seva Details</span>
+                  <span>1. Details</span>
                 </button>
 
                 {/* Step 2 Pill */}
@@ -409,16 +409,39 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                       window.scrollTo({ top: 200, behavior: 'smooth' });
                     }
                   }}
-                  className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
+                  className={`relative z-10 flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
                     step === 2
                       ? 'bg-amber-500 text-slate-950 shadow-md ring-4 ring-amber-100 scale-105'
-                      : 'bg-white text-slate-500 border border-slate-300'
+                      : step > 2
+                      ? 'bg-white text-slate-700 border border-slate-300 hover:border-amber-400'
+                      : 'bg-white text-slate-400 border border-slate-200 cursor-not-allowed'
                   }`}
                 >
-                  <span className="w-5 h-5 rounded-full bg-slate-950 text-white flex items-center justify-center text-[10px] font-black">
+                  <span className="w-4 h-4 rounded-full bg-slate-950 text-white flex items-center justify-center text-[10px] font-black">
                     2
                   </span>
-                  <span>Select Payment Mode</span>
+                  <span>2. Select Mode</span>
+                </button>
+
+                {/* Step 3 Pill */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (donorName.trim() && donorPhone.replace(/[^0-9]/g, '').length >= 10 && amount > 0) {
+                      setStep(3);
+                      window.scrollTo({ top: 200, behavior: 'smooth' });
+                    }
+                  }}
+                  className={`relative z-10 flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all shadow-sm ${
+                    step === 3
+                      ? 'bg-amber-500 text-slate-950 shadow-md ring-4 ring-amber-100 scale-105'
+                      : 'bg-white text-slate-400 border border-slate-200 cursor-not-allowed'
+                  }`}
+                >
+                  <span className="w-4 h-4 rounded-full bg-slate-950 text-white flex items-center justify-center text-[10px] font-black">
+                    3
+                  </span>
+                  <span>3. Pay & E-Receipt</span>
                 </button>
               </div>
             </div>
@@ -635,9 +658,189 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   </div>
                 </div>
               </form>
+            ) : step === 2 ? (
+              /* =========================================================================
+                 STEP 2: SELECT PAYMENT MODE (STANDALONE SELECTION PAGE)
+                 ========================================================================= */
+              <div className="space-y-6 animate-fadeIn">
+                {/* Summary Pill */}
+                <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                      Contributing to:
+                    </span>
+                    <div className="text-sm sm:text-base font-bold text-slate-900">{selectedCampaign}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">
+                      Donor: <span className="font-semibold text-slate-800">{donorName}</span> • Amount:{' '}
+                      <span className="font-bold text-amber-700 font-mono">₹{amount.toLocaleString('en-IN')}</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep(1);
+                      window.scrollTo({ top: 200, behavior: 'smooth' });
+                    }}
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1 transition-all"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Edit Details</span>
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-md space-y-6">
+                  <div className="text-center sm:text-left">
+                    <h2 className="text-xl font-serif font-black text-slate-900">Choose Payment Mode</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                      Select your preferred channel to complete this contribution and receive your authentic E-Receipt.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* OPTION 1: UPI & CARDS */}
+                    <div
+                      onClick={() => {
+                        setPaymentMethod('UPI');
+                        setStep(3);
+                        window.scrollTo({ top: 200, behavior: 'smooth' });
+                      }}
+                      className="p-6 rounded-3xl border-2 border-amber-400/80 bg-gradient-to-br from-amber-50/70 via-white to-amber-50/40 hover:border-amber-500 hover:shadow-xl cursor-pointer transition-all flex flex-col justify-between space-y-4 group"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-md group-hover:scale-105 transition-transform">
+                            <QrCode className="w-6 h-6" />
+                          </div>
+                          <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-black rounded-full uppercase tracking-wider">
+                            RECOMMENDED
+                          </span>
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-950 group-hover:text-amber-900 transition-colors">
+                            UPI & Digital Cards
+                          </h3>
+                          <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                            Pay via Google Pay, PhonePe, Paytm, BHIM UPI, Debit/Credit Cards, Netbanking, or Dynamic QR Code.
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          <span className="px-2 py-0.5 bg-white border border-slate-200 text-slate-700 text-[10px] font-semibold rounded-md">
+                            Google Pay
+                          </span>
+                          <span className="px-2 py-0.5 bg-white border border-slate-200 text-slate-700 text-[10px] font-semibold rounded-md">
+                            PhonePe
+                          </span>
+                          <span className="px-2 py-0.5 bg-white border border-slate-200 text-slate-700 text-[10px] font-semibold rounded-md">
+                            Paytm
+                          </span>
+                          <span className="px-2 py-0.5 bg-white border border-slate-200 text-slate-700 text-[10px] font-semibold rounded-md">
+                            Cards / Netbanking
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="w-full py-3.5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-md group-hover:shadow-lg flex items-center justify-center gap-2 transition-all"
+                      >
+                        <span>Proceed to UPI & Cards Payment</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* OPTION 2: CASH HANDOVER */}
+                    <div
+                      onClick={() => {
+                        if (isAuthorizedMember) {
+                          setPaymentMethod('CASH');
+                          setStep(3);
+                          window.scrollTo({ top: 200, behavior: 'smooth' });
+                        }
+                      }}
+                      className={`p-6 rounded-3xl border-2 transition-all flex flex-col justify-between space-y-4 ${
+                        isAuthorizedMember
+                          ? 'border-emerald-300 bg-gradient-to-br from-emerald-50/70 via-white to-emerald-50/40 hover:border-emerald-500 hover:shadow-xl cursor-pointer group'
+                          : 'border-slate-200 bg-slate-50/80 opacity-90 cursor-default'
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div
+                            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold shadow-md ${
+                              isAuthorizedMember ? 'bg-emerald-600 text-white' : 'bg-slate-400 text-white'
+                            }`}
+                          >
+                            <HeartHandshake className="w-6 h-6" />
+                          </div>
+                          {isAuthorizedMember ? (
+                            <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1">
+                              <Unlock className="w-3 h-3" /> AUTHORIZED MEMBER
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 bg-rose-100 text-rose-800 border border-rose-200 text-[10px] font-black rounded-full uppercase tracking-wider flex items-center gap-1">
+                              <Lock className="w-3 h-3" /> COMMITTEE MEMBERS ONLY
+                            </span>
+                          )}
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-950">Cash Handover</h3>
+                          <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                            For physical cash received directly on ground in Guraja by verified committee members.
+                          </p>
+                        </div>
+                      </div>
+
+                      {isAuthorizedMember ? (
+                        <button
+                          type="button"
+                          className="w-full py-3.5 bg-emerald-600 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md group-hover:bg-emerald-700 flex items-center justify-center gap-2 transition-all"
+                        >
+                          <span>Proceed to Cash Handover</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOpenAuth(
+                                'login',
+                                'Please sign in with your authorized Committee Member credentials to enable Cash Handover collection.',
+                                'record_cash'
+                              );
+                            }}
+                            className="w-full py-3 bg-white border border-slate-300 hover:border-amber-400 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                          >
+                            <Lock className="w-3.5 h-3.5 text-amber-600" />
+                            <span>Sign in as Member to Enable</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Back Navigation */}
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep(1);
+                        window.scrollTo({ top: 200, behavior: 'smooth' });
+                      }}
+                      className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
+                    >
+                      ← Back to Donor Details
+                    </button>
+                  </div>
+                </div>
+              </div>
             ) : (
               /* =========================================================================
-                 STEP 2: SELECT PAYMENT MODE & COMPLETE CONTRIBUTION (REDESIGNED 2-COLUMN)
+                 STEP 3: RESPECTIVE PAYMENT CHANNEL PAGE (UPI & CARDS OR CASH HANDOVER)
                  ========================================================================= */
               <div className="space-y-8 animate-fadeIn">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -714,110 +917,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     </div>
                   </div>
 
-                  {/* RIGHT COLUMN: PAYMENT METHODS & CHANNELS (7 Cols) */}
+                  {/* RIGHT COLUMN: RESPECTIVE PAYMENT CHANNELS (7 Cols) */}
                   <div className="lg:col-span-7 space-y-6">
-                    {/* Payment Mode Selector Tabs */}
-                    <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-md space-y-4">
-                      <div>
-                        <h2 className="text-base font-bold text-slate-900">Choose Payment Channel</h2>
-                        <p className="text-xs text-slate-500">Select online UPI/Gateway transfer or authorized member cash handover.</p>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {/* MODE 1: UPI & DIGITAL GATEWAY */}
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('UPI')}
-                          className={`p-4 rounded-2xl border-2 text-left transition-all relative ${
-                            paymentMethod === 'UPI'
-                              ? 'bg-amber-50/80 border-amber-500 ring-2 ring-amber-500/20 shadow-md'
-                              : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold">
-                                <QrCode className="w-5 h-5" />
-                              </div>
-                              <div>
-                                <div className="font-bold text-slate-900 text-sm">UPI & Cards</div>
-                                <div className="text-[10px] text-slate-500 font-medium">Razorpay / GPay / PhonePe</div>
-                              </div>
-                            </div>
-                            {paymentMethod === 'UPI' && <CheckCircle2 className="w-4 h-4 text-amber-600" />}
-                          </div>
-                        </button>
-
-                        {/* MODE 2: CASH HANDOVER (Restricted to Member Login) */}
-                        <div
-                          onClick={() => {
-                            if (isAuthorizedMember) {
-                              setPaymentMethod('CASH');
-                            }
-                          }}
-                          className={`p-4 rounded-2xl border-2 text-left transition-all relative ${
-                            !isAuthorizedMember
-                              ? 'bg-slate-100/80 border-slate-300 opacity-80 cursor-not-allowed'
-                              : paymentMethod === 'CASH'
-                              ? 'bg-emerald-50/80 border-emerald-500 ring-2 ring-emerald-500/20 shadow-md cursor-pointer'
-                              : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700 cursor-pointer'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2.5">
-                              <div
-                                className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${
-                                  isAuthorizedMember ? 'bg-emerald-600 text-white' : 'bg-slate-400 text-white'
-                                }`}
-                              >
-                                <HeartHandshake className="w-5 h-5" />
-                              </div>
-                              <div>
-                                <div className="font-bold text-slate-900 text-sm flex items-center gap-1">
-                                  <span>Cash Handover</span>
-                                  {!isAuthorizedMember ? (
-                                    <span className="text-[9px] font-bold uppercase tracking-wider text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded border border-rose-200">
-                                      Member Only
-                                    </span>
-                                  ) : (
-                                    <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-200">
-                                      Authorized
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-[10px] text-slate-500 font-medium">Physical cash in village</div>
-                              </div>
-                            </div>
-                            {isAuthorizedMember && paymentMethod === 'CASH' && (
-                              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                            )}
-                          </div>
-
-                          {!isAuthorizedMember && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onOpenAuth(
-                                  'login',
-                                  'Please sign in with your authorized Committee Member credentials to enable Cash Handover collection.',
-                                  'record_cash'
-                                );
-                              }}
-                              className="mt-2 text-[11px] font-bold text-amber-700 hover:text-amber-800 underline flex items-center gap-1"
-                            >
-                              <span>Sign in as Member</span>
-                              <ArrowRight className="w-3 h-3" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* PAYMENT DETAILS CARD */}
                     {paymentMethod === 'UPI' ? (
-                      /* UPI CHANNELS (WHITE & GOLD THEME) */
-                      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-md space-y-5">
+                      /* UPI & CARDS DEDICATED CHANNEL */
+                      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-md space-y-6">
+                        <div className="pb-3 border-b border-slate-100">
+                          <h2 className="text-base font-bold text-slate-900">Pay via UPI & Cards</h2>
+                          <p className="text-xs text-slate-500">Choose 1-Click Gateway checkout or scan the dynamic QR code below.</p>
+                        </div>
+
                         {/* 1. PRIMARY RAZORPAY 1-CLICK CHECKOUT BUTTON */}
                         <div>
                           <button
@@ -838,11 +947,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                         <div className="relative flex items-center justify-center">
                           <div className="border-t border-slate-200 w-full" />
                           <span className="bg-white px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                            Or Pay with Dynamic QR
+                            Or Scan Dynamic QR Code
                           </span>
                         </div>
 
-                        {/* 2. DYNAMIC QR ACCORDION */}
+                        {/* 2. DYNAMIC QR CONTAINER */}
                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                           <div className="flex flex-col sm:flex-row items-center gap-5">
                             <div className="p-2.5 bg-white rounded-2xl border border-slate-300 shadow-sm flex-shrink-0">
@@ -896,11 +1005,25 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                             </div>
                           </div>
                         </div>
+
+                        {/* Back to Step 2 button */}
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setStep(2);
+                              window.scrollTo({ top: 200, behavior: 'smooth' });
+                            }}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all"
+                          >
+                            ← Change Payment Mode
+                          </button>
+                        </div>
                       </div>
                     ) : (
-                      /* CASH HANDOVER CARD (MEMBERS ONLY) */
-                      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-emerald-300 shadow-md space-y-4">
-                        <div className="flex items-center gap-2 text-emerald-900 font-bold text-sm">
+                      /* CASH HANDOVER DEDICATED CHANNEL */
+                      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-emerald-300 shadow-md space-y-5">
+                        <div className="pb-3 border-b border-slate-100 flex items-center gap-2 text-emerald-900 font-bold text-sm">
                           <ShieldCheck className="w-5 h-5 text-emerald-600" />
                           <span>Authorized Committee Member Cash Verification</span>
                         </div>
@@ -960,23 +1083,22 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                             </>
                           )}
                         </button>
+
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setStep(2);
+                              window.scrollTo({ top: 200, behavior: 'smooth' });
+                            }}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all"
+                          >
+                            ← Change Payment Mode
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
-                </div>
-
-                {/* Back Button */}
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep(1);
-                      window.scrollTo({ top: 200, behavior: 'smooth' });
-                    }}
-                    className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
-                  >
-                    ← Back to Details
-                  </button>
                 </div>
               </div>
             )}

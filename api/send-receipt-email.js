@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -25,7 +27,7 @@ export default async function handler(req, res) {
 
     const brevoApiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
     const resendApiKey = process.env.RESEND_API_KEY;
-    const adminAlertEmail = process.env.ADMIN_ALERT_EMAIL || 'admin@skyguraja.org';
+    const adminAlertEmail = process.env.ADMIN_ALERT_EMAIL || 'srikrishnayadavyouthguraja@gmail.com';
     const verifyUrl = `https://sky-guraja-app.vercel.app/?verify=${verificationToken || receiptNumber}`;
 
     const htmlContent = `
@@ -83,6 +85,10 @@ export default async function handler(req, res) {
                       <tr>
                         <td style="padding-bottom: 8px; font-weight: 600;">Seva Initiative:</td>
                         <td style="padding-bottom: 8px; font-weight: 700; color: #0F172A;" align="right">${campaignTitle}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom: 8px; font-weight: 600;">Payment Mode:</td>
+                        <td style="padding-bottom: 8px; font-weight: 700; color: #0F172A;" align="right">${paymentMethod === 'CASH' ? 'Cash Handover (Authorized)' : 'UPI / Online Transfer'}</td>
                       </tr>
                       <tr>
                         <td style="padding-bottom: 8px; font-weight: 600;">Transaction Ref:</td>
@@ -153,6 +159,27 @@ export default async function handler(req, res) {
           attachment: attachments.length > 0 ? attachments : undefined
         })
       });
+
+      // Admin Alert Email Queue
+      if (adminAlertEmail && adminAlertEmail !== email) {
+        fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: {
+            'api-key': brevoApiKey,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            sender: {
+              name: 'SKY Guraja Platform',
+              email: process.env.BREVO_SENDER_EMAIL || 'srikrishnayadavyouthguraja@gmail.com'
+            },
+            to: [{ email: adminAlertEmail, name: 'Committee Admin' }],
+            subject: `🔔 New Contribution: ₹${Number(amount || 0).toLocaleString('en-IN')} from ${donorName || 'Devotee'}`,
+            htmlContent: `<p>New contribution of ₹${amount} received from <strong>${donorName}</strong> (${email}) for <strong>${campaignTitle}</strong>.<br>Receipt No: <code>${receiptNumber}</code>.<br><a href="${verifyUrl}">View on Live Public Ledger</a></p>`
+          })
+        }).catch(() => {});
+      }
     }
     // 2. SECONDARY: Resend
     else if (resendApiKey) {
@@ -172,7 +199,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: process.env.RESEND_FROM || 'Sri Krishna Yadav Youth Guraja <receipts@skyguraja.org>',
+          from: process.env.RESEND_FROM || 'Sri Krishna Yadav Youth Guraja <srikrishnayadavyouthguraja@gmail.com>',
           to: [email],
           subject: `Official E-Receipt: ₹${Number(amount || 0).toLocaleString('en-IN')} for ${campaignTitle || 'Donation'} [${receiptNumber}]`,
           html: htmlContent,

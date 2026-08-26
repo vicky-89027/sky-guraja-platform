@@ -201,7 +201,7 @@ export function generateReceiptPDF(receipt: RealReceipt): jsPDF {
   const txRef = contribution?.transactionId || contribution?.referenceNo || `TXN_${receipt.id.slice(-10).toUpperCase()}`;
   doc.text(txRef, margin + 55, currentY + 12);
   doc.setFont('helvetica', 'normal');
-  doc.text('Craftory Payment Gateway (Razorpay Verified)', margin + 55, currentY + 18);
+  doc.text('Sri Krishna Yadav Youth Guraja (Razorpay Verified)', margin + 55, currentY + 18);
 
   doc.setTextColor(100, 116, 139);
   doc.text('Ledger Status:', margin + 115, currentY + 12);

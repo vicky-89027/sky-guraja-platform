@@ -49,7 +49,15 @@ export default async function handler(req, res) {
       .update(body.toString())
       .digest('hex');
 
-    const isMatch = expectedSignature === receivedSignature;
+    let isMatch = false;
+    try {
+      isMatch = crypto.timingSafeEqual(
+        Buffer.from(expectedSignature, 'utf-8'),
+        Buffer.from(receivedSignature, 'utf-8')
+      );
+    } catch {
+      isMatch = false;
+    }
 
     if (!isMatch) {
       return res.status(400).json({

@@ -18,14 +18,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed. Only POST is supported.' });
   }
 
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
-
-  if (!keyId || !keySecret) {
-    return res.status(401).json({
-      error: 'Razorpay API credentials not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.'
-    });
-  }
+  const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TUPBdxOO32AKd1';
+  const keySecret = process.env.RAZORPAY_KEY_SECRET || 'kxCOHz6gJHknD4iScB9c9n2g';
 
   try {
     const { amount, currency = 'INR', receipt, notes } = req.body || {};

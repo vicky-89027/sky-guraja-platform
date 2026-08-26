@@ -22,7 +22,7 @@ router.post('/create-order', async (req: Request, res: Response) => {
       });
     }
 
-    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TUPPim0Wc6PVBF';
+    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TUPBdxOO32AKd1';
     const keySecret = process.env.RAZORPAY_KEY_SECRET || 'kxCOHz6gJHknD4iScB9c9n2g';
 
     if (!keyId || !keySecret) {

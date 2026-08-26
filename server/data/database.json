@@ -857,6 +857,60 @@
       "paymentMethod": "UPI",
       "status": "PENDING",
       "createdAt": "2026-08-26T04:27:19.800Z"
+    },
+    {
+      "id": "cnt-upi-1787718833191-743",
+      "contributorName": "Ch. Sambasiva Rao Yadav",
+      "phone": "9440332211",
+      "email": "sambasiva.y@gmail.com",
+      "campaignId": "cmp-01",
+      "campaignTitle": "Sri Krishna Janmashtami & Utlotsavam",
+      "amount": 15000,
+      "amountInWords": "Rupees Fifteen Thousand Only",
+      "paymentMethod": "UPI",
+      "status": "PENDING",
+      "createdAt": "2026-08-26T04:33:53.192Z"
+    },
+    {
+      "id": "cnt-upi-1787718833239-463",
+      "contributorName": "P. Koteswara Rao",
+      "phone": "9848055443",
+      "campaignId": "general",
+      "campaignTitle": "Sri Krishna Temple Arch",
+      "amount": 20000,
+      "amountInWords": "Rupees Twenty Thousand Only",
+      "paymentMethod": "UPI",
+      "status": "VERIFIED",
+      "createdAt": "2026-08-26T04:33:53.239Z",
+      "receiptNumber": "SKYG/26-27/000034",
+      "verificationToken": "SKYG-VERIFY-6DE7-747A-5969"
+    },
+    {
+      "id": "cnt-csh-1787718833315-148",
+      "contributorName": "Guraja Community Devotee",
+      "phone": "9848011223",
+      "campaignId": "general",
+      "campaignTitle": "Devi Navaratri Mahotsavam",
+      "amount": 5000,
+      "amountInWords": "Rupees Five Thousand Only",
+      "paymentMethod": "CASH",
+      "status": "VERIFIED",
+      "createdAt": "2026-08-26T04:33:53.315Z",
+      "receiptNumber": "SKYG/26-27/000035",
+      "verificationToken": "SKYG-VERIFY-07C5-891D-1478"
+    },
+    {
+      "id": "cnt-upi-1787718833420-238",
+      "contributorName": "Devotee <script>alert(\"xss\")</script>",
+      "phone": "9848011223",
+      "address": "<script>alert(\"xss\")</script>",
+      "campaignId": "general",
+      "campaignTitle": "General Youth Seva Fund",
+      "amount": 2000,
+      "amountInWords": "Rupees Two Thousand Only",
+      "paymentMethod": "UPI",
+      "status": "PENDING",
+      "createdAt": "2026-08-26T04:33:53.421Z"
     }
   ],
   "transactions": [
@@ -1324,6 +1378,37 @@
       "orderId": "ORDER_UPI_1787718439800",
       "status": "PENDING",
       "timestamp": "2026-08-26T04:27:19.800Z"
+    },
+    {
+      "id": "txn-upi-1787718833194",
+      "contributionId": "cnt-upi-1787718833191-743",
+      "orderId": "ORDER_UPI_1787718833191",
+      "status": "PENDING",
+      "timestamp": "2026-08-26T04:33:53.194Z"
+    },
+    {
+      "id": "txn-upi-1787718833239",
+      "contributionId": "cnt-upi-1787718833239-463",
+      "orderId": "ORDER_UPI_1787718833239",
+      "status": "VERIFIED",
+      "timestamp": "2026-08-26T04:33:53.239Z",
+      "gatewayPaymentId": "UPI_PAY_TEST_778899"
+    },
+    {
+      "id": "txn-csh-1787718833315",
+      "contributionId": "cnt-csh-1787718833315-148",
+      "cashRecordedByMemberId": "mem-01",
+      "cashRecordedByMemberName": "Nagaraju Yadav",
+      "cashReferenceNo": "CSH-833315",
+      "status": "VERIFIED",
+      "timestamp": "2026-08-26T04:33:53.315Z"
+    },
+    {
+      "id": "txn-upi-1787718833421",
+      "contributionId": "cnt-upi-1787718833420-238",
+      "orderId": "ORDER_UPI_1787718833420",
+      "status": "PENDING",
+      "timestamp": "2026-08-26T04:33:53.421Z"
     }
   ],
   "receipts": [
@@ -1688,6 +1773,28 @@
       "issueDate": "26 Aug 2026",
       "issueTime": "09:57 am",
       "status": "VOIDED",
+      "signatoryTitle": "President / Treasurer"
+    },
+    {
+      "id": "rcpt-1787718833291",
+      "receiptNumber": "SKYG/26-27/000034",
+      "contributionId": "cnt-upi-1787718833239-463",
+      "verificationToken": "SKYG-VERIFY-6DE7-747A-5969",
+      "qrCodeUrl": "/verify/receipt/SKYG-VERIFY-6DE7-747A-5969",
+      "issueDate": "26 Aug 2026",
+      "issueTime": "10:03 am",
+      "status": "ISSUED",
+      "signatoryTitle": "President / Treasurer"
+    },
+    {
+      "id": "rcpt-1787718833315",
+      "receiptNumber": "SKYG/26-27/000035",
+      "contributionId": "cnt-csh-1787718833315-148",
+      "verificationToken": "SKYG-VERIFY-07C5-891D-1478",
+      "qrCodeUrl": "/verify/receipt/SKYG-VERIFY-07C5-891D-1478",
+      "issueDate": "26 Aug 2026",
+      "issueTime": "10:03 am",
+      "status": "ISSUED",
       "signatoryTitle": "President / Treasurer"
     }
   ],
@@ -2387,6 +2494,38 @@
       "action": "UPI_PAYMENT_INITIATED",
       "details": "Initiated UPI contribution of ₹2000 for Devotee <script>alert(\"xss\")</script>",
       "timestamp": "2026-08-26T04:27:19.800Z"
+    },
+    {
+      "id": "audit-1787718833194",
+      "action": "UPI_PAYMENT_INITIATED",
+      "details": "Initiated UPI contribution of ₹15000 for Ch. Sambasiva Rao Yadav",
+      "timestamp": "2026-08-26T04:33:53.194Z"
+    },
+    {
+      "id": "audit-1787718833239",
+      "action": "UPI_PAYMENT_INITIATED",
+      "details": "Initiated UPI contribution of ₹20000 for P. Koteswara Rao",
+      "timestamp": "2026-08-26T04:33:53.239Z"
+    },
+    {
+      "id": "audit-1787718833291",
+      "action": "UPI_PAYMENT_VERIFIED",
+      "details": "Verified ₹20000 UPI contribution from P. Koteswara Rao. Issued Receipt: SKYG/26-27/000034",
+      "timestamp": "2026-08-26T04:33:53.251Z"
+    },
+    {
+      "id": "audit-1787718833315",
+      "action": "CASH_RECEIVED",
+      "userId": "mem-01",
+      "userName": "Nagaraju Yadav",
+      "details": "Member Nagaraju Yadav recorded Cash Contribution of ₹5000 from Guraja Community Devotee. Issued Receipt: SKYG/26-27/000035. Notes: None",
+      "timestamp": "2026-08-26T04:33:53.315Z"
+    },
+    {
+      "id": "audit-1787718833421",
+      "action": "UPI_PAYMENT_INITIATED",
+      "details": "Initiated UPI contribution of ₹2000 for Devotee <script>alert(\"xss\")</script>",
+      "timestamp": "2026-08-26T04:33:53.421Z"
     }
   ],
   "settings": {
@@ -2401,5 +2540,5 @@
     "financialYear": "26-27",
     "authorizedSignatory": "President / Treasurer"
   },
-  "receiptSequence": 33
+  "receiptSequence": 35
 }

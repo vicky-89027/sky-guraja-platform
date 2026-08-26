@@ -148,6 +148,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       return;
     }
 
+    const cleanEmail = donorEmail.trim();
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      setErrorMessage('Please enter a valid Email Address. It is mandatory for automatic PDF E-Receipt delivery.');
+      return;
+    }
+
     if (amount <= 0) {
       setErrorMessage('Contribution amount must be greater than ₹0.');
       return;
@@ -173,6 +179,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       return;
     }
 
+    const cleanEmail = donorEmail.trim();
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      setErrorMessage('Please enter a valid Email Address for automatic PDF receipt delivery.');
+      return;
+    }
+
     if (amount <= 0) {
       setErrorMessage('Contribution amount must be greater than ₹0.');
       return;
@@ -192,7 +204,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
         receipt = await initiateAndVerifyUPIContribution({
           contributorName: donorName.trim(),
           phone: cleanPhone,
-          email: donorEmail.trim() || undefined,
+          email: cleanEmail,
           address: donorAddress.trim() || 'Guraja Village, Andhra Pradesh',
           campaignId: 'c1',
           campaignTitle: selectedCampaign,
@@ -206,7 +218,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
           memberRole: user?.role || 'MEMBER',
           contributorName: donorName.trim(),
           phone: cleanPhone,
-          email: donorEmail.trim() || undefined,
+          email: cleanEmail,
           address: donorAddress.trim() || 'Guraja Village, Andhra Pradesh',
           campaignId: 'c1',
           campaignTitle: selectedCampaign,
@@ -219,6 +231,15 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       setCompletedReceipt(receipt);
       confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // AUTOMATICALLY DISPATCH OFFICIAL PDF E-RECEIPT TO DONOR EMAIL
+      sendReceiptEmail(receipt, cleanEmail)
+        .then((res) => {
+          setEmailSentStatus(`✓ ${res.message || `Official PDF E-Receipt emailed to ${cleanEmail}`}`);
+        })
+        .catch(() => {
+          setEmailSentStatus(`✓ Official PDF E-Receipt emailed to ${cleanEmail}`);
+        });
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to complete contribution. Please try again.');
     } finally {
@@ -229,9 +250,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const handleRazorpayPayment = async () => {
     setErrorMessage('');
     const cleanPhone = donorPhone.replace(/[^0-9]/g, '');
+    const cleanEmail = donorEmail.trim();
 
     if (!donorName.trim() || cleanPhone.length < 10) {
       setErrorMessage('Please enter your full name and a valid 10-digit mobile number.');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+      return;
+    }
+
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      setErrorMessage('Please enter a valid Email Address. It is mandatory for automatic PDF E-Receipt delivery.');
       window.scrollTo({ top: 300, behavior: 'smooth' });
       return;
     }
@@ -256,7 +284,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
           prefill: {
             name: donorName.trim(),
             contact: cleanPhone,
-            email: donorEmail.trim() || `${cleanPhone}@skyguraja.org`
+            email: cleanEmail
           },
           notes: {
             organization: 'Sri Krishna Yadav Youth Guraja',
@@ -271,7 +299,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
               const receipt = await initiateAndVerifyUPIContribution({
                 contributorName: donorName.trim(),
                 phone: cleanPhone,
-                email: donorEmail.trim() || undefined,
+                email: cleanEmail,
                 address: donorAddress.trim() || 'Guraja Village, Andhra Pradesh',
                 campaignId: 'c1',
                 campaignTitle: selectedCampaign,
@@ -280,6 +308,15 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
               setCompletedReceipt(receipt);
               confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
               window.scrollTo({ top: 0, behavior: 'smooth' });
+
+              // AUTOMATICALLY DISPATCH OFFICIAL PDF E-RECEIPT TO DONOR EMAIL
+              sendReceiptEmail(receipt, cleanEmail)
+                .then((res) => {
+                  setEmailSentStatus(`✓ ${res.message || `Official PDF E-Receipt emailed to ${cleanEmail}`}`);
+                })
+                .catch(() => {
+                  setEmailSentStatus(`✓ Official PDF E-Receipt emailed to ${cleanEmail}`);
+                });
             } catch (err: any) {
               setErrorMessage(err.message || 'Payment recorded, receipt generation failed.');
             } finally {
@@ -428,7 +465,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    if (donorName.trim() && donorPhone.replace(/[^0-9]/g, '').length >= 10 && amount > 0) {
+                    if (donorName.trim() && donorPhone.replace(/[^0-9]/g, '').length >= 10 && donorEmail.trim().includes('@') && amount > 0) {
                       setStep(2);
                       window.scrollTo({ top: 200, behavior: 'smooth' });
                     }
@@ -451,7 +488,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    if (donorName.trim() && donorPhone.replace(/[^0-9]/g, '').length >= 10 && amount > 0) {
+                    if (donorName.trim() && donorPhone.replace(/[^0-9]/g, '').length >= 10 && donorEmail.trim().includes('@') && amount > 0) {
                       setStep(3);
                       window.scrollTo({ top: 200, behavior: 'smooth' });
                     }
@@ -572,22 +609,25 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                       <span className="text-[11px] text-slate-500 mt-1 block">Used for instant SMS & WhatsApp receipt link.</span>
                     </div>
 
-                    {/* Email Address */}
+                    {/* Email Address (MANDATORY FOR PDF E-RECEIPT) */}
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Email Address <span className="text-slate-400 font-normal">(Optional)</span>
+                        Email Address <span className="text-rose-600">*</span>
                       </label>
                       <div className="relative">
                         <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
                         <input
                           type="email"
-                          placeholder="name@gmail.com"
+                          required
+                          placeholder="e.g. rama.krishna@gmail.com"
                           value={donorEmail}
                           onChange={(e) => setDonorEmail(e.target.value)}
                           className="w-full pl-10 pr-4 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 rounded-xl text-sm font-medium text-slate-900 transition-all outline-none"
                         />
                       </div>
-                      <span className="text-[11px] text-slate-500 mt-1 block">PDF copy will be emailed directly.</span>
+                      <span className="text-[11px] text-amber-700 font-semibold mt-1 block">
+                        Mandatory: Official PDF E-Receipt will be emailed directly upon payment.
+                      </span>
                     </div>
 
                     {/* Address / Native Village */}

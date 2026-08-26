@@ -237,8 +237,8 @@ export async function sendReceiptEmailService(payload: EmailReceiptPayload): Pro
         },
         body: JSON.stringify({
           sender: {
-            name: 'Sri Krishna Yadav Youth Guraja',
-            email: process.env.BREVO_SENDER_EMAIL || 'receipts@skyguraja.org'
+            name: process.env.BREVO_SENDER_NAME || 'Sri Krishna Yadav Youth Guraja',
+            email: process.env.BREVO_SENDER_EMAIL || 'srikrishnayadavyouthguraja@gmail.com'
           },
           to: [{ email: payload.email, name: payload.donorName }],
           subject: `Official E-Receipt: ₹${payload.amount.toLocaleString('en-IN')} for ${payload.campaignTitle} [${payload.receiptNumber}]`,

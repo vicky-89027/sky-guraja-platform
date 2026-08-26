@@ -144,8 +144,8 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           sender: {
-            name: 'Sri Krishna Yadav Youth Guraja',
-            email: process.env.BREVO_SENDER_EMAIL || 'receipts@skyguraja.org'
+            name: process.env.BREVO_SENDER_NAME || 'Sri Krishna Yadav Youth Guraja',
+            email: process.env.BREVO_SENDER_EMAIL || 'srikrishnayadavyouthguraja@gmail.com'
           },
           to: [{ email: email, name: donorName }],
           subject: `Official E-Receipt: ₹${Number(amount || 0).toLocaleString('en-IN')} for ${campaignTitle || 'Donation'} [${receiptNumber}]`,

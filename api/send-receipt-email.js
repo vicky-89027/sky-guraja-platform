@@ -17,13 +17,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { receiptNumber, donorName, email, amount, campaignTitle, verificationToken, pdfBase64, transactionId, issueDate } = req.body;
+    const { receiptNumber, donorName, email, amount, campaignTitle, verificationToken, pdfBase64, transactionId, issueDate, paymentMethod } = req.body;
 
     if (!email || !email.includes('@')) {
       return res.status(400).json({ error: 'Valid email address is required.' });
     }
 
+    const brevoApiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
     const resendApiKey = process.env.RESEND_API_KEY;
+    const adminAlertEmail = process.env.ADMIN_ALERT_EMAIL || 'admin@skyguraja.org';
     const verifyUrl = `https://sky-guraja-app.vercel.app/?verify=${verificationToken || receiptNumber}`;
 
     const htmlContent = `
@@ -122,7 +124,38 @@ export default async function handler(req, res) {
 </html>
     `;
 
-    if (resendApiKey) {
+    // 1. PRIMARY: Brevo (Sendinblue) Transactional API
+    if (brevoApiKey) {
+      const attachments = [];
+      if (pdfBase64) {
+        const cleanBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '');
+        attachments.push({
+          name: `SKY_Guraja_Receipt_${String(receiptNumber).replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
+          content: cleanBase64
+        });
+      }
+
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': brevoApiKey,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Sri Krishna Yadav Youth Guraja',
+            email: process.env.BREVO_SENDER_EMAIL || 'receipts@skyguraja.org'
+          },
+          to: [{ email: email, name: donorName }],
+          subject: `Official E-Receipt: ₹${Number(amount || 0).toLocaleString('en-IN')} for ${campaignTitle || 'Donation'} [${receiptNumber}]`,
+          htmlContent: htmlContent,
+          attachment: attachments.length > 0 ? attachments : undefined
+        })
+      });
+    }
+    // 2. SECONDARY: Resend
+    else if (resendApiKey) {
       const attachments = [];
       if (pdfBase64) {
         const cleanBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '');

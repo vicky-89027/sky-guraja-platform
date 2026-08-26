@@ -175,18 +175,108 @@ export function buildReceiptEmailHTML(payload: EmailReceiptPayload): string {
 }
 
 /**
- * Sends receipt email via Resend API or SMTP, and records an audit log.
+ * Builds an Admin Alert HTML email template
+ */
+export function buildAdminAlertHTML(payload: EmailReceiptPayload): string {
+  return `
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; background-color: #f8fafc; padding: 20px; color: #0f172a;">
+  <div style="max-width: 550px; margin: auto; background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px;">
+    <div style="background: #08152b; color: #f5bd55; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold;">
+      🔔 SKY GURAJA • NEW CONTRIBUTION RECEIVED
+    </div>
+    <h3 style="margin-top: 16px;">Donation Summary:</h3>
+    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+      <tr><td style="padding: 6px 0; color: #64748b;">Amount:</td><td style="font-weight: bold; color: #b45309;">₹${payload.amount.toLocaleString('en-IN')}</td></tr>
+      <tr><td style="padding: 6px 0; color: #64748b;">Donor Name:</td><td style="font-weight: bold;">${payload.donorName}</td></tr>
+      <tr><td style="padding: 6px 0; color: #64748b;">Donor Email:</td><td>${payload.email}</td></tr>
+      <tr><td style="padding: 6px 0; color: #64748b;">Cause / Campaign:</td><td>${payload.campaignTitle}</td></tr>
+      <tr><td style="padding: 6px 0; color: #64748b;">Receipt Number:</td><td style="font-family: monospace;">${payload.receiptNumber}</td></tr>
+      <tr><td style="padding: 6px 0; color: #64748b;">Payment Mode:</td><td>${payload.paymentMethod || 'UPI / Online'}</td></tr>
+    </table>
+    <div style="margin-top: 20px; text-align: center;">
+      <a href="https://sky-guraja-app.vercel.app/?verify=${payload.verificationToken || payload.receiptNumber}" style="background: #08152b; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block;">
+        View Live Ledger Entry →
+      </a>
+    </div>
+  </div>
+</body>
+</html>
+  `.trim();
+}
+
+/**
+ * Sends receipt email via Brevo / Resend / SMTP, and triggers Admin Alert.
  */
 export async function sendReceiptEmailService(payload: EmailReceiptPayload): Promise<{ success: boolean; message: string }> {
   try {
+    const brevoApiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
     const resendApiKey = process.env.RESEND_API_KEY;
+    const adminAlertEmail = process.env.ADMIN_ALERT_EMAIL || 'admin@skyguraja.org';
     const htmlContent = buildReceiptEmailHTML(payload);
 
-    // 1. Resend REST API (if configured)
-    if (resendApiKey) {
+    // 1. PRIMARY: Brevo (Sendinblue) Transactional API (As per architecture diagram)
+    if (brevoApiKey) {
       const attachments: any[] = [];
       if (payload.pdfBase64) {
-        // Strip data:application/pdf;base64, header if present
+        const cleanBase64 = payload.pdfBase64.replace(/^data:application\/pdf;base64,/, '');
+        attachments.push({
+          name: `SKY_Guraja_Receipt_${payload.receiptNumber.replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
+          content: cleanBase64
+        });
+      }
+
+      // Send to Donor
+      const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': brevoApiKey,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Sri Krishna Yadav Youth Guraja',
+            email: process.env.BREVO_SENDER_EMAIL || 'receipts@skyguraja.org'
+          },
+          to: [{ email: payload.email, name: payload.donorName }],
+          subject: `Official E-Receipt: ₹${payload.amount.toLocaleString('en-IN')} for ${payload.campaignTitle} [${payload.receiptNumber}]`,
+          htmlContent: htmlContent,
+          attachment: attachments.length > 0 ? attachments : undefined
+        })
+      });
+
+      if (!brevoRes.ok) {
+        const errText = await brevoRes.text();
+        console.warn('Brevo API returned error:', errText);
+      }
+
+      // Trigger Admin Alert in background
+      if (adminAlertEmail && adminAlertEmail !== payload.email) {
+        fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: {
+            'api-key': brevoApiKey,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            sender: {
+              name: 'SKY Guraja Platform',
+              email: process.env.BREVO_SENDER_EMAIL || 'receipts@skyguraja.org'
+            },
+            to: [{ email: adminAlertEmail, name: 'Committee Admin' }],
+            subject: `🔔 New Contribution: ₹${payload.amount.toLocaleString('en-IN')} from ${payload.donorName}`,
+            htmlContent: buildAdminAlertHTML(payload)
+          })
+        }).catch((e) => console.warn('Admin alert email error:', e));
+      }
+    }
+    // 2. SECONDARY: Resend REST API
+    else if (resendApiKey) {
+      const attachments: any[] = [];
+      if (payload.pdfBase64) {
         const cleanBase64 = payload.pdfBase64.replace(/^data:application\/pdf;base64,/, '');
         attachments.push({
           filename: `SKY_Guraja_Receipt_${payload.receiptNumber.replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
@@ -194,7 +284,7 @@ export async function sendReceiptEmailService(payload: EmailReceiptPayload): Pro
         });
       }
 
-      const res = await fetch('https://api.resend.com/emails', {
+      await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${resendApiKey}`,
@@ -208,19 +298,14 @@ export async function sendReceiptEmailService(payload: EmailReceiptPayload): Pro
           attachments: attachments.length > 0 ? attachments : undefined
         })
       });
-
-      if (!res.ok) {
-        const errorData = await res.text();
-        console.warn('Resend API returned error:', errorData);
-      }
     }
 
-    // 2. Audit Trail Logging in Ledger Database
+    // 3. Audit Trail Logging in Ledger Database
     const db = loadDB();
     db.auditLogs.push({
       id: `audit-${Date.now()}`,
       action: 'RECEIPT_EMAILED',
-      details: `Official E-Receipt ${payload.receiptNumber} dispatched to ${payload.email} for Rs. ${payload.amount} (${payload.campaignTitle})`,
+      details: `Official E-Receipt ${payload.receiptNumber} dispatched via Email Queue (Brevo/SMTP) to ${payload.email} for Rs. ${payload.amount} (${payload.campaignTitle})`,
       timestamp: new Date().toISOString()
     });
     saveDB(db);

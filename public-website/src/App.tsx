@@ -75,17 +75,20 @@ export const App: React.FC = () => {
             const parsed = JSON.parse(saved);
             const liveMembers = getTeamMembers();
             const cleanPhone = (parsed.phone || '').replace(/[^0-9]/g, '');
+            const cleanUsername = (parsed.username || '').toLowerCase().trim();
+            const cleanFullName = (parsed.fullName || '').toLowerCase().trim();
 
+            // Strict matching by Phone, Username, or Full Name only
             const matched = liveMembers.find(
               (m) =>
                 (cleanPhone && m.phone && m.phone.replace(/[^0-9]/g, '') === cleanPhone) ||
-                m.role.toUpperCase() === (parsed.role || '').toUpperCase() ||
-                (parsed.username && m.username?.toLowerCase() === parsed.username.toLowerCase())
+                (cleanUsername && m.username && m.username.toLowerCase() === cleanUsername) ||
+                (cleanFullName && m.name.toLowerCase() === cleanFullName)
             ) || OFFICIAL_MEMBERS.find(
               (m) =>
                 (cleanPhone && m.phone && m.phone.replace(/[^0-9]/g, '') === cleanPhone) ||
-                m.role.toUpperCase() === (parsed.role || '').toUpperCase() ||
-                (parsed.username && m.username.toLowerCase() === parsed.username.toLowerCase())
+                (cleanUsername && m.username && m.username.toLowerCase() === cleanUsername) ||
+                (cleanFullName && m.fullName.toLowerCase() === cleanFullName)
             );
 
             if (matched) {

@@ -183,6 +183,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [regTerms, setRegTerms] = useState(true);
   const [regLoading, setRegLoading] = useState(false);
   const [regError, setRegError] = useState<string | null>(null);
+  const [forgotModalOpen, setForgotModalOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -539,16 +540,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <label className="block text-slate-700 font-bold uppercase tracking-wider text-[11px]">
                       Password *
                     </label>
-                    <span className="text-[10px] font-mono text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                      Default: SRIKRISHNA26
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setForgotModalOpen(true)}
+                      className="text-[11px] text-amber-700 hover:text-amber-800 font-bold hover:underline"
+                    >
+                      Forgot Password?
+                    </button>
                   </div>
                   <div className="relative">
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       required
-                      placeholder="Enter account password"
+                      placeholder="Enter your account password"
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 rounded-xl pl-10 pr-10 py-2.5 text-slate-900 outline-none font-semibold transition-all font-mono text-xs"
@@ -579,37 +584,44 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </button>
               </form>
 
-              {/* 1-Click Committee Quick Sign In */}
-              <div className="pt-3 border-t border-slate-200">
-                <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-2">
-                  Quick 1-Click Committee Login
+              {/* Forgot Password Help Dialog */}
+              {forgotModalOpen && (
+                <div className="p-4 bg-amber-50/90 border border-amber-300/80 rounded-2xl space-y-2 animate-fadeIn text-slate-800">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <KeyRound className="w-4 h-4 text-amber-700" />
+                      Password Reset & Verification
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setForgotModalOpen(false)}
+                      className="text-xs text-slate-500 hover:text-slate-900 font-bold p-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-700 leading-relaxed">
+                    To maintain strict security and official double-entry verification in Guraja Village, password recovery is verified by the executive leadership.
+                  </p>
+                  <div className="pt-1 flex flex-wrap gap-2 text-[11px]">
+                    <a
+                      href="tel:+919848022222"
+                      className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                    >
+                      <Phone className="w-3 h-3" />
+                      Call President (Srinu Yadav)
+                    </a>
+                    <a
+                      href="https://wa.me/919848022222?text=Hello%20President%2C%20I%20need%20assistance%20with%20my%20SKY%20Guraja%20password."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                    >
+                      WhatsApp Support
+                    </a>
+                  </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {OFFICIAL_MEMBERS.slice(0, 4).map((m) => {
-                    const photo = getMemberPhoto(m.fullName || m.phone || m.role);
-                    return (
-                      <button
-                        type="button"
-                        key={m.username}
-                        onClick={() => handleAutoFillAndLogin(m)}
-                        className="p-2 bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all flex flex-col items-center group shadow-sm"
-                      >
-                        <img
-                          src={photo}
-                          alt={m.fullName}
-                          className="w-8 h-8 rounded-full object-cover object-top mb-1 border border-amber-400"
-                        />
-                        <span className="font-bold text-[10px] text-slate-900 truncate w-full group-hover:text-amber-800">
-                          {m.fullName.split(' ')[0]}
-                        </span>
-                        <span className="text-[8px] font-bold text-amber-700 uppercase truncate w-full font-mono">
-                          {m.role}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              )}
 
               <div className="text-center pt-1 text-[11px] text-slate-500">
                 New member in Guraja village?{' '}

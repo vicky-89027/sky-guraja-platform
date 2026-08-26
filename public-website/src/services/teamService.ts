@@ -303,19 +303,42 @@ export function resetTeamMembersToDefault(): TeamMember[] {
   return DEFAULT_TEAM_MEMBERS;
 }
 
-export function getMemberPhoto(identifier: string): string {
-  if (!identifier) return '/images/gallery/guraja_youth_volunteers_group.png';
+export function getMemberPhoto(identifier: string, fallbackImage?: string): string {
+  if (!identifier) return fallbackImage || '/images/gallery/guraja_youth_volunteers_group.png';
   const clean = identifier.trim().toLowerCase();
+  const cleanDigits = clean.replace(/[^0-9]/g, '');
   const members = getTeamMembers();
-  const found = members.find(
-    (m) =>
-      m.name.toLowerCase().includes(clean) ||
-      clean.includes(m.name.toLowerCase().split(' ')[0]) ||
-      (m.username && m.username.toLowerCase() === clean) ||
-      (m.phone && m.phone.replace(/[^0-9]/g, '').includes(clean.replace(/[^0-9]/g, ''))) ||
-      (m.role && m.role.toLowerCase() === clean)
-  );
-  return found?.image || '/images/gallery/guraja_youth_volunteers_group.png';
+
+  // 1. Strict match by phone number (highest precision)
+  if (cleanDigits && cleanDigits.length >= 7) {
+    const phoneMatch = members.find((m) => {
+      const mDigits = (m.phone || '').replace(/[^0-9]/g, '');
+      return mDigits && (mDigits === cleanDigits || mDigits.endsWith(cleanDigits) || cleanDigits.endsWith(mDigits));
+    });
+    if (phoneMatch?.image) return phoneMatch.image;
+  }
+
+  // 2. Strict match by exact username
+  const userMatch = members.find((m) => m.username && m.username.toLowerCase() === clean);
+  if (userMatch?.image) return userMatch.image;
+
+  // 3. Strict match by exact full name
+  const nameMatch = members.find((m) => m.name.toLowerCase() === clean);
+  if (nameMatch?.image) return nameMatch.image;
+
+  // 4. Match by first name (e.g. "Venkat", "Srinu", "Manikanta", "Lohit", "Pavan")
+  const firstNameMatch = members.find((m) => {
+    const mFirst = m.name.toLowerCase().split(' ')[0];
+    const cleanFirst = clean.split(' ')[0];
+    return mFirst === cleanFirst || m.name.toLowerCase().startsWith(clean);
+  });
+  if (firstNameMatch?.image) return firstNameMatch.image;
+
+  // 5. Match by exact role if unique
+  const roleMatch = members.find((m) => m.role.toLowerCase() === clean);
+  if (roleMatch?.image) return roleMatch.image;
+
+  return fallbackImage || '/images/gallery/guraja_youth_volunteers_group.png';
 }
 
 /**

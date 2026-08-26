@@ -36,15 +36,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  const livePhoto = user ? getMemberPhoto(user.fullName || user.phone || user.role || '') : '';
-  const avatarPhoto =
-    (livePhoto && !livePhoto.includes('guraja_youth_volunteers_group.png'))
-      ? livePhoto
-      : (user?.image && !user.image.includes('guraja_youth_volunteers_group.png'))
-      ? user.image
-      : (user?.photoUrl && !user.photoUrl.includes('guraja_youth_volunteers_group.png'))
-      ? user.photoUrl
-      : livePhoto || user?.image || user?.photoUrl || '/images/gallery/guraja_youth_volunteers_group.png';
+  const avatarPhoto = user
+    ? user.photoUrl || user.image || getMemberPhoto(user.phone || user.username || user.fullName, user.image)
+    : '/images/gallery/guraja_youth_volunteers_group.png';
 
   const navLinks = [
     { id: 'home', label: 'HOME' },

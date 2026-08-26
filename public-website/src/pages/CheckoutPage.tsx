@@ -29,6 +29,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { SkyLogo } from '../components/SkyLogo';
 import { AuthUser } from '../components/AuthModal';
+import { isCommitteeMember } from '../services/teamService';
 import {
   initiateAndVerifyUPIContribution,
   createMemberCashContribution,
@@ -84,9 +85,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [copiedUpi, setCopiedUpi] = useState(false);
   const [completedReceipt, setCompletedReceipt] = useState<RealReceipt | null>(null);
 
-  // Check if current user is an authorized committee member
-  const isAuthorizedMember =
-    !!user && ['MEMBER', 'ADMIN', 'SUPER_ADMIN', 'PRESIDENT', 'SECRETARY', 'TREASURER', 'JOINT_SECRETARY', 'AUDITOR'].includes(user.role);
+  // Check if current user is an authorized committee member (auto-grants to all existing and new members)
+  const isAuthorizedMember = isCommitteeMember(user);
 
   // If user state changes, pre-fill details
   useEffect(() => {

@@ -317,3 +317,72 @@ export function getMemberPhoto(identifier: string): string {
   );
   return found?.image || '/images/gallery/guraja_youth_volunteers_group.png';
 }
+
+/**
+ * Universal Dynamic Committee Member Access Checker
+ * Returns true for all current committee leadership AND automatically grants access to any newly added committee member.
+ */
+export function isCommitteeMember(
+  user: { role?: string; phone?: string; email?: string; fullName?: string; username?: string } | null | undefined
+): boolean {
+  if (!user) return false;
+
+  const roleUpper = (user.role || '').toUpperCase().trim();
+
+  // 1. Any recognized committee / administrative / leadership role
+  const recognizedRoles = [
+    'PRESIDENT',
+    'SECRETARY',
+    'GENERAL_SECRETARY',
+    'GENERAL SECRETARY',
+    'TREASURER',
+    'JOINT_SECRETARY',
+    'JOINT SECRETARY',
+    'AUDITOR',
+    'MEMBER',
+    'COMMITTEE_MEMBER',
+    'COMMITTEE MEMBER',
+    'COORDINATOR',
+    'YOUTH_COORDINATOR',
+    'YOUTH COORDINATOR',
+    'INCHARGE',
+    'COMMITTEE IN-CHARGE',
+    'ADMIN',
+    'SUPER_ADMIN',
+    'LEAD',
+    'FOUNDER',
+    'ADVISOR'
+  ];
+
+  if (recognizedRoles.includes(roleUpper)) {
+    return true;
+  }
+
+  // 2. Dynamic Roster Match: Automatically check if user is in the live active committee members list
+  const liveMembers = getTeamMembers();
+  const cleanPhone = (user.phone || '').replace(/[^0-9]/g, '');
+  const cleanEmail = (user.email || '').toLowerCase().trim();
+  const cleanName = (user.fullName || '').toLowerCase().trim();
+  const cleanUsername = (user.username || '').toLowerCase().trim();
+
+  const isPresentInRoster = liveMembers.some((m) => {
+    const mPhone = (m.phone || '').replace(/[^0-9]/g, '');
+    const mEmail = (m.email || '').toLowerCase().trim();
+    const mName = (m.name || '').toLowerCase().trim();
+    const mUsername = (m.username || '').toLowerCase().trim();
+
+    return (
+      (cleanPhone && mPhone && cleanPhone === mPhone) ||
+      (cleanEmail && mEmail && cleanEmail === mEmail) ||
+      (cleanUsername && mUsername && cleanUsername === mUsername) ||
+      (cleanName && mName && (cleanName === mName || mName.includes(cleanName) || cleanName.includes(mName)))
+    );
+  });
+
+  if (isPresentInRoster) {
+    return true;
+  }
+
+  // 3. Fallback: If role is defined and not a basic user/guest
+  return !!roleUpper && roleUpper !== 'USER' && roleUpper !== 'GUEST' && roleUpper !== 'PUBLIC';
+}

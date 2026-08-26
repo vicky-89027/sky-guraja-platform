@@ -26,7 +26,7 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { RealReceipt, getRealReceiptsList } from './services/receiptService';
 
 import { OFFICIAL_MEMBERS } from './components/AuthModal';
-import { getTeamMembers } from './services/teamService';
+import { getTeamMembers, isCommitteeMember } from './services/teamService';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('home');
@@ -117,21 +117,10 @@ export const App: React.FC = () => {
   };
 
   const handleOpenCashContribution = () => {
-    const authorized =
-      user &&
-      [
-        'PRESIDENT',
-        'SECRETARY',
-        'TREASURER',
-        'JOINT_SECRETARY',
-        'AUDITOR',
-        'MEMBER',
-        'ADMIN',
-        'SUPER_ADMIN'
-      ].includes(user.role?.toUpperCase());
+    const authorized = isCommitteeMember(user);
 
     if (!authorized) {
-      handleOpenAuth('login', 'Please sign in with your authorized Member/President account to record cash contributions.', 'record_cash');
+      handleOpenAuth('login', 'Please sign in with your authorized Committee Member / Leadership account to record cash contributions.', 'record_cash');
       return;
     }
     setIsCashOpen(true);

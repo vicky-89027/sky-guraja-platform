@@ -16,8 +16,9 @@ import {
   Calendar,
   Lock
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { AuthUser } from './AuthModal';
+import confetti from 'canvas-confetti';
+import { isCommitteeMember } from '../services/teamService';
 import {
   initiateAndVerifyUPIContribution,
   createMemberCashContribution,
@@ -65,18 +66,8 @@ export const DonationModal: React.FC<DonationModalProps> = ({
   const [verifiedReceipt, setVerifiedReceipt] = useState<RealReceipt | null>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
 
-  const isMemberOrAdmin =
-    user &&
-    [
-      'PRESIDENT',
-      'SECRETARY',
-      'TREASURER',
-      'JOINT_SECRETARY',
-      'AUDITOR',
-      'MEMBER',
-      'ADMIN',
-      'SUPER_ADMIN'
-    ].includes(user.role?.toUpperCase());
+  // Universal dynamic committee authorization
+  const isMemberOrAdmin = isCommitteeMember(user);
 
   useEffect(() => {
     if (user) {

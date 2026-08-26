@@ -15,7 +15,7 @@ import {
   KeyRound
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { getMemberPhoto } from '../services/teamService';
+import { getMemberPhoto, getTeamMembers } from '../services/teamService';
 
 export interface AuthUser {
   id: string;
@@ -233,6 +233,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setLoginLoading(false);
         return;
       }
+    }
+
+    // Check all live members in database (including dynamically newly added committee members!)
+    const liveMembers = getTeamMembers();
+    const cleanPhoneInput = inputId.replace(/[^0-9]/g, '');
+    const matchedLiveMember = liveMembers.find(
+      (m) =>
+        (m.username && m.username.toLowerCase() === inputId) ||
+        (m.phone && cleanPhoneInput && m.phone.replace(/[^0-9]/g, '') === cleanPhoneInput) ||
+        (m.email && m.email.toLowerCase() === inputId) ||
+        m.name.toLowerCase().includes(inputId) ||
+        (m.role && m.role.toLowerCase() === inputId)
+    );
+
+    if (matchedLiveMember && (isStrictPassword || inputPass === 'SkyGuraja@2026')) {
+      const liveAuthUser: AuthUser = {
+        id: `usr-${matchedLiveMember.id}`,
+        fullName: matchedLiveMember.name,
+        phone: matchedLiveMember.phone || '9848011111',
+        email: matchedLiveMember.email || 'member@skyguraja.org',
+        username: matchedLiveMember.username || matchedLiveMember.name.toLowerCase().replace(/\s+/g, '_'),
+        role: matchedLiveMember.role,
+        roleTitle: `🎖️ ${matchedLiveMember.role}`,
+        village: 'Guraja',
+        image: matchedLiveMember.image,
+        photoUrl: matchedLiveMember.image
+      };
+      localStorage.setItem('sky_token', `jwt_token_${liveAuthUser.username}`);
+      localStorage.setItem('sky_user', JSON.stringify(liveAuthUser));
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+      onAuthSuccess(liveAuthUser, pendingIntent);
+      onClose();
+      setLoginLoading(false);
+      return;
     }
 
     // Generic member login with strict password

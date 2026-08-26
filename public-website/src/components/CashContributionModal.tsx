@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { AuthUser } from './AuthModal';
 import { createMemberCashContribution, RealReceipt } from '../services/receiptService';
+import { isCommitteeMember } from '../services/teamService';
 import confetti from 'canvas-confetti';
 
 interface CashContributionModalProps {
@@ -31,19 +32,8 @@ export const CashContributionModal: React.FC<CashContributionModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Strict member/admin/president permission check
-  const isAuthorized =
-    user &&
-    [
-      'PRESIDENT',
-      'SECRETARY',
-      'TREASURER',
-      'JOINT_SECRETARY',
-      'AUDITOR',
-      'MEMBER',
-      'ADMIN',
-      'SUPER_ADMIN'
-    ].includes(user.role?.toUpperCase());
+  // Universal dynamic committee authorization (auto-grants to all existing & new members)
+  const isAuthorized = isCommitteeMember(user);
 
   if (!isAuthorized) {
     return (

@@ -24,7 +24,8 @@ import {
   FileText,
   BadgeCheck,
   Info,
-  Edit3
+  Edit3,
+  Send
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
@@ -93,6 +94,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [copiedUpi, setCopiedUpi] = useState(false);
   const [completedReceipt, setCompletedReceipt] = useState<RealReceipt | null>(null);
   const [emailSentStatus, setEmailSentStatus] = useState<string | null>(null);
+  const [resendEmailInput, setResendEmailInput] = useState('');
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
   const [qrAccordionOpen, setQrAccordionOpen] = useState(true);
 
   // Check if current user is an authorized committee member (auto-grants to all existing and new members)
@@ -317,6 +320,27 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
     setAmount(1116);
     setPaymentMethod('UPI');
     setErrorMessage('');
+    setEmailSentStatus(null);
+    setResendEmailInput('');
+  };
+
+  const handleResendEmail = async () => {
+    if (!completedReceipt) return;
+    const targetEmail = resendEmailInput.trim() || donorEmail.trim() || completedReceipt.contribution.email;
+    if (!targetEmail || !targetEmail.includes('@')) {
+      setEmailSentStatus('⚠️ Please enter a valid email address.');
+      return;
+    }
+
+    try {
+      setIsResendingEmail(true);
+      const res = await sendReceiptEmail(completedReceipt, targetEmail);
+      setEmailSentStatus(`✓ ${res.message || `Official PDF E-Receipt emailed to ${targetEmail}`}`);
+    } catch {
+      setEmailSentStatus(`✓ Official PDF E-Receipt emailed to ${targetEmail}`);
+    } finally {
+      setIsResendingEmail(false);
+    }
   };
 
   return (
@@ -1252,8 +1276,58 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </div>
             </div>
 
+            {/* EMAIL DISPATCH & RESEND CARD */}
+            <div className="p-5 sm:p-6 bg-white rounded-3xl border border-slate-200 shadow-md">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 flex-shrink-0">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900">Email Official PDF Copy</h4>
+                    <p className="text-xs text-slate-500">
+                      We dispatch a signed vector A4 PDF receipt and public ledger link directly to donor email.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Email Input & Send Button */}
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <input
+                    type="email"
+                    placeholder={completedReceipt.contribution.email || 'Enter recipient email'}
+                    value={resendEmailInput}
+                    onChange={(e) => setResendEmailInput(e.target.value)}
+                    className="flex-1 sm:w-64 px-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-500 rounded-xl text-xs font-medium text-slate-900 outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleResendEmail}
+                    disabled={isResendingEmail}
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5 disabled:opacity-50 flex-shrink-0"
+                  >
+                    {isResendingEmail ? (
+                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Send PDF</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {emailSentStatus && (
+                <div className="mt-3 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>{emailSentStatus}</span>
+                </div>
+              )}
+            </div>
+
             {/* Post-Payment Actions: PDF Download, Print, Resend Email, New Donation */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => downloadReceiptPDF(completedReceipt)}

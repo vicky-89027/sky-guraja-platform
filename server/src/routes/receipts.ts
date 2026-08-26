@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { loadDB, saveDB } from '../services/db';
+import { sendReceiptEmailService } from '../services/emailService';
 
 const router = Router();
 
@@ -142,29 +143,27 @@ router.post('/:id/void', (req: Request, res: Response) => {
 });
 
 // 4. Send Official PDF E-Receipt via Email
-router.post('/send-email', (req: Request, res: Response) => {
-  const { receiptNumber, donorName, email, amount, campaignTitle } = req.body;
+router.post('/send-email', async (req: Request, res: Response) => {
+  const { receiptId, receiptNumber, donorName, email, amount, campaignTitle, verificationToken, transactionId, issueDate, pdfBase64 } = req.body;
 
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Valid email address is required.' });
   }
 
-  const db = loadDB();
-  db.auditLogs.push({
-    id: `audit-${Date.now()}`,
-    action: 'RECEIPT_EMAILED',
-    details: `Official E-Receipt ${receiptNumber || ''} sent to ${email} for Rs. ${amount || 0} (${campaignTitle || 'Donation'})`,
-    timestamp: new Date().toISOString()
-  });
-  saveDB(db);
-
-  return res.json({
-    success: true,
-    message: `Official PDF E-Receipt successfully dispatched to ${email}`,
-    recipient: email,
+  const result = await sendReceiptEmailService({
+    receiptId: receiptId || `rec-${Date.now()}`,
+    receiptNumber: receiptNumber || 'SKYG/26-27/TEMP',
     donorName: donorName || 'Devotee',
-    receiptNumber
+    email,
+    amount: Number(amount || 0),
+    campaignTitle: campaignTitle || 'Sri Krishna Janmashtami',
+    verificationToken,
+    transactionId,
+    issueDate,
+    pdfBase64
   });
+
+  return res.json(result);
 });
 
 // 5. Get Audit Logs (ADMIN Only)

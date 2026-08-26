@@ -15,6 +15,7 @@ import {
   KeyRound
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { getMemberPhoto } from '../services/teamService';
 
 export interface AuthUser {
   id: string;
@@ -206,6 +207,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     if (matchedOfficial) {
       if (isStrictPassword || inputPass === matchedOfficial.password || inputPass === 'SkyGuraja@2026') {
+        const livePhoto = getMemberPhoto(matchedOfficial.fullName || matchedOfficial.phone || matchedOfficial.role);
+        const resolvedPhoto = (livePhoto && !livePhoto.includes('guraja_youth_volunteers_group.png')) ? livePhoto : matchedOfficial.image;
         const authUser: AuthUser = {
           id: `usr-${matchedOfficial.username}-01`,
           fullName: matchedOfficial.fullName,
@@ -215,8 +218,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           role: matchedOfficial.role,
           roleTitle: matchedOfficial.roleTitle,
           village: 'Guraja',
-          image: matchedOfficial.image,
-          photoUrl: matchedOfficial.image
+          image: resolvedPhoto,
+          photoUrl: resolvedPhoto
         };
         localStorage.setItem('sky_token', `jwt_token_${matchedOfficial.username}`);
         localStorage.setItem('sky_user', JSON.stringify(authUser));
@@ -359,6 +362,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const handleAutoFillAndLogin = (member: typeof OFFICIAL_MEMBERS[0]) => {
     setLoginIdentifier(member.username);
     setLoginPassword(member.password);
+    const livePhoto = getMemberPhoto(member.fullName || member.phone || member.role);
+    const resolvedPhoto = (livePhoto && !livePhoto.includes('guraja_youth_volunteers_group.png')) ? livePhoto : member.image;
     const authUser: AuthUser = {
       id: `usr-${member.username}-01`,
       fullName: member.fullName,
@@ -368,8 +373,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       role: member.role,
       roleTitle: member.roleTitle,
       village: 'Guraja',
-      image: member.image,
-      photoUrl: member.image
+      image: resolvedPhoto,
+      photoUrl: resolvedPhoto
     };
     localStorage.setItem('sky_token', `jwt_token_${member.username}`);
     localStorage.setItem('sky_user', JSON.stringify(authUser));

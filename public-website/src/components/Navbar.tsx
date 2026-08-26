@@ -12,6 +12,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { AuthUser } from './AuthModal';
+import { getMemberPhoto } from '../services/teamService';
 
 interface NavbarProps {
   activeTab: string;
@@ -34,6 +35,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  const livePhoto = user ? getMemberPhoto(user.fullName || user.phone || user.role || '') : '';
+  const avatarPhoto =
+    (livePhoto && !livePhoto.includes('guraja_youth_volunteers_group.png'))
+      ? livePhoto
+      : (user?.image && !user.image.includes('guraja_youth_volunteers_group.png'))
+      ? user.image
+      : (user?.photoUrl && !user.photoUrl.includes('guraja_youth_volunteers_group.png'))
+      ? user.photoUrl
+      : livePhoto || user?.image || user?.photoUrl || '/images/gallery/guraja_youth_volunteers_group.png';
 
   const navLinks = [
     { id: 'home', label: 'HOME' },
@@ -124,9 +135,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {/* Member Photo Icon with Gold Ring Frame */}
                 <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full p-0.5 bg-gradient-to-tr from-[#B38020] via-[#F5BD55] to-[#D4A244] shadow-md flex-shrink-0">
                   <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center">
-                    {user.image || user.photoUrl ? (
+                    {avatarPhoto ? (
                       <img
-                        src={user.image || user.photoUrl}
+                        src={avatarPhoto}
                         alt={user.fullName}
                         className="w-full h-full object-cover object-top"
                         onError={(e) => {
@@ -171,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="p-3 bg-[#050F21] rounded-xl border border-white/10 text-left flex items-center gap-3">
                     <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-amber-400 to-amber-600 shadow-md flex-shrink-0">
                       <img
-                        src={user.image || user.photoUrl || '/images/gallery/guraja_youth_volunteers_group.png'}
+                        src={avatarPhoto}
                         alt={user.fullName}
                         className="w-full h-full object-cover object-top rounded-full"
                       />

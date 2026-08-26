@@ -79,8 +79,10 @@ export const App: React.FC = () => {
               parsed.fullName = (matched as any).name || (matched as any).fullName;
               parsed.role = matched.role;
               parsed.roleTitle = (matched as any).roleTitle || matched.role;
-              parsed.image = matched.image || parsed.image;
-              parsed.photoUrl = matched.image || parsed.photoUrl;
+              if (matched.image) {
+                parsed.image = matched.image;
+                parsed.photoUrl = matched.image;
+              }
               parsed.phone = matched.phone || parsed.phone;
               parsed.email = matched.email || parsed.email;
               localStorage.setItem('sky_user', JSON.stringify(parsed));

@@ -117,8 +117,21 @@ export const App: React.FC = () => {
   };
 
   const handleOpenCashContribution = () => {
-    if (!user || !['MEMBER', 'ADMIN', 'SUPER_ADMIN'].includes(user.role)) {
-      handleOpenAuth('login', 'Please sign in with your authorized Member account to record cash contributions.', 'record_cash');
+    const authorized =
+      user &&
+      [
+        'PRESIDENT',
+        'SECRETARY',
+        'TREASURER',
+        'JOINT_SECRETARY',
+        'AUDITOR',
+        'MEMBER',
+        'ADMIN',
+        'SUPER_ADMIN'
+      ].includes(user.role?.toUpperCase());
+
+    if (!authorized) {
+      handleOpenAuth('login', 'Please sign in with your authorized Member/President account to record cash contributions.', 'record_cash');
       return;
     }
     setIsCashOpen(true);

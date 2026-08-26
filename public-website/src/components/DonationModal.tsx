@@ -65,7 +65,18 @@ export const DonationModal: React.FC<DonationModalProps> = ({
   const [verifiedReceipt, setVerifiedReceipt] = useState<RealReceipt | null>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
 
-  const isMemberOrAdmin = user && ['MEMBER', 'ADMIN', 'SUPER_ADMIN'].includes(user.role);
+  const isMemberOrAdmin =
+    user &&
+    [
+      'PRESIDENT',
+      'SECRETARY',
+      'TREASURER',
+      'JOINT_SECRETARY',
+      'AUDITOR',
+      'MEMBER',
+      'ADMIN',
+      'SUPER_ADMIN'
+    ].includes(user.role?.toUpperCase());
 
   useEffect(() => {
     if (user) {

@@ -31,8 +31,19 @@ export const CashContributionModal: React.FC<CashContributionModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Strict member/admin permission check
-  const isAuthorized = user && ['MEMBER', 'ADMIN', 'SUPER_ADMIN'].includes(user.role);
+  // Strict member/admin/president permission check
+  const isAuthorized =
+    user &&
+    [
+      'PRESIDENT',
+      'SECRETARY',
+      'TREASURER',
+      'JOINT_SECRETARY',
+      'AUDITOR',
+      'MEMBER',
+      'ADMIN',
+      'SUPER_ADMIN'
+    ].includes(user.role?.toUpperCase());
 
   if (!isAuthorized) {
     return (

@@ -419,7 +419,17 @@ export async function createMemberCashContribution(params: {
   internalReference?: string;
 }): Promise<RealReceipt> {
   // Strict Role Check
-  if (!['MEMBER', 'ADMIN', 'SUPER_ADMIN'].includes(params.memberRole)) {
+  const authorizedRoles = [
+    'PRESIDENT',
+    'SECRETARY',
+    'TREASURER',
+    'JOINT_SECRETARY',
+    'AUDITOR',
+    'MEMBER',
+    'ADMIN',
+    'SUPER_ADMIN'
+  ];
+  if (!authorizedRoles.includes(params.memberRole?.toUpperCase())) {
     throw new Error('Unauthorized: Cash contributions can only be recorded by authenticated Committee Members or Admins.');
   }
 

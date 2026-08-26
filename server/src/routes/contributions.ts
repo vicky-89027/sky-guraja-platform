@@ -168,7 +168,17 @@ router.post('/cash/create', (req: Request, res: Response) => {
   } = req.body;
 
   // Strict Authorization Check
-  if (!memberRole || !['MEMBER', 'ADMIN', 'SUPER_ADMIN'].includes(memberRole)) {
+  const authorizedCashRoles = [
+    'PRESIDENT',
+    'SECRETARY',
+    'TREASURER',
+    'JOINT_SECRETARY',
+    'AUDITOR',
+    'MEMBER',
+    'ADMIN',
+    'SUPER_ADMIN'
+  ];
+  if (!memberRole || !authorizedCashRoles.includes(memberRole.toUpperCase())) {
     return res.status(403).json({
       error: 'Access Denied: Cash contributions can only be recorded by authenticated Committee Members or Administrators.'
     });

@@ -25,7 +25,11 @@ import {
   BadgeCheck,
   Info,
   Edit3,
-  Send
+  Send,
+  CreditCard,
+  Smartphone,
+  Building2,
+  Check
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
@@ -42,6 +46,7 @@ import {
   downloadReceiptPDF,
   sendReceiptEmail
 } from '../services/receiptPdfService';
+import { launchRazorpayStandardCheckout } from '../services/razorpayService';
 
 interface CheckoutPageProps {
   user: AuthUser | null;
@@ -80,6 +85,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
   // Payment Method: 'UPI' or 'CASH'
   const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'CASH'>('UPI');
+  const [paymentSubTab, setPaymentSubTab] = useState<'CARDS' | 'UPI' | 'NETBANKING'>('CARDS');
+  const [selectedBank, setSelectedBank] = useState('State Bank of India');
 
   // Cash Handover specific state (for members)
   const [cashReference, setCashReference] = useState('');
@@ -269,81 +276,55 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       return;
     }
 
-    const rzpKey = (import.meta as any).env?.VITE_RAZORPAY_KEY_ID || 'rzp_live_craftory';
+    try {
+      setIsSubmitting(true);
+      await launchRazorpayStandardCheckout({
+        amount: Number(amount),
+        donorName: donorName.trim(),
+        donorEmail: cleanEmail,
+        donorPhone: cleanPhone,
+        campaignTitle: selectedCampaign,
+        onSuccess: async (paymentData) => {
+          try {
+            const receipt = await initiateAndVerifyUPIContribution({
+              contributorName: donorName.trim(),
+              phone: cleanPhone,
+              email: cleanEmail,
+              address: donorAddress.trim() || 'Guraja Village, Andhra Pradesh',
+              campaignId: 'c1',
+              campaignTitle: selectedCampaign,
+              amount: Number(amount)
+            });
+            setCompletedReceipt(receipt);
+            confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    if (typeof (window as any).Razorpay !== 'undefined') {
-      try {
-        setIsSubmitting(true);
-        const options = {
-          key: rzpKey,
-          amount: Math.round(amount * 100),
-          currency: 'INR',
-          name: 'Craftory',
-          description: `${selectedCampaign} • SKY Guraja`,
-          image: '/images/sky_official_monogram.png',
-          prefill: {
-            name: donorName.trim(),
-            contact: cleanPhone,
-            email: cleanEmail
-          },
-          notes: {
-            organization: 'Sri Krishna Yadav Youth Guraja',
-            campaign: selectedCampaign,
-            merchant: 'Craftory'
-          },
-          theme: {
-            color: '#D4A244'
-          },
-          handler: async function (response: any) {
-            try {
-              const receipt = await initiateAndVerifyUPIContribution({
-                contributorName: donorName.trim(),
-                phone: cleanPhone,
-                email: cleanEmail,
-                address: donorAddress.trim() || 'Guraja Village, Andhra Pradesh',
-                campaignId: 'c1',
-                campaignTitle: selectedCampaign,
-                amount
+            // AUTOMATICALLY DISPATCH OFFICIAL PDF E-RECEIPT TO DONOR EMAIL
+            sendReceiptEmail(receipt, cleanEmail)
+              .then((res) => {
+                setEmailSentStatus(`✓ ${res.message || `Official PDF E-Receipt emailed to ${cleanEmail}`}`);
+              })
+              .catch(() => {
+                setEmailSentStatus(`✓ Official PDF E-Receipt emailed to ${cleanEmail}`);
               });
-              setCompletedReceipt(receipt);
-              confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-
-              // AUTOMATICALLY DISPATCH OFFICIAL PDF E-RECEIPT TO DONOR EMAIL
-              sendReceiptEmail(receipt, cleanEmail)
-                .then((res) => {
-                  setEmailSentStatus(`✓ ${res.message || `Official PDF E-Receipt emailed to ${cleanEmail}`}`);
-                })
-                .catch(() => {
-                  setEmailSentStatus(`✓ Official PDF E-Receipt emailed to ${cleanEmail}`);
-                });
-            } catch (err: any) {
-              setErrorMessage(err.message || 'Payment recorded, receipt generation failed.');
-            } finally {
-              setIsSubmitting(false);
-            }
-          },
-          modal: {
-            ondismiss: function () {
-              setIsSubmitting(false);
-            }
+          } catch (err: any) {
+            setErrorMessage(err.message || 'Payment recorded, receipt generation failed.');
+          } finally {
+            setIsSubmitting(false);
           }
-        };
-
-        const rzp = new (window as any).Razorpay(options);
-        rzp.on('payment.failed', function (response: any) {
-          setErrorMessage(response?.error?.description || 'Razorpay transaction was cancelled or failed.');
+        },
+        onFailure: (err) => {
+          setErrorMessage(err.message || 'Razorpay transaction failed. Please try again.');
           setIsSubmitting(false);
-        });
-        rzp.open();
-        return;
-      } catch (err: any) {
-        setErrorMessage('Failed to launch Razorpay gateway. Falling back to direct QR.');
-      }
+        },
+        onDismiss: () => {
+          setIsSubmitting(false);
+        }
+      });
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Failed to initialize Razorpay Standard Checkout.');
+      setIsSubmitting(false);
     }
-
-    // Direct fallback
-    handleSubmitContribution({ preventDefault: () => {} } as any);
   };
 
   const handlePrintReceipt = () => {
@@ -984,94 +965,314 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   {/* RIGHT COLUMN: RESPECTIVE PAYMENT CHANNELS (7 Cols) */}
                   <div className="lg:col-span-7 space-y-6">
                     {paymentMethod === 'UPI' ? (
-                      /* UPI & CARDS DEDICATED CHANNEL */
-                      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-md space-y-6">
-                        <div className="pb-3 border-b border-slate-100">
-                          <h2 className="text-base font-bold text-slate-900">Pay via UPI & Cards</h2>
-                          <p className="text-xs text-slate-500">Choose 1-Click Gateway checkout or scan the dynamic QR code below.</p>
-                        </div>
-
-                        {/* 1. PRIMARY RAZORPAY 1-CLICK CHECKOUT BUTTON */}
-                        <div>
-                          <button
-                            type="button"
-                            onClick={handleRazorpayPayment}
-                            disabled={isSubmitting}
-                            className="w-full py-4 px-5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] hover:to-[#D4A244] text-slate-950 font-black text-sm uppercase tracking-wider rounded-2xl shadow-lg flex items-center justify-center gap-2.5 transition-all transform active:scale-[0.99] disabled:opacity-50"
-                          >
-                            <Sparkles className="w-4 h-4 fill-slate-950" />
-                            <span>PAY ₹{amount.toLocaleString('en-IN')} VIA UPI / GPAY / PHONEPE / CARDS</span>
-                            <ArrowRight className="w-4 h-4" />
-                          </button>
-                          <span className="text-[11px] text-slate-500 text-center block mt-1.5">
-                            Seamless 1-Click Razorpay Gateway (Craftory Merchant Account)
-                          </span>
-                        </div>
-
-                        <div className="relative flex items-center justify-center">
-                          <div className="border-t border-slate-200 w-full" />
-                          <span className="bg-white px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                            Or Scan Dynamic QR Code
-                          </span>
-                        </div>
-
-                        {/* 2. DYNAMIC QR CONTAINER */}
-                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                          <div className="flex flex-col sm:flex-row items-center gap-5">
-                            <div className="p-2.5 bg-white rounded-2xl border border-slate-300 shadow-sm flex-shrink-0">
-                              <QRCodeSVG value={upiPayUrl} size={130} level="H" includeMargin />
-                            </div>
-
-                            <div className="space-y-3 flex-1 text-center sm:text-left">
-                              <div>
-                                <span className="text-xs font-bold text-slate-900 block">
-                                  Scan with Any UPI App
-                                </span>
-                                <span className="text-[11px] text-slate-500">
-                                  Google Pay, PhonePe, Paytm, BHIM, CRED
-                                </span>
-                              </div>
-
-                              {/* VPA Copy Pill */}
-                              <div className="flex items-center gap-2 p-2 bg-white rounded-xl border border-slate-200 font-mono text-xs font-bold text-slate-800">
-                                <span className="flex-1 truncate">{upiId}</span>
-                                <button
-                                  type="button"
-                                  onClick={handleCopyUpi}
-                                  className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-lg transition-all flex items-center gap-1 shadow-sm"
-                                >
-                                  <Copy className="w-3 h-3" />
-                                  <span>{copiedUpi ? 'Copied!' : 'Copy'}</span>
-                                </button>
-                              </div>
-
-                              {/* Direct App Deep Links */}
-                              <div className="flex flex-wrap gap-2">
-                                <a
-                                  href={upiPayUrl}
-                                  className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
-                                >
-                                  Google Pay
-                                </a>
-                                <a
-                                  href={upiPayUrl}
-                                  className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
-                                >
-                                  PhonePe
-                                </a>
-                                <a
-                                  href={upiPayUrl}
-                                  className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
-                                >
-                                  Paytm
-                                </a>
-                              </div>
-                            </div>
+                      /* DEDICATED CARDS, UPI & NETBANKING PAYMENT CHANNEL */
+                      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-lg space-y-6">
+                        {/* Header with Title & Security Badge */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
+                          <div>
+                            <h2 className="text-lg font-serif font-black text-slate-950 flex items-center gap-2">
+                              <span>Digital Payment Checkout</span>
+                              <BadgeCheck className="w-5 h-5 text-amber-600" />
+                            </h2>
+                            <p className="text-xs text-slate-500">
+                              Instant payment processing via RBI-compliant Razorpay gateway.
+                            </p>
+                          </div>
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full text-[11px] font-bold self-start sm:self-auto">
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>256-Bit SSL Encrypted</span>
                           </div>
                         </div>
 
+                        {/* Interactive Payment Method Subtabs */}
+                        <div className="grid grid-cols-3 gap-2 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 text-xs font-bold">
+                          <button
+                            type="button"
+                            onClick={() => setPaymentSubTab('CARDS')}
+                            className={`py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                              paymentSubTab === 'CARDS'
+                                ? 'bg-white text-slate-950 shadow-md font-black ring-2 ring-amber-500/20'
+                                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
+                            }`}
+                          >
+                            <CreditCard className="w-4 h-4 text-amber-600" />
+                            <span>Cards</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setPaymentSubTab('UPI')}
+                            className={`py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                              paymentSubTab === 'UPI'
+                                ? 'bg-white text-slate-950 shadow-md font-black ring-2 ring-amber-500/20'
+                                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
+                            }`}
+                          >
+                            <Smartphone className="w-4 h-4 text-amber-600" />
+                            <span>UPI & QR</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setPaymentSubTab('NETBANKING')}
+                            className={`py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                              paymentSubTab === 'NETBANKING'
+                                ? 'bg-white text-slate-950 shadow-md font-black ring-2 ring-amber-500/20'
+                                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
+                            }`}
+                          >
+                            <Building2 className="w-4 h-4 text-amber-600" />
+                            <span>Netbanking</span>
+                          </button>
+                        </div>
+
+                        {/* =========================================================================
+                            SUBTAB 1: DEBIT / CREDIT CARD TRANSACTION LAYOUT
+                            ========================================================================= */}
+                        {paymentSubTab === 'CARDS' && (
+                          <div className="space-y-6 animate-fadeIn">
+                            {/* Premium Visual Credit / Debit Card Graphic */}
+                            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-[#061224] via-[#0A1E3D] to-[#152E5A] border-2 border-amber-500/40 p-6 sm:p-7 text-white shadow-2xl space-y-5">
+                              {/* Background Watermark Pattern */}
+                              <div className="absolute right-[-20px] bottom-[-20px] opacity-10 pointer-events-none">
+                                <SkyLogo variant="icon" size="lg" />
+                              </div>
+
+                              {/* Card Top Row: Monogram + Card Type */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <SkyLogo variant="icon" size="sm" />
+                                  <div>
+                                    <div className="text-[11px] font-black uppercase tracking-widest text-amber-300">
+                                      SRI KRISHNA YADAV YOUTH
+                                    </div>
+                                    <div className="text-[9px] text-slate-300 tracking-wider font-mono">
+                                      SEVA CONTRIBUTION CARD
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="px-2.5 py-1 rounded-md bg-white/10 border border-white/20 text-[10px] font-mono font-bold tracking-wider text-amber-200">
+                                  DEBIT / CREDIT
+                                </div>
+                              </div>
+
+                              {/* Card Chip & Contactless Wave */}
+                              <div className="flex items-center gap-4 pt-1">
+                                <div className="w-11 h-8 rounded-lg bg-gradient-to-br from-amber-200 via-amber-400 to-amber-600 border border-amber-300/80 shadow-inner flex flex-col justify-around p-1">
+                                  <div className="border-t border-slate-800/40 w-full" />
+                                  <div className="border-t border-slate-800/40 w-full" />
+                                  <div className="border-t border-slate-800/40 w-full" />
+                                </div>
+                                <svg className="w-6 h-6 text-amber-300/80 fill-current" viewBox="0 0 24 24">
+                                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/>
+                                </svg>
+                              </div>
+
+                              {/* Masked Card Number Preview */}
+                              <div className="font-mono text-lg sm:text-xl font-bold tracking-[0.25em] text-slate-100 drop-shadow">
+                                •••• •••• •••• {new Date().getFullYear()}
+                              </div>
+
+                              {/* Card Bottom Row: Cardholder Name + Contribution Amount */}
+                              <div className="flex items-end justify-between pt-1 border-t border-white/10">
+                                <div>
+                                  <div className="text-[9px] uppercase tracking-widest text-slate-400 font-sans">
+                                    DEVOTEE / CONTRIBUTOR
+                                  </div>
+                                  <div className="font-bold text-sm tracking-wide text-amber-100 truncate max-w-[200px]">
+                                    {donorName ? donorName.toUpperCase() : 'VALUED CONTRIBUTOR'}
+                                  </div>
+                                </div>
+
+                                <div className="text-right">
+                                  <div className="text-[9px] uppercase tracking-widest text-slate-400 font-sans">
+                                    AMOUNT
+                                  </div>
+                                  <div className="font-mono font-black text-lg text-emerald-400">
+                                    ₹{amount.toLocaleString('en-IN')}.00
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Card Security Highlights */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                              <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                                <span>Zero extra surcharge on domestic cards</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                                <span>Direct 3D Secure OTP authentication</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                                <span>Visa, MasterCard, RuPay, Maestro accepted</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                                <span>Instant verified PDF E-Receipt issued</span>
+                              </div>
+                            </div>
+
+                            {/* Primary Card Pay Button */}
+                            <div>
+                              <button
+                                type="button"
+                                onClick={handleRazorpayPayment}
+                                disabled={isSubmitting}
+                                className="w-full py-4 px-5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] hover:to-[#D4A244] text-slate-950 font-serif font-black text-sm uppercase tracking-wider rounded-2xl shadow-xl flex items-center justify-center gap-2.5 transition-all transform active:scale-[0.99] disabled:opacity-50"
+                              >
+                                <CreditCard className="w-5 h-5 text-slate-950" />
+                                <span>PAY ₹{amount.toLocaleString('en-IN')} VIA DEBIT / CREDIT CARD (RAZORPAY)</span>
+                                <ArrowRight className="w-4 h-4" />
+                              </button>
+                              <span className="text-[11px] text-slate-500 text-center block mt-2">
+                                🔒 Secured by Razorpay Gateway • Sri Krishna Yadav Youth Guraja
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* =========================================================================
+                            SUBTAB 2: UPI & DYNAMIC QR CODE LAYOUT
+                            ========================================================================= */}
+                        {paymentSubTab === 'UPI' && (
+                          <div className="space-y-6 animate-fadeIn">
+                            {/* Fast 1-Click Gateway Checkout */}
+                            <div>
+                              <button
+                                type="button"
+                                onClick={handleRazorpayPayment}
+                                disabled={isSubmitting}
+                                className="w-full py-4 px-5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] hover:to-[#D4A244] text-slate-950 font-serif font-black text-sm uppercase tracking-wider rounded-2xl shadow-xl flex items-center justify-center gap-2.5 transition-all transform active:scale-[0.99] disabled:opacity-50"
+                              >
+                                <Sparkles className="w-4 h-4 fill-slate-950" />
+                                <span>1-CLICK FAST PAY (GPAY / PHONEPE / PAYTM)</span>
+                                <ArrowRight className="w-4 h-4" />
+                              </button>
+                            </div>
+
+                            <div className="relative flex items-center justify-center">
+                              <div className="border-t border-slate-200 w-full" />
+                              <span className="bg-white px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                Or Scan Dynamic QR Code
+                              </span>
+                            </div>
+
+                            {/* DYNAMIC QR CONTAINER */}
+                            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                              <div className="flex flex-col sm:flex-row items-center gap-5">
+                                <div className="p-3 bg-white rounded-2xl border border-slate-300 shadow-md flex-shrink-0">
+                                  <QRCodeSVG value={upiPayUrl} size={140} level="H" includeMargin />
+                                </div>
+
+                                <div className="space-y-3 flex-1 text-center sm:text-left">
+                                  <div>
+                                    <span className="text-sm font-bold text-slate-900 block">
+                                      Scan with Any UPI App
+                                    </span>
+                                    <span className="text-xs text-slate-500">
+                                      Google Pay, PhonePe, Paytm, BHIM, CRED
+                                    </span>
+                                  </div>
+
+                                  {/* VPA Copy Pill */}
+                                  <div className="flex items-center gap-2 p-2 bg-white rounded-xl border border-slate-200 font-mono text-xs font-bold text-slate-800">
+                                    <span className="flex-1 truncate">{upiId}</span>
+                                    <button
+                                      type="button"
+                                      onClick={handleCopyUpi}
+                                      className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-lg transition-all flex items-center gap-1 shadow-sm"
+                                    >
+                                      <Copy className="w-3 h-3" />
+                                      <span>{copiedUpi ? 'Copied!' : 'Copy'}</span>
+                                    </button>
+                                  </div>
+
+                                  {/* Direct App Deep Links */}
+                                  <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                                    <a
+                                      href={upiPayUrl}
+                                      className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                                    >
+                                      Google Pay
+                                    </a>
+                                    <a
+                                      href={upiPayUrl}
+                                      className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                                    >
+                                      PhonePe
+                                    </a>
+                                    <a
+                                      href={upiPayUrl}
+                                      className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                                    >
+                                      Paytm
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* =========================================================================
+                            SUBTAB 3: NETBANKING & POPULAR BANKS LAYOUT
+                            ========================================================================= */}
+                        {paymentSubTab === 'NETBANKING' && (
+                          <div className="space-y-6 animate-fadeIn">
+                            <div>
+                              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Select Your Bank
+                              </label>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                                {[
+                                  'State Bank of India',
+                                  'HDFC Bank',
+                                  'ICICI Bank',
+                                  'Axis Bank',
+                                  'Kotak Mahindra Bank',
+                                  'Punjab National Bank'
+                                ].map((b) => (
+                                  <button
+                                    type="button"
+                                    key={b}
+                                    onClick={() => setSelectedBank(b)}
+                                    className={`p-3 rounded-xl text-left border text-xs font-bold transition-all flex items-center justify-between gap-1.5 ${
+                                      selectedBank === b
+                                        ? 'bg-amber-50 border-amber-500 ring-2 ring-amber-500/20 text-slate-950 shadow-sm'
+                                        : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-700'
+                                    }`}
+                                  >
+                                    <span className="truncate">{b}</span>
+                                    {selectedBank === b && (
+                                      <Check className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                                    )}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={handleRazorpayPayment}
+                              disabled={isSubmitting}
+                              className="w-full py-4 px-5 bg-gradient-to-r from-[#D4A244] via-[#F5BD55] to-[#C49132] hover:from-[#E5B869] hover:to-[#D4A244] text-slate-950 font-serif font-black text-sm uppercase tracking-wider rounded-2xl shadow-xl flex items-center justify-center gap-2.5 transition-all transform active:scale-[0.99] disabled:opacity-50"
+                            >
+                              <Building2 className="w-5 h-5 text-slate-950" />
+                              <span>PROCEED TO NETBANKING ({selectedBank.toUpperCase()})</span>
+                              <ArrowRight className="w-4 h-4" />
+                            </button>
+                            <span className="text-[11px] text-slate-500 text-center block mt-2">
+                              You will be redirected to your bank's secure login portal via Razorpay.
+                            </span>
+                          </div>
+                        )}
+
                         {/* Back to Step 2 button */}
-                        <div className="pt-2">
+                        <div className="pt-2 border-t border-slate-100">
                           <button
                             type="button"
                             onClick={() => {

@@ -24,6 +24,7 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { ReceiptVerificationPage } from './pages/ReceiptVerificationPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { AuthPage } from './pages/AuthPage';
+import { LegalPolicyPage } from './pages/LegalPolicyPage';
 import { RealReceipt, getRealReceiptsList } from './services/receiptService';
 
 import { OFFICIAL_MEMBERS } from './components/AuthModal';
@@ -77,6 +78,16 @@ export const App: React.FC = () => {
         setActiveTab('login');
       } else if (urlParams.get('page') === 'register' || urlParams.get('register') !== null) {
         setActiveTab('register');
+      } else if (urlParams.get('page') === 'terms' || pathname.includes('/terms')) {
+        setActiveTab('terms');
+      } else if (urlParams.get('page') === 'privacy' || pathname.includes('/privacy')) {
+        setActiveTab('privacy');
+      } else if (urlParams.get('page') === 'refund' || pathname.includes('/refund')) {
+        setActiveTab('refund');
+      } else if (urlParams.get('page') === 'shipping' || pathname.includes('/shipping')) {
+        setActiveTab('shipping');
+      } else if (urlParams.get('page') === 'policies' || urlParams.get('page') === 'legal') {
+        setActiveTab('terms');
       }
 
       const syncActiveSession = () => {
@@ -251,6 +262,13 @@ export const App: React.FC = () => {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
+        )}
+        {activeTab === 'terms' && <LegalPolicyPage initialPolicy="terms" onNavigateTab={setActiveTab} />}
+        {activeTab === 'privacy' && <LegalPolicyPage initialPolicy="privacy" onNavigateTab={setActiveTab} />}
+        {activeTab === 'refund' && <LegalPolicyPage initialPolicy="refund" onNavigateTab={setActiveTab} />}
+        {activeTab === 'shipping' && <LegalPolicyPage initialPolicy="shipping" onNavigateTab={setActiveTab} />}
+        {(activeTab === 'policies' || activeTab === 'legal' || activeTab === 'grievance') && (
+          <LegalPolicyPage initialPolicy={activeTab === 'grievance' ? 'contact' : 'terms'} onNavigateTab={setActiveTab} />
         )}
         {activeTab === 'verify-receipt' && verificationToken && (
           <ReceiptVerificationPage

@@ -21,7 +21,7 @@ try {
         execSync(cmd, { stdio: 'inherit' });
         ok = true;
         break;
-      } catch (err) {
+      } catch {
         console.warn(`Command failed: ${cmd}`);
       }
     }

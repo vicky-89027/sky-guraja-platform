@@ -24,6 +24,7 @@ import {
   createMemberCashContribution,
   RealReceipt
 } from '../services/receiptService';
+import { launchRazorpayStandardCheckout } from '../services/razorpayService';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -97,14 +98,12 @@ export const DonationModal: React.FC<DonationModalProps> = ({
     try {
       setIsProcessing(true);
 
-      let receipt: RealReceipt;
-
       if (paymentMethod === 'CASH') {
         if (!isMemberOrAdmin) {
           throw new Error('Cash handover can only be recorded by authenticated Committee Members.');
         }
 
-        receipt = await createMemberCashContribution({
+        const receipt = await createMemberCashContribution({
           memberId: user?.phone || 'mem-01',
           memberName: user?.fullName || 'Committee Member',
           memberRole: user?.role || 'MEMBER',
@@ -122,31 +121,58 @@ export const DonationModal: React.FC<DonationModalProps> = ({
           }),
           notes: cashNotes.trim() || undefined
         });
-      } else {
-        // UPI, Card, or Netbanking
-        receipt = await initiateAndVerifyUPIContribution({
-          contributorName: contributorName.trim(),
-          phone: phone.trim(),
-          email: email.trim() || undefined,
-          address: address.trim() || undefined,
-          campaignId: campaign.toLowerCase().replace(/\s+/g, '-'),
-          campaignTitle: campaign,
-          amount: Number(amount)
-        });
 
-        // Set specific payment method if CARD or NETBANKING
-        if (paymentMethod === 'CARD' || paymentMethod === 'NETBANKING') {
-          receipt.contribution.paymentMethod = paymentMethod as any;
-        }
+        setVerifiedReceipt(receipt);
+        setStep(3);
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        onReceiptGenerated(receipt);
+        setIsProcessing(false);
+        return;
       }
 
-      setVerifiedReceipt(receipt);
-      setStep(3);
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      onReceiptGenerated(receipt);
+      // Launch Razorpay Standard Checkout for Online Payments
+      await launchRazorpayStandardCheckout({
+        amount: Number(amount),
+        donorName: contributorName.trim(),
+        donorEmail: email.trim() || `${phone.trim()}@skyguraja.org`,
+        donorPhone: phone.trim(),
+        campaignTitle: campaign,
+        onSuccess: async () => {
+          try {
+            const receipt = await initiateAndVerifyUPIContribution({
+              contributorName: contributorName.trim(),
+              phone: phone.trim(),
+              email: email.trim() || undefined,
+              address: address.trim() || undefined,
+              campaignId: campaign.toLowerCase().replace(/\s+/g, '-'),
+              campaignTitle: campaign,
+              amount: Number(amount)
+            });
+
+            if (paymentMethod === 'CARD' || paymentMethod === 'NETBANKING') {
+              receipt.contribution.paymentMethod = paymentMethod as any;
+            }
+
+            setVerifiedReceipt(receipt);
+            setStep(3);
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            onReceiptGenerated(receipt);
+          } catch (receiptErr: any) {
+            alert(receiptErr.message || 'Payment verified, receipt generation in progress.');
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        onFailure: (err) => {
+          alert(err.message || 'Payment transaction failed. Please try again.');
+          setIsProcessing(false);
+        },
+        onDismiss: () => {
+          setIsProcessing(false);
+        }
+      });
     } catch (err: any) {
       alert(err.message || 'Payment processing failed. Please try again.');
-    } finally {
       setIsProcessing(false);
     }
   };

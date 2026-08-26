@@ -119,15 +119,17 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenDonate }) =>
           </ul>
         </div>
 
-        {/* Column 4: Legal */}
+        {/* Column 4: Legal & Policies */}
         <div className="space-y-3">
           <h4 className="text-xs font-bold text-white uppercase tracking-wider font-display border-b border-amber-500/30 pb-1">
-            LEGAL
+            LEGAL & POLICIES
           </h4>
           <ul className="space-y-2 text-xs text-slate-400">
-            <li><button onClick={() => scrollToTab('transparency')} className="hover:text-amber-300 transition-colors">Privacy Policy</button></li>
-            <li><button onClick={() => scrollToTab('transparency')} className="hover:text-amber-300 transition-colors">Terms & Conditions</button></li>
-            <li><button onClick={() => scrollToTab('transparency')} className="hover:text-amber-300 transition-colors">Refund Policy</button></li>
+            <li><button onClick={() => scrollToTab('terms')} className="hover:text-amber-300 transition-colors">Terms & Conditions</button></li>
+            <li><button onClick={() => scrollToTab('privacy')} className="hover:text-amber-300 transition-colors">Privacy Policy</button></li>
+            <li><button onClick={() => scrollToTab('refund')} className="hover:text-amber-300 transition-colors">Refund & Cancellation</button></li>
+            <li><button onClick={() => scrollToTab('shipping')} className="hover:text-amber-300 transition-colors">Shipping & Delivery</button></li>
+            <li><button onClick={() => scrollToTab('grievance')} className="hover:text-amber-300 transition-colors">Grievance Redressal</button></li>
           </ul>
         </div>
 

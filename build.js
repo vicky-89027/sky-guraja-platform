@@ -20,7 +20,7 @@ try {
       execSync(cmd, { stdio: 'inherit' });
       built = true;
       break;
-    } catch (e) {
+    } catch {
       console.warn(`Strategy failed: ${cmd}, trying next...`);
     }
   }

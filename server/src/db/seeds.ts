@@ -114,6 +114,14 @@ export async function seedDatabase(): Promise<void> {
       phone: '9848012345',
       full_name: 'NAGARAJU YADAV',
       role: 'MEMBER'
+    },
+    {
+      id: 'usr-test-01',
+      username: 'razorpay_test',
+      email: 'testuser@skyguraja.org',
+      phone: '9876543210',
+      full_name: 'RAZORPAY TEST USER',
+      role: 'MEMBER'
     }
   ];
 

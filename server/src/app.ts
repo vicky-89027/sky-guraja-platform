@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 import authRoutes from './routes/auth';
 import dashboardRoutes from './routes/dashboard';
@@ -18,6 +21,7 @@ import reportsRoutes from './routes/reports';
 import settingsRoutes from './routes/settings';
 import publicRoutes from './routes/public';
 import receiptsRoutes from './routes/receipts';
+import razorpayRoutes from './routes/razorpay';
 
 const app = express();
 
@@ -33,6 +37,8 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 app.use('/uploads', express.static(UPLOADS_DIR));
 
 // API Routes
+app.use('/api', razorpayRoutes);
+app.use('/api/razorpay', razorpayRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/contributions', contributionsRoutes);

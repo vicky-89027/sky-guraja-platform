@@ -23,6 +23,7 @@ import { JoinUsPage } from './pages/JoinUsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ReceiptVerificationPage } from './pages/ReceiptVerificationPage';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { AuthPage } from './pages/AuthPage';
 import { RealReceipt, getRealReceiptsList } from './services/receiptService';
 
 import { OFFICIAL_MEMBERS } from './components/AuthModal';
@@ -61,6 +62,10 @@ export const App: React.FC = () => {
         urlParams.get('checkout') !== null
       ) {
         setActiveTab('checkout');
+      } else if (urlParams.get('page') === 'login' || urlParams.get('login') !== null) {
+        setActiveTab('login');
+      } else if (urlParams.get('page') === 'register' || urlParams.get('register') !== null) {
+        setActiveTab('register');
       }
 
       const syncActiveSession = () => {
@@ -216,6 +221,21 @@ export const App: React.FC = () => {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             initialCampaignTitle={donateCampaign}
+          />
+        )}
+        {(activeTab === 'login' || activeTab === 'register' || activeTab === 'auth') && (
+          <AuthPage
+            initialMode={activeTab === 'register' ? 'register' : 'login'}
+            user={user}
+            onAuthSuccess={(authUser) => {
+              setUser(authUser);
+              setActiveTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateHome={() => {
+              setActiveTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
         {activeTab === 'verify-receipt' && verificationToken && (

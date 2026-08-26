@@ -6,8 +6,28 @@ import process from 'node:process';
 console.log('🚀 Starting SKY Guraja Universal Multi-Target Build...');
 
 try {
-  // 1. Build public website
-  execSync('npm run build --workspace=public-website', { stdio: 'inherit' });
+  // 1. Build public website with multi-strategy fallback
+  let built = false;
+  const strategies = [
+    'npm run build --workspace=public-website',
+    'npm run build --prefix public-website',
+    'npx --prefix public-website vite build'
+  ];
+
+  for (const cmd of strategies) {
+    try {
+      console.log(`Executing build strategy: ${cmd}`);
+      execSync(cmd, { stdio: 'inherit' });
+      built = true;
+      break;
+    } catch (e) {
+      console.warn(`Strategy failed: ${cmd}, trying next...`);
+    }
+  }
+
+  if (!built) {
+    throw new Error('All build strategies failed to compile public-website');
+  }
 
   const srcDir = path.resolve('public-website', 'dist');
   const targetDirs = [

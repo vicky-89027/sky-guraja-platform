@@ -1,4 +1,4 @@
-export default async function handler(req: any, res: any) {
+export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -123,7 +123,7 @@ export default async function handler(req: any, res: any) {
     `;
 
     if (resendApiKey) {
-      const attachments: any[] = [];
+      const attachments = [];
       if (pdfBase64) {
         const cleanBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '');
         attachments.push({
@@ -154,7 +154,7 @@ export default async function handler(req: any, res: any) {
       recipient: email,
       receiptNumber
     });
-  } catch (error: any) {
+  } catch (error) {
     return res.status(200).json({
       success: true,
       message: `Official E-Receipt PDF queued and sent to ${req.body?.email || 'email'}`,

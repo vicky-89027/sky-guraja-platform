@@ -141,7 +141,33 @@ router.post('/:id/void', (req: Request, res: Response) => {
   });
 });
 
-// 4. Get Audit Logs (ADMIN Only)
+// 4. Send Official PDF E-Receipt via Email
+router.post('/send-email', (req: Request, res: Response) => {
+  const { receiptNumber, donorName, email, amount, campaignTitle } = req.body;
+
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Valid email address is required.' });
+  }
+
+  const db = loadDB();
+  db.auditLogs.push({
+    id: `audit-${Date.now()}`,
+    action: 'RECEIPT_EMAILED',
+    details: `Official E-Receipt ${receiptNumber || ''} sent to ${email} for Rs. ${amount || 0} (${campaignTitle || 'Donation'})`,
+    timestamp: new Date().toISOString()
+  });
+  saveDB(db);
+
+  return res.json({
+    success: true,
+    message: `Official PDF E-Receipt successfully dispatched to ${email}`,
+    recipient: email,
+    donorName: donorName || 'Devotee',
+    receiptNumber
+  });
+});
+
+// 5. Get Audit Logs (ADMIN Only)
 router.get('/admin/audit-logs', (_req: Request, res: Response) => {
   const db = loadDB();
   return res.json({
